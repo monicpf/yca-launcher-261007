@@ -369,7 +369,18 @@ html.no-set .ic-set { display: none !important; }   /* boss 2026-10-07: v1 has n
 #agent.sv-open .ag-survey { transform: none; }
 #agent.sv-open .ag-btm { opacity: 0; pointer-events: none; }
 .ag-btm { transition: opacity .2s var(--ease-io); }
-.ag-survey.swap > * { opacity: 0; }
+.ag-survey.swap > :not(.sv-grab) { opacity: 0; }
+/* Grabber (boss 2026-10-07): drag down or tap → the card folds into a bar above the input showing the question; tap / drag up → back */
+.ag-survey { padding-top: 22px; touch-action: none; }
+.sv-grab { position: absolute; left: 0; right: 0; top: 0; height: 22px; display: flex; align-items: center; justify-content: center; cursor: grab; }
+.sv-grab i { width: 36px; height: 4px; border-radius: 2px; background: #d3d5e0; }
+.ag-survey.drag { transition: none; }
+.sv-pend { position: absolute; left: 16px; right: 16px; bottom: 121px; z-index: 21; height: 40px; border-radius: 12px; background: #fff; border: 1px solid #eaebf4;
+  box-shadow: 0 -2px 12px rgba(64,62,223,.10); display: flex; align-items: center; gap: 8px; padding: 0 12px; font: 590 13px var(--sf); color: var(--ink);
+  opacity: 0; transform: translateY(8px); pointer-events: none; transition: opacity .2s var(--ease-io), transform .25s var(--ease-out); touch-action: none; }
+.sv-pend span { text-align: left; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sv-pend svg { display: block; flex-shrink: 0; }
+#agent.sv-min .sv-pend { opacity: 1; transform: none; pointer-events: auto; }
 .ag-survey > * { transition: opacity .14s var(--ease-io); }
 .sv-hd { display: flex; align-items: center; gap: 8px; padding-bottom: 10px; }
 .sv-hd h3 { flex: 1; font: 590 14px/18px var(--sf); color: var(--ink); }
@@ -717,6 +728,7 @@ html.no-set .ic-set { display: none !important; }   /* boss 2026-10-07: v1 has n
     </div>
     <div class="scroll" id="ag-scroll"><div class="ag-list" id="ag-list"></div></div>
     <div class="ag-survey" id="ag-survey"></div>
+    <button class="sv-pend" id="sv-pend"><span></span><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3.5 10L8 5.5 12.5 10" stroke="#6f779b" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     <div class="ag-btm">
       <div class="in">
         <div class="quota">Remain daily query: 4 <span>/ 30</span></div>
@@ -1430,7 +1442,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     if (S.agent && !S.sheet) {
       if ($('buy').classList.contains('in') && S.agentHint !== $('buy-cta')) return null;
       if (S.agentHint) {
-        var h = S.agentHint, host = h.closest('#buy .cta-w') || h.closest('#ag-survey') || h.closest('.msg') || h.closest('.box');
+        var h = S.agentHint, host = h.closest('#buy .cta-w') || h.closest('#ag-survey') || h.closest('.msg') || h.closest('.box') || (h.id === 'sv-pend' ? $('agent') : null);
         var t = at(host, h);
         if (h.classList.contains('cost')) {                  // cost buttons: keep the tap dot off the credit coin (Next → over ›, Yes → over "Yes")
           var kk = frameScale(), hr = h.getBoundingClientRect();
@@ -1705,7 +1717,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
         q.o.forEach(function (o, k) { h += '<button class="sv-op' + (numbered ? '' : ' nonum') + '" data-k="' + k + '">' + (numbered ? '<span class="nm"><i>' + (k + 1) + '</i>' + ICONS.svCheck + '</span>' : '') + '<span class="tx"><b>' + esc(o[0]) + '</b>' + (o[1] ? '<span>' + esc(o[1]) + '</span>' : '') + '</span></button>'; });
         if (q.live || !q.fixed) h += '<div class="sv-own live"><span class="fd"><span class="ed">' + ICONS.svEdit + '</span><span class="iw"><input type="text" enterkeyhint="next" autocomplete="off" placeholder="' + esc(q.live || 'Something else…') + '"></span></span></div>';
         h += '<div class="sv-ft"><button class="sv-next" disabled></button></div>';
-        SV.innerHTML = h;
+        SV.innerHTML = '<div class="sv-grab" aria-label="Collapse"><i></i></div>' + h;
         /* Pick, then Next (Claude-style): a tap only selects (row tint); Next sends. If the pick generates a script or an image,
            Next shows its credit cost instead of "Next" and charges it when tapped. Typing in the pen row counts as a pick. */
         var ops = Array.prototype.slice.call(SV.querySelectorAll('.sv-op')), nx = SV.querySelector('.sv-next'), own = SV.querySelector('.sv-own.live'), inp = own && own.querySelector('input'), sel = null;
@@ -1758,13 +1770,45 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     });
   }
   function openSurvey() {
-    $('agent').classList.add('sv-open');
+    $('agent').classList.remove('sv-min'); $('agent').classList.add('sv-open');
     requestAnimationFrame(function () {
       $('ag-list').style.paddingBottom = (SV.offsetHeight + 16) + 'px';
       requestAnimationFrame(function () { follow(true); });
     });
   }
-  function closeSurvey() { $('agent').classList.remove('sv-open'); $('ag-list').style.paddingBottom = ''; }
+  function closeSurvey() { $('agent').classList.remove('sv-open', 'sv-min'); SV.style.transform = ''; $('ag-list').style.paddingBottom = ''; MIN_HINT = null; }
+  var MIN_HINT = null;
+  function minSurvey() {                                     // fold the card: the question waits in a bar above the input
+    var a = $('agent'); if (!a.classList.contains('sv-open')) return;
+    var t = SV.querySelector('.sv-hd h3'); $('sv-pend').querySelector('span').textContent = t ? t.textContent : '';
+    MIN_HINT = S.agentHint; a.classList.remove('sv-open'); a.classList.add('sv-min'); SV.style.transform = '';
+    $('ag-list').style.paddingBottom = '170px';
+    S.agentHint = $('sv-pend'); hideHint(); scheduleHint();
+  }
+  function maxSurvey() {
+    var a = $('agent'); if (!a.classList.contains('sv-min')) return;
+    a.classList.remove('sv-min'); SV.style.transform = ''; openSurvey();
+    S.agentHint = MIN_HINT && MIN_HINT.isConnected ? MIN_HINT : null; MIN_HINT = null; hideHint(); scheduleHint();
+  }
+  (function () {                                             // drag the grabber down (or tap it) → fold; tap / drag the bar up → open
+    var y0 = null, dy = 0, moved = false, onGrab = false;
+    SV.addEventListener('pointerdown', function (e) {
+      if (!e.target.closest('.sv-grab, .sv-hd')) return; y0 = e.clientY; dy = 0; moved = false; onGrab = !!e.target.closest('.sv-grab');
+      SV.classList.add('drag'); try { SV.setPointerCapture(e.pointerId); } catch (x) {}
+    });
+    SV.addEventListener('pointermove', function (e) {
+      if (y0 === null) return; dy = Math.max(0, (e.clientY - y0) / frameScale()); if (dy > 4) moved = true;
+      SV.style.transform = 'translateY(' + dy + 'px)';
+    });
+    function end(e) {
+      if (y0 === null) return; var tap = !moved && onGrab; y0 = null; SV.classList.remove('drag');
+      if (dy > 50 || tap) minSurvey(); else SV.style.transform = '';
+    }
+    SV.addEventListener('pointerup', end); SV.addEventListener('pointercancel', end);
+    var p = $('sv-pend'), py = null;
+    p.addEventListener('pointerdown', function (e) { py = e.clientY; });
+    p.addEventListener('pointerup', function (e) { if (py === null) return; py = null; maxSurvey(); });
+  })();
 
   /* Opening check: video settings carried from the launcher (or the template defaults) + resolution */
   function settingsQs(cfg, live) { live = live !== false;                         // live: question 1 swaps Edit for a pen + text field the user can type into                              // ① confirm ratio + duration ② resolution — fixed choices (demo: only the hinted option responds)
