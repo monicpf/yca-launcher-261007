@@ -1792,9 +1792,8 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   function openSurvey() {
     SV.style.transform = '';
     $('agent').classList.remove('sv-min'); $('agent').classList.add('sv-open');
-    $('agent').classList.toggle('sv-soft', !!SV._dismiss);   // optional card: sits above the input bar, which stays usable
     requestAnimationFrame(function () {
-      $('ag-list').style.paddingBottom = (SV.offsetHeight + 16 + (SV._dismiss ? 104 : 0)) + 'px';
+      $('ag-list').style.paddingBottom = (SV.offsetHeight + 16) + 'px';
       requestAnimationFrame(function () { follow(true); });
     });
   }
@@ -1909,12 +1908,18 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   /* After the video (Figma Generating2 49:11847): Regenerate (-25 credits) / Change Approach (start this chat over) */
   function endSurvey(poster, dur, token, video) {
     if (token !== RUN) return;
-    ask([{ raw: true, fixed: true, any: true, num: true, nohint: true, closable: true, q: 'Which direction should we take?',
+    ask([{ raw: true, any: true, num: true, nohint: true, closable: true, live: 'Something else…', liveCost: COST.regen, q: 'Which direction should we take?',
            o: [['Regenerate', 'Generate another version', 'Regenerate', COST.regen], ['Change Approach', 'Will start from the beginning']] }], token)
       .then(async function (a) {
         if (!a) return;                                       // dragged away: back to the video; the pen opens it again
         S.agentDone = false;
-        if (a[0][2] === 0) { await wait(300); alive(token); await user(M.answers([['', 'Regenerate']]), token); await generate(poster, dur, token, video); }
+        var k = a[0][2];
+        if (k === 0) { await wait(300); alive(token); await user(M.answers([['', 'Regenerate']]), token); await generate(poster, dur, token, video); }
+        else if (k === -1) {                                  // typed in the card: a new version with that change (charged like Regenerate)
+          await wait(300); alive(token); await user(M.answers([['', a[0][1]]]), token);
+          await think(token, 1400); await say(M.text('Got it. I’ll make a new version with that change.'), token);
+          await generate(poster, dur, token, video);
+        }
         else openAgentAgain(S.which);
       }).catch(function () {});
   }
