@@ -1908,14 +1908,14 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   /* After the video (Figma Generating2 49:11847): Regenerate (-25 credits) / Change Approach (start this chat over) */
   function endSurvey(poster, dur, token, video) {
     if (token !== RUN) return;
-    ask([{ raw: true, any: true, num: true, nohint: true, closable: true, live: 'Something else…', liveCost: COST.regen, q: 'Which direction should we take?',
+    ask([{ raw: true, any: true, num: true, nohint: true, closable: true, live: 'Something else…', q: 'Which direction should we take?',
            o: [['Regenerate', 'Generate another version', 'Regenerate', COST.regen], ['Change Approach', 'Will start from the beginning']] }], token)
       .then(async function (a) {
         if (!a) return;                                       // dragged away: back to the video; the pen opens it again
         S.agentDone = false;
         var k = a[0][2];
         if (k === 0) { await wait(300); alive(token); await user(M.answers([['', 'Regenerate']]), token); await generate(poster, dur, token, video); }
-        else if (k === -1) {                                  // typed in the card: a new version with that change (charged like Regenerate)
+        else if (k === -1) {                                  // typed in the card: free text → Next (no charge shown, boss 2026-10-08)
           await wait(300); alive(token); await user(M.answers([['', a[0][1]]]), token);
           await think(token, 1400); await say(M.text('Got it. I’ll make a new version with that change.'), token);
           await generate(poster, dur, token, video);
