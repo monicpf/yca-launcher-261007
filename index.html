@@ -1197,7 +1197,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   function pillTarget() { return PILL_EXPAND ? $('pill-ugc') : $('pill-ba'); }
   $('pill-ba').onclick = function (e) {
     if (S.busy) return;
-    if (S.pill === 'exp') { if (!e.target.closest('#pill-ba-x')) return;
+    if (S.pill === 'exp') {                                  // tap UGC Review again → deselect (its X is hidden for now)
       $('pill-ba').classList.remove('on'); S.pill = 'norm'; resetInput(); scheduleHint(); return; }
     $('skill').scrollTo({ left: 0, behavior: 'smooth' });
     $('pill-ba').classList.add('on'); S.pill = 'exp';
