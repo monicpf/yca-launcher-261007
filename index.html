@@ -368,11 +368,15 @@ html.no-set .ic-set { display: none !important; }   /* boss 2026-10-07: v1 has n
   box-shadow: 0 -4px 20px rgba(64,62,223,.10); padding: 16px 16px 28px; transform: translateY(105%); transition: transform .34s var(--ease-out); }
 #agent.sv-open .ag-survey { transform: none; }
 #agent.sv-open .ag-btm { opacity: 0; pointer-events: none; }
+/* optional card (after the video): floats above the input bar; the bar stays visible and usable */
+#agent.sv-soft .ag-btm { opacity: 1; pointer-events: auto; }
+#agent.sv-soft .ag-survey { bottom: 104px; left: 8px; right: 8px; border-radius: 20px; border-bottom: 1px solid #eaebf4; padding-bottom: 16px; box-shadow: 0 4px 24px rgba(64,62,223,.14); }
+#agent .ag-survey { transition: transform .34s var(--ease-out), bottom .2s; }
 .ag-btm { transition: opacity .2s var(--ease-io); }
 .ag-survey.swap > :not(.sv-grab) { opacity: 0; }
 /* Grabber (boss 2026-10-07): drag down or tap → the card folds into a bar above the input showing the question; tap / drag up → back */
 .ag-survey { padding-top: 22px; touch-action: none; }
-.sv-grab { position: absolute; left: 0; right: 0; top: 0; height: 22px; display: flex; align-items: center; justify-content: center; cursor: grab; }
+.sv-grab { position: absolute; z-index: 2; user-select: none; -webkit-user-select: none; left: 0; right: 0; top: 0; height: 26px; display: flex; align-items: center; justify-content: center; cursor: grab; }
 .sv-grab i { width: 36px; height: 4px; border-radius: 2px; background: #d3d5e0; }
 .ag-survey.drag { transition: none; }
 .sv-pend { position: absolute; left: 16px; right: 16px; bottom: 121px; z-index: 21; height: 40px; border-radius: 12px; background: #fff; border: 1px solid #eaebf4;
@@ -397,6 +401,11 @@ html.no-set .ic-set { display: none !important; }   /* boss 2026-10-07: v1 has n
 .nm i { font-style: normal; }
 .sv-op .nm > svg { display: none; }
 .sv-op.on .nm { background: var(--brand); }
+/* single option (no number): the brand check box slides in from the left when picked (boss 2026-10-08) */
+.sv-op.nonum .nm.slide { width: 0; margin-right: -12px; opacity: 0; transform: translateX(-12px); overflow: hidden; background: var(--brand);
+  transition: width .24s var(--ease-out), margin-right .24s var(--ease-out), opacity .2s var(--ease-io), transform .24s var(--ease-out); }
+.sv-op.nonum.on .nm.slide { width: 24px; margin-right: 0; opacity: 1; transform: none; }
+.sv-op .nm > svg { transition: transform .2s var(--ease-out); }
 .sv-op.on .nm i { display: none; }
 .sv-op.on .nm > svg { display: block; }
 .nm.ck svg { opacity: 0; transform: scale(.6); transition: opacity .15s, transform .2s var(--ease-out); }
@@ -827,7 +836,9 @@ ICONS.agSend = `<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmln
 ICONS.svEdit = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17.3395 10.2487L8.24451 19.3454C8.03589 19.5534 7.77927 19.7071 7.49744 19.7928L3.57926 20.9802C3.50152 21.0035 3.41892 21.0062 3.3402 20.9864C3.26145 20.9665 3.18937 20.9251 3.1319 20.8677C3.07464 20.8104 3.03404 20.7388 3.01413 20.6603C2.99423 20.5817 2.99539 20.4989 3.01852 20.4212L4.20768 16.5039C4.29419 16.2218 4.44874 15.9652 4.65769 15.7569L13.7509 6.66014L17.3395 10.2487Z" fill="#6F779B"/><path d="M18.4636 3.00037C19.1363 3.00054 19.7818 3.26728 20.2574 3.74304C20.7331 4.21888 21.0002 4.86493 21.0001 5.53778C20.9999 6.21048 20.7323 6.85601 20.2566 7.33163L19.2485 8.33974L15.6599 4.75115L16.6689 3.74304C17.1447 3.26732 17.7907 3.00028 18.4636 3.00037Z" fill="#6F779B"/></svg>`;
 ICONS.svPen = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="8" fill="#ECEEFF"/><path d="M13.67 9.35L14.81 10.5L15.02 10.72L14.81 10.93L8.5 17.12L8.46 17.16L8.4 17.18L6.89 17.77C6.79 17.8 6.69 17.81 6.58 17.78C6.48 17.76 6.4 17.7 6.34 17.63C6.28 17.57 6.23 17.49 6.21 17.39C6.19 17.29 6.2 17.19 6.24 17.1L6.86 15.63L6.88 15.58L6.93 15.54L13.24 9.35L13.45 9.14L13.67 9.35Z" fill="#403EDF" stroke="#6F779B" stroke-width="0.6"/><path d="M14.34 7.9L16.09 9.66L17.09 8.67C17.35 8.41 17.49 8.15 17.5 7.89C17.51 7.63 17.4 7.38 17.17 7.15L16.84 6.81C16.61 6.58 16.37 6.48 16.1 6.5C15.85 6.52 15.59 6.65 15.34 6.9L14.34 7.9Z" fill="#403EDF"/></svg>`;
 ICONS.svSend = `<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13 12.1629C13 11.3993 13.8217 10.9174 14.4883 11.2899L28.4385 19.0858C29.1213 19.4674 29.1214 20.4502 28.4385 20.8319L14.4883 28.6278C13.8218 29.0002 13.0002 28.5181 13 27.7547V21.9276L20 19.9588L13 17.9901V12.1629Z" fill="#15171F"/></svg>`;
-ICONS.play = `<svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="36" height="36" rx="18" fill="black" fill-opacity="0.5"/><path d="M14.5 11.9C14.5 11.13 15.33 10.65 16 11.03L25.2 16.27C25.88 16.66 25.88 17.64 25.2 18.03L16 23.27C15.33 23.65 14.5 23.17 14.5 22.4V11.9Z" fill="white" transform="translate(0 0.85)"/></svg>`;
+ICONS.play = `<svg width="36" height="36" viewBox="0 0 36 36" fill="none"><rect width="36" height="36" rx="18" fill="black" fill-opacity="0.5"/><path d="M18 8.14V20.14M21.86 16.19L18 20.14L14.14 16.19" stroke="white" stroke-width="1.54" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.43 21.43V24.21C9.43 25.52 10.48 26.57 11.79 26.57H24.21C25.52 26.57 26.57 25.52 26.57 24.21V21.43" stroke="white" stroke-width="1.54" stroke-linecap="round"/></svg>`;   /* Figma 49:11562: result video overlay = download */
+ICONS.playBtn = `<svg width="36" height="36" viewBox="0 0 36 36" fill="none"><rect width="36" height="36" rx="18" fill="black" fill-opacity="0.5"/><path d="M14.5 11.8v12.4c0 .8.9 1.3 1.6.9l9.8-6.2c.6-.4.6-1.4 0-1.8l-9.8-6.2c-.7-.4-1.6.1-1.6.9z" fill="white"/></svg>`;
+ICONS.actEdit = `<svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M11.61 5.92L13.16 7.48L13.37 7.7L13.15 7.91L4.63 16.27L4.59 16.32L4.53 16.34L2.48 17.13C2.38 17.17 2.26 17.18 2.14 17.15C2.03 17.12 1.94 17.05 1.86 16.97C1.79 16.9 1.74 16.8 1.71 16.69C1.69 16.58 1.7 16.47 1.74 16.37L2.59 14.38L2.61 14.33L2.65 14.29L11.18 5.92L11.4 5.71Z" fill="#6F779B" stroke="#6F779B" stroke-width="0.6"/><path d="M12.6 3.89L14.96 6.27L16.31 4.93C16.66 4.58 16.84 4.23 16.86 3.88C16.88 3.53 16.73 3.2 16.42 2.88L15.96 2.42C15.66 2.12 15.33 1.98 14.98 2C14.63 2.03 14.28 2.21 13.95 2.54Z" fill="#6F779B"/></svg>`;
 ICONS.actCopy = `<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3.88966 4.00611H11.0591C11.487 4.00611 11.8768 4.18138 12.1582 4.46333C12.4401 4.74528 12.6154 5.1345 12.6154 5.5624V14.777C12.6154 15.2055 12.4401 15.5947 12.1582 15.8761C11.8762 16.158 11.487 16.3333 11.0591 16.3333H3.88966C3.46117 16.3333 3.07196 16.158 2.79059 15.8761C2.50864 15.5941 2.33337 15.2049 2.33337 14.777V5.5624C2.33337 5.13449 2.50864 4.74469 2.79059 4.46333C3.07254 4.18138 3.46177 4.00611 3.88966 4.00611ZM6.01873 2.76611C5.9185 2.92731 5.70631 2.97654 5.54511 2.87631C5.38392 2.77609 5.33468 2.56389 5.43491 2.40269C5.57442 2.17877 5.77021 1.99237 6.00232 1.86341C6.22683 1.73797 6.48415 1.66645 6.75555 1.66645H13.925C14.3535 1.66645 14.7427 1.84172 15.0241 2.12367C15.306 2.40562 15.4813 2.79485 15.4813 3.22274V12.4373C15.4813 12.809 15.3482 13.1531 15.126 13.4227C14.901 13.6964 14.585 13.8928 14.2251 13.9637C14.0387 14.0001 13.8576 13.8782 13.8218 13.6918C13.7855 13.5048 13.9068 13.3242 14.0938 13.2879C14.2948 13.248 14.4713 13.139 14.5967 12.986C14.7192 12.8371 14.7931 12.6454 14.7931 12.4368V3.22216C14.7931 2.98418 14.6952 2.76729 14.5381 2.6102C14.381 2.45251 14.1641 2.35521 13.9262 2.35521H6.75673C6.60375 2.35521 6.46071 2.39449 6.33703 2.46307C6.20807 2.53517 6.09846 2.63951 6.01991 2.76553L6.01873 2.76611ZM11.0598 4.69543H3.89041C3.65243 4.69543 3.43555 4.79332 3.27845 4.95041C3.12077 5.10809 3.02347 5.32439 3.02347 5.56237V14.777C3.02347 15.015 3.12136 15.2318 3.27845 15.3889C3.43555 15.5466 3.65243 15.6439 3.89041 15.6439H11.0598C11.2978 15.6439 11.5147 15.546 11.6718 15.3889C11.8289 15.2318 11.9268 15.015 11.9268 14.777V5.56237C11.9268 5.32439 11.8289 5.10751 11.6718 4.95041C11.5141 4.79331 11.2978 4.69543 11.0598 4.69543Z" fill="#6F779B" stroke="#6F779B" stroke-width="0.413539"/></svg>`;
 ICONS.actCopied = `<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3.5 9.4L7.1 13L14.5 5.2" stroke="#403EDF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 ICONS.actDownload = `<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8.95 2.66V12.2M11.76 9.39L8.95 12.2L6.14 9.39" stroke="#6F779B" stroke-width="1.16" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.33 13.2V15.29C2.33 16.21 3.07 16.95 4 16.95H14C14.92 16.95 15.66 16.21 15.66 15.29V13.2" stroke="#6F779B" stroke-width="1.33" stroke-linecap="round"/></svg>`;
@@ -1054,8 +1065,9 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     show.classList.add('fade'); requestAnimationFrame(function () { requestAnimationFrame(function () { show.classList.remove('fade'); }); });
     if (window.recheckPanes) window.recheckPanes();
   }
-  $('tab-crt').onclick = function () { setTab('crt'); };
-  $('tab-mkt').onclick = function () { setTab('mkt'); spy(); };
+  $('tab-crt').onclick = function () { setTab('crt'); };   // Creator is shown first, so it's never a first visit
+  var VISITED = { crt: true };
+  $('tab-mkt').onclick = function () { var first = !VISITED.mkt; setTab('mkt'); VISITED.mkt = true; if (first) CATS.mkt.first(); else spy(); };
 
   /* ── Template categories (Creator + Marketer): the dividers split each list into groups, one per category chip.
         Scrolling moves the highlight; tapping a category scrolls its group under the pinned bars. ── */
@@ -1144,7 +1156,11 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
       };
     });
     function reset() { setOff(0, false); lock = null; jumping = false; curG = -1; setG(0); }
-    return { spy: spy, reset: reset };
+    function first() {                                    // first visit to this tab: the first category is selected and its list starts at the top
+      reset(); bar.scrollLeft = 0;
+      if (isPinned()) { var sc = $('scroll'); sc.scrollTop = groupTop(0); lock = { g: 0, y: sc.scrollTop }; }
+    }
+    return { spy: spy, reset: reset, first: first };
   }
   CATS.crt = cats('crt'); CATS.mkt = cats('mkt');
   function spy() { CATS[tab].spy(); }
@@ -1596,9 +1612,11 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
       : poster.panel ? panelImg(poster) : '<img src="' + poster + '" alt="">';
     return '<div class="a-in">' + head() + '<div class="a-tx long">' + esc(intro) + '</div><div class="a-res' + (video ? ' vid' : '') + '">' + media +
       '<span class="play">' + ICONS.play + '</span><span class="du">' + dur + '</span></div><div class="a-tx long">' + esc(outro) + '</div>' +
-      fbBar('media') + '</div>';
+      fbBar('video') + '</div>';
   };
   function fbBar(kind) {                                  // reply feedback (Figma 41:46565): text → copy / good / bad · image or video → download / good / bad
+    if (kind === 'video') return '<div class="a-acts"><button data-fb="up" aria-label="Good">' + ICONS.actUp + '</button><button data-fb="down" aria-label="Bad">' + ICONS.actDown + '</button>' +   // Figma 49:11267: good / bad / edit / download
+      '<button data-fb="edit" aria-label="Edit">' + ICONS.actEdit + '</button><button data-fb="dl" aria-label="Download">' + ICONS.actDownload + '</button></div>';
     return '<div class="a-acts">' + (kind === 'media' ? '<button data-fb="dl" aria-label="Download">' + ICONS.actDownload + '</button>'
       : '<button data-fb="copy" aria-label="Copy">' + ICONS.actCopy + '</button>') +
       '<button data-fb="up" aria-label="Good">' + ICONS.actUp + '</button><button data-fb="down" aria-label="Bad">' + ICONS.actDown + '</button></div>';
@@ -1677,6 +1695,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   $('ag-list').addEventListener('click', function (e) {
     var b = e.target.closest('[data-fb]'); if (!b) return;
     var k = b.dataset.fb, bar = b.parentNode;
+    if (k === 'edit') { if (b._onEdit) b._onEdit(); return; }   // edit → the next-step survey
     if (k === 'up' || k === 'down') { var on = !b.classList.contains('on');
       bar.querySelectorAll('[data-fb=up],[data-fb=down]').forEach(function (x) { x.classList.remove('on'); }); b.classList.toggle('on', on); }
     else if (k === 'copy') {
@@ -1709,12 +1728,13 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     FB = null;
     var rev = LASTA && LASTA.parentNode && (LASTA.querySelector('.a-script, .a-sb') || LASTA.dataset.review) ? LASTA : null;   // script / storyboard / product info up for approval
     return new Promise(function (res) {
-      function resolve(v) { if (rev) addFb(rev); res(v); }   // once the user answers, the approved reply gets its feedback bar
+      function resolve(v) { SV._dismiss = null; if (rev) addFb(rev); res(v); }
+      SV._dismiss = qs[0].closable ? function () { SV._dismiss = null; closeSurvey(); res(null); } : null;   // optional card: dragging it down closes it   // once the user answers, the approved reply gets its feedback bar
       var answers = [], i = 0;
       function draw() {
         var q = qs[i], h = '<div class="sv-hd"><h3>' + esc(q.q) + '</h3>' + (qs.length > 1 ? '<div class="pg">' + (i ? '<button class="ar" data-back aria-label="Previous question">‹</button>' : '<span class="ar ph" aria-hidden="true">‹</span>') + (i + 1) + ' of ' + qs.length + '</div>' : '') + '</div>';
         var numbered = q.num || q.o.length + (q.live || !q.fixed ? 1 : 0) > 2;   // a single option + the pen row reads fine without numbers
-        q.o.forEach(function (o, k) { h += '<button class="sv-op' + (numbered ? '' : ' nonum') + '" data-k="' + k + '">' + (numbered ? '<span class="nm"><i>' + (k + 1) + '</i>' + ICONS.svCheck + '</span>' : '') + '<span class="tx"><b>' + esc(o[0]) + '</b>' + (o[1] ? '<span>' + esc(o[1]) + '</span>' : '') + '</span></button>'; });
+        q.o.forEach(function (o, k) { h += '<button class="sv-op' + (numbered ? '' : ' nonum') + '" data-k="' + k + '">' + (numbered ? '<span class="nm"><i>' + (k + 1) + '</i>' + ICONS.svCheck + '</span>' : '<span class="nm slide">' + ICONS.svCheck + '</span>') + '<span class="tx"><b>' + esc(o[0]) + '</b>' + (o[1] ? '<span>' + esc(o[1]) + '</span>' : '') + '</span></button>'; });
         if (q.live || !q.fixed) h += '<div class="sv-own live"><span class="fd"><span class="ed">' + ICONS.svEdit + '</span><span class="iw"><input type="text" enterkeyhint="next" autocomplete="off" placeholder="' + esc(q.live || 'Something else…') + '"></span></span></div>';
         h += '<div class="sv-ft"><button class="sv-next" disabled></button></div>';
         SV.innerHTML = '<div class="sv-grab" aria-label="Collapse"><i></i></div>' + h;
@@ -1748,7 +1768,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
         }
         ops.forEach(function (b) { b.onclick = function () {
           if (token !== RUN || SV.dataset.lock) return;
-          if (!q.any && b !== ops[q.pick || 0]) return;      // demo: only the hinted option responds (q.any: every option does)
+          // every option responds; one pick per question (boss 2026-10-08)
           var k = +b.dataset.k, o = q.o[k];
           if (inp) inp.value = '';
           pick(k, o[2] || o[0], o[3]);
@@ -1770,16 +1790,19 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     });
   }
   function openSurvey() {
+    SV.style.transform = '';
     $('agent').classList.remove('sv-min'); $('agent').classList.add('sv-open');
+    $('agent').classList.toggle('sv-soft', !!SV._dismiss);   // optional card: sits above the input bar, which stays usable
     requestAnimationFrame(function () {
-      $('ag-list').style.paddingBottom = (SV.offsetHeight + 16) + 'px';
+      $('ag-list').style.paddingBottom = (SV.offsetHeight + 16 + (SV._dismiss ? 104 : 0)) + 'px';
       requestAnimationFrame(function () { follow(true); });
     });
   }
-  function closeSurvey() { $('agent').classList.remove('sv-open', 'sv-min'); SV.style.transform = ''; $('ag-list').style.paddingBottom = ''; MIN_HINT = null; }
+  function closeSurvey() { $('agent').classList.remove('sv-open', 'sv-min', 'sv-soft'); SV.style.transform = ''; $('ag-list').style.paddingBottom = ''; MIN_HINT = null; }
   var MIN_HINT = null;
   function minSurvey() {                                     // fold the card: the question waits in a bar above the input
     var a = $('agent'); if (!a.classList.contains('sv-open')) return;
+    if (SV._dismiss) { SV.style.transform = ''; S.agentHint = null; hideHint(); scheduleHint(); SV._dismiss(); return; }   // optional card: closed, no bar
     var t = SV.querySelector('.sv-hd h3'); $('sv-pend').querySelector('span').textContent = t ? t.textContent : '';
     MIN_HINT = S.agentHint; a.classList.remove('sv-open'); a.classList.add('sv-min'); SV.style.transform = '';
     $('ag-list').style.paddingBottom = '170px';
@@ -1790,21 +1813,24 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     a.classList.remove('sv-min'); SV.style.transform = ''; openSurvey();
     S.agentHint = MIN_HINT && MIN_HINT.isConnected ? MIN_HINT : null; MIN_HINT = null; hideHint(); scheduleHint();
   }
-  (function () {                                             // drag the grabber down (or tap it) → fold; tap / drag the bar up → open
+  (function () {                                             // a deliberate drag of the grabber (14px dead zone, then 80px) → fold; tap the bar → open
     var y0 = null, dy = 0, moved = false, onGrab = false;
     SV.addEventListener('pointerdown', function (e) {
-      if (!e.target.closest('.sv-grab, .sv-hd')) return; y0 = e.clientY; dy = 0; moved = false; onGrab = !!e.target.closest('.sv-grab');
+      if (!e.target.closest('.sv-grab')) return;   // only the grabber strip drags
+      y0 = e.clientY; dy = 0; moved = false; onGrab = true; e.preventDefault();
       SV.classList.add('drag'); try { SV.setPointerCapture(e.pointerId); } catch (x) {}
     });
     SV.addEventListener('pointermove', function (e) {
-      if (y0 === null) return; dy = Math.max(0, (e.clientY - y0) / frameScale()); if (dy > 4) moved = true;
-      SV.style.transform = 'translateY(' + dy + 'px)';
+      if (y0 === null) return; var d = (e.clientY - y0) / frameScale(); if (!moved && d < 14) return;   // dead zone: a clear pull before the card follows the finger
+      moved = true; dy = Math.max(0, d - 14); SV.style.transform = 'translateY(' + dy + 'px)';
     });
     function end(e) {
-      if (y0 === null) return; var tap = !moved && onGrab; y0 = null; SV.classList.remove('drag');
-      if (dy > 50 || tap) minSurvey(); else SV.style.transform = '';
+      if (y0 === null) return; y0 = null; SV.classList.remove('drag');
+      if (moved && dy > 80) minSurvey(); else SV.style.transform = '';   // no tap-to-fold: only a deliberate drag
     }
-    SV.addEventListener('pointerup', end); SV.addEventListener('pointercancel', end);
+    SV.addEventListener('pointerup', end); SV.addEventListener('pointercancel', end); SV.addEventListener('lostpointercapture', end);
+    window.addEventListener('pointerup', end, true); window.addEventListener('pointercancel', end, true);   // iOS: the release can land outside the card — never leave it half-dragged (that hid the input bar)
+    window.addEventListener('touchend', end, true); window.addEventListener('touchcancel', end, true);
     var p = $('sv-pend'), py = null;
     p.addEventListener('pointerdown', function (e) { py = e.clientY; });
     p.addEventListener('pointerup', function (e) { if (py === null) return; py = null; maxSurvey(); });
@@ -1856,10 +1882,17 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     var rn = await say(M.result(poster, dur, 'Done! Here’s your video', 'This looks polished! There’s plenty more you can create.', video), token);
     var v = rn.querySelector('[data-vid]');
     if (v) { var box = v.parentNode;
-      box.onclick = function () { if (v.paused) { v.play(); box.classList.add('playing'); } else { v.pause(); box.classList.remove('playing'); } };
+      var ov = box.querySelector('.play'), dlBtn = rn.querySelector('[data-fb=dl]'), saved = false;
+      function markSaved() { if (saved) return; saved = true; ov.innerHTML = ICONS.playBtn; }   // after a download the overlay turns into play (boss 2026-10-08)
+      if (dlBtn) dlBtn.addEventListener('click', markSaved);
+      box.onclick = function (e) {
+        if (!saved && e.target.closest('.play')) { markSaved(); return; }          // the overlay is the download button until used
+        if (v.paused) { v.play(); box.classList.add('playing'); } else { v.pause(); box.classList.remove('playing'); } };
       v.onended = function () { box.classList.remove('playing'); v.currentTime = 0.1; }; }
-    S.agentDone = true; S.agentHint = null; scheduleHint();          // hint → back
-    endSurvey(poster, dur, token, video);
+    var ed = rn.querySelector('[data-fb=edit]');                    // boss 2026-10-08: no survey yet — the guide points at the pen; tapping it opens the survey
+    S.agentDone = true; S.agentHint = null; scheduleHint();   // guide → back (boss 2026-10-08); the pen still opens the survey
+    ed._onEdit = function () { if (token !== RUN || $('agent').classList.contains('sv-open') || $('agent').classList.contains('sv-min')) return;
+      S.agentHint = null; hideHint(); endSurvey(poster, dur, token, video); };
   }
   async function boardStep(src, token) {                     // Ready to use this storyboard? — Looks good -60 · Regenerate / typed change -25 (a new version, asked again)
     for (;;) {
@@ -1876,9 +1909,10 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   /* After the video (Figma Generating2 49:11847): Regenerate (-25 credits) / Change Approach (start this chat over) */
   function endSurvey(poster, dur, token, video) {
     if (token !== RUN) return;
-    ask([{ raw: true, fixed: true, any: true, num: true, nohint: true, q: 'Which direction should we take?',
+    ask([{ raw: true, fixed: true, any: true, num: true, nohint: true, closable: true, q: 'Which direction should we take?',
            o: [['Regenerate', 'Generate another version', 'Regenerate', COST.regen], ['Change Approach', 'Will start from the beginning']] }], token)
       .then(async function (a) {
+        if (!a) return;                                       // dragged away: back to the video; the pen opens it again
         S.agentDone = false;
         if (a[0][2] === 0) { await wait(300); alive(token); await user(M.answers([['', 'Regenerate']]), token); await generate(poster, dur, token, video); }
         else openAgentAgain(S.which);
@@ -2075,7 +2109,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     }
     resetInput(); S.setDone = false; $('skill').scrollLeft = 0;
     if (tab !== 'crt') setTab('crt');
-    CATS.crt.reset(); CATS.mkt.reset();
+    CATS.crt.reset(); CATS.mkt.reset(); VISITED.mkt = false;
     $('scroll').scrollTop = 0;
     setTimeout(function () { $('ag-list').innerHTML = ''; S.busy = false; scheduleHint(); }, 420);
   }
