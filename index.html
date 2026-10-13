@@ -104,11 +104,14 @@ button:focus, button:focus-visible { outline: none; }
 .ic-ph { font: 400 12px/14px var(--sf); color: var(--ink-3); }
 .ic-recipe { display: flex; flex-direction: column; gap: 6px; }
 .ic-imgs { display: none; gap: 10px; }   /* boss 2026-10-13: hide the Model / Product thumbnails for now (was flex) */
+.a-next { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; margin-top: 10px; }   /* boss 2026-10-13: keep-editing suggestions under the result (demo only) */
+.a-next button { height: 30px; padding: 0 14px; border-radius: 15px; background: var(--chip); color: var(--ink); font: 400 13px var(--sf); transition: filter .15s; }
+.a-next button:active { filter: brightness(.94); }
 .a-pinfo { width: 272px; margin-top: 10px; padding: 12px 14px; border-radius: 12px; background: var(--card-bg); font-family: var(--sf); color: var(--ink); }
 .a-pinfo .lb { font: 400 12px/16px var(--sf); color: var(--ink-3); }
 .a-pinfo .pn { font: 600 13.5px/18px var(--sf); margin: 2px 0 10px; }
 .a-pinfo .ds { font: 400 13px/18px var(--sf); margin-top: 2px; }
-.a-tx .pick { color: var(--brand); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+.a-tx .pick { font-weight: 600; color: var(--brand); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
 .pchip { position: relative; width: 44px; display: flex; flex-direction: column; align-items: center; gap: 2px; }
 .pchip .ph { position: relative; display: block; width: 44px; height: 44px; border-radius: 8px; overflow: hidden; background: var(--chip); }
 .pchip .ph img { width: 44px; height: 44px; object-fit: cover; }
@@ -1625,7 +1628,13 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
       : poster.panel ? panelImg(poster) : '<img src="' + poster + '" alt="">';
     return '<div class="a-in">' + head() + '<div class="a-tx long">' + esc(intro) + '</div><div class="a-res' + (video ? ' vid' : '') + '">' + media +
       '<span class="play">' + ICONS.play + '</span><span class="du">' + dur + '</span></div><div class="a-tx long">' + esc(outro) + '</div>' +
+      (NEXT[video] ? '<div class="a-next">' + NEXT[video].map(function (t) { return '<button type="button">' + esc(t) + '</button>'; }).join('') + '</div>' : '') +
       fbBar('video') + '</div>';
+  };
+  var NEXT = {                                             // per-video "keep editing" suggestions — tappable look, no action (boss review only)
+    'media/UGC_agent.mp4': ['Enhance video quality', 'Make a 30s version', 'Try another model'],
+    'media/Pet_diary_vdo.mp4': ['Enhance video quality', 'Make the next episode', 'Try another style'],
+    'media/agent-f9-bag_vdo.mp4': ['Enhance video quality', 'Change the background', 'Make a 1:1 feed version']
   };
   function fbBar(kind) {                                  // reply feedback (Figma 41:46565): text → copy / good / bad · image or video → download / good / bad
     if (kind === 'video') return '<div class="a-acts"><button data-fb="up" aria-label="Good">' + ICONS.actUp + '</button><button data-fb="down" aria-label="Bad">' + ICONS.actDown + '</button>' +   // Figma 49:11267: good / bad / edit / download
