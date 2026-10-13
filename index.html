@@ -103,7 +103,12 @@ button:focus, button:focus-visible { outline: none; }
 .ic-type { padding: 0 12px 8px; }
 .ic-ph { font: 400 12px/14px var(--sf); color: var(--ink-3); }
 .ic-recipe { display: flex; flex-direction: column; gap: 6px; }
-.ic-imgs { display: flex; gap: 10px; }
+.ic-imgs { display: none; gap: 10px; }   /* boss 2026-10-13: hide the Model / Product thumbnails for now (was flex) */
+.a-pinfo { width: 272px; margin-top: 10px; padding: 12px 14px; border-radius: 12px; background: var(--card-bg); font-family: var(--sf); color: var(--ink); }
+.a-pinfo .lb { font: 400 12px/16px var(--sf); color: var(--ink-3); }
+.a-pinfo .pn { font: 600 13.5px/18px var(--sf); margin: 2px 0 10px; }
+.a-pinfo .ds { font: 400 13px/18px var(--sf); margin-top: 2px; }
+.a-tx .pick { color: var(--brand); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
 .pchip { position: relative; width: 44px; display: flex; flex-direction: column; align-items: center; gap: 2px; }
 .pchip .ph { position: relative; display: block; width: 44px; height: 44px; border-radius: 8px; overflow: hidden; background: var(--chip); }
 .pchip .ph img { width: 44px; height: 44px; object-fit: cover; }
@@ -1565,7 +1570,8 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     }
   };
   var TG = function (s) { return '<span class="tgi">' + s + '</span>'; };
-  var PRODUCT_DESC = 'I pulled this product info from your link. I’ll use it to write the script, so please check that it’s correct:\n\nFirming Vegan Collagen Prep Serum is a lightweight, fast-absorbing treatment that helps skin look firmer, smoother, and more supple. Powered by vegan collagen and hydrating ingredients, it replenishes moisture while improving the appearance of elasticity, texture, and fine lines. Suitable for daily use and all skin types.';
+  var PRODUCT_NAME = 'Firming Vegan Collagen Prep Serum';
+  var PRODUCT_DESC = 'Firming Vegan Collagen Prep Serum is a lightweight, fast-absorbing treatment that helps skin look firmer, smoother, and more supple. Powered by vegan collagen and hydrating ingredients, it replenishes moisture while improving the appearance of elasticity, texture, and fine lines. Suitable for daily use and all skin types.';
   var ASK_NAME = 'What is the name of this product? The product name helps me write a better script.';
   var BAG = 'Fawn Calf-Hair Top Handle Bag';   // Marketer demo: the name the user types in
 
@@ -1592,7 +1598,14 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     return '<div class="a-in">' + head() + '<div class="a-tx long">Here’s the plan:</div><div class="a-assets">' +
       photos.map(function (p) { return '<div class="ph' + (p.fit ? ' fit' : '') + '"><img src="' + p.src + '" alt=""><span class="tg">' + p.tag + '</span></div>'; }).join('') +
       '</div><div class="a-sum a-script">' + metaRow(sc.meta) + '<ul>' + rows.map(function (r) { return '<li><span>' + r[0] + '</span><em>' + esc(r[1]) + '</em></li>'; }).join('') + '</ul><div class="sc-lb">Script</div>' +
-      shotsHtml(sc.shots, sc.vo) + '</div><div class="a-tx long">Ready to generate?</div><div class="yn" data-yn><button class="btn-xs yes cost" data-v="Generate">Generate' + coin(14) + COST.video + '</button><button class="btn-xs no" data-v="Not Yet">Not Yet</button></div></div>';
+      shotsHtml(sc.shots, sc.vo) + '</div></div>';
+  };
+  M.productInfo = function (name, desc) {                  // boss 2026-10-13: the user confirms both the product name and its description
+    return '<div class="a-in">' + head() + '<div class="a-tx long">I pulled this product info from your link. I’ll use it to write the script, so please check that both are correct:</div>' +
+      '<div class="a-pinfo"><div class="lb">Product name</div><div class="pn">' + esc(name) + '</div><div class="lb">Description</div><div class="ds">' + esc(desc) + '</div></div></div>';
+  };
+  M.ready = function () {                                  // boss 2026-10-13: Generate appears only after the plan is confirmed; coin + cost hidden for now
+    return '<div class="a-in">' + head() + '<div class="a-tx long">Great! Ready to generate?</div><div class="yn" data-yn><button class="btn-xs yes cost" data-v="Generate">Generate</button><button class="btn-xs no" data-v="Not Yet">Not Yet</button></div></div>';
   };
   M.noCredit = function () {                              // Figma F8 49:8394: the reply that stops the flow until credits are bought
     return '<div class="a-in">' + head() + '<div class="a-tx long">Got it! Making this video takes about 210 credits (script, storyboard and video), and you have ' + CREDIT + ' left. Top up to continue, and I’ll pick up right where we left off.</div>' +
@@ -1853,13 +1866,17 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     ];
   }
   async function greetAndUpload(text, sheet, cell, token) {  // template routes: greet → photo button → picker (Recents / Sample Photos) → the route's photo
-    await say(M.text(text), token);
+    var gn = await say(M.text(text), token);
+    var pk = gn && gn.querySelector('.pick'); if (pk) pk.onclick = function () { $('ag-pic').onclick(); };   // boss 2026-10-13: the underlined words open the photo picker too
     S.agentSheet = sheet; S.pickCell = cell;
     await new Promise(function (res) { S.onAgentPick = res; S.agentHint = $('ag-pic'); S.agentDone = true; scheduleHint(); });
     alive(token); S.agentSheet = null; S.pickCell = null; S.agentHint = null; S.agentDone = false;
   }
   async function confirmYes(photos, rows, sc, token) {
-    var n = await say(M.summary(photos, rows, sc), token);
+    var plan = await say(M.summary(photos, rows, sc), token); plan.dataset.review = '1';
+    await ask([{ q: 'Is everything in this plan correct?', live: 'Tell me what to change…', o: [['Yes, looks right', 'Go on to generate']] }], token);
+    await think(token, 900);
+    var n = await say(M.ready(), token);
     var yn = n.querySelector('[data-yn]'), btns = Array.prototype.slice.call(yn.querySelectorAll('.btn-xs'));
     var b = await waitTap([btns[0]], btns[0], token);
     if (b.classList.contains('cost')) setCredit(CREDIT - COST.video);   // demo: only Yes responds b.classList.add('press');
@@ -2014,8 +2031,8 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
       await say(M.text('Next, let’s pick a video style for your UGC review.'), token);
       var d = await ask([{ label: 'Video style', q: 'Which video style?', o: [['Natural selfie', 'Handheld, phone-camera feel, talking to camera'], ['Bright & clean', 'Soft daylight, white vanity, crisp close-ups'], ['Cozy lifestyle', 'Warm home tones, slower and relaxed']] }], token);
       await think(token, 1600);
-      (await say(M.reply(PRODUCT_DESC), token)).dataset.review = '1';   // content for the user to approve → gets feedback once answered
-      await ask([{ q: 'Is this product info correct?', live: 'Edit the product info…', o: [['Yes, use it', 'Write the script with this']] }], token);
+      (await say(M.productInfo(PRODUCT_NAME, PRODUCT_DESC), token)).dataset.review = '1';   // content for the user to approve → gets feedback once answered
+      await ask([{ q: 'Are the product name and description correct?', live: 'Edit the name or description…', o: [['Yes, use them', 'Write the script with this']] }], token);
       await think(token, 2000);
       var SHOTS = [
         ['0–5s', 'Bare-skin close-up by the window, tired-looking skin.', 'Okay, real talk — my skin has looked so dull lately.'],
@@ -2037,7 +2054,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     F8: async function (token) {
       var cfg = { ratio: '9:16', dur: 15 }, PET = { src: 'media/Pet_diary.PNG', tag: '@pet' };
       await wait(250);
-      await greetAndUpload('Hi there! 👋 I’m your AI Shorts agent. Send me a photo of your pet, and I’ll turn one of their everyday moments into a short film. ✨', 'ov-recents', [2, 1], token);
+      await greetAndUpload('Hi there! 👋 I’m your AI Shorts agent. Send me a photo of <span class="pick">your pet</span>, and I’ll turn one of their everyday moments into a short film. ✨', 'ov-recents', [2, 1], token);
       await user(M.userImgs([PET], 'Create a 15-second photorealistic short about your pet’s daily moment', 'featuring' + TG('@pet')), token);
       await think(token, 2600);
       if (CREDIT < 210) { await creditGate(token); await think(token, 1200); }   // not enough for a full video (25 + 25 + 60 + 100) → buy first
@@ -2070,7 +2087,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     F9: async function (token) {
       var cfg = { ratio: '9:16', dur: 15 };
       await wait(250);
-      await greetAndUpload('Hi there! 👋 I’m your AI Shorts agent. Send me a photo of your product, and I’ll turn it into a polished showcase video. ✨', 'ov-product', [1, 0], token);
+      await greetAndUpload('Hi there! 👋 I’m your AI Shorts agent. Send me a photo of <span class="pick">your product</span>, and I’ll turn it into a polished showcase video. ✨', 'ov-product', [1, 0], token);
       await user(M.userImgs([{ src: 'media/agent-f9-bag.png', tag: '@product', fit: true }], 'Create product showcase storyboard ', 'infographic for' + TG('@product')), token);
       await think(token, 2600);
       if (CREDIT < 210) { await creditGate(token); await think(token, 1200); }
