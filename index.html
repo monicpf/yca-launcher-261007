@@ -65,8 +65,16 @@ button:focus, button:focus-visible { outline: none; }
 
 /* ── Pro zone (input_launcher) ── */
 .pro { position: relative; height: 174px; padding-top: 40px; transition: height .32s var(--ease-out); }
-.pro-title { position: absolute; left: 16px; top: 12px; width: 288px; height: 18px; text-align: center;
-  font: 700 15px/18px var(--sf); background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.pro-title { position: absolute; left: 16px; top: 9px; width: 288px; height: 24px; text-align: center;   /* 24px box (was 18) so descenders aren't clipped by background-clip:text */
+  font: 700 15px/24px var(--sf); margin: 0; overflow: hidden; }
+/* boss 2026-10-13: two lines take turns — slide up + fade, 3s each; the 2nd is a smaller subtitle so it fits one line */
+.pro-title .ln { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; white-space: nowrap;
+  background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent;
+  opacity: 0; transform: translateY(8px); transition: opacity .5s var(--ease-io), transform .5s var(--ease-io); }
+.pro-title .ln.sub { font: 590 12.5px/24px var(--sf); }
+.pro-title .ln.on { opacity: 1; transform: none; }
+.pro-title .ln.out { opacity: 0; transform: translateY(-8px); }
+@media (prefers-reduced-motion: reduce) { .pro-title .ln, .pro-title .ln.out { transform: none; } }
 .skill { position: relative; width: 320px; height: 52px; margin-bottom: -10px; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; }   /* 10px of room under the pills so the hint ring isn't clipped */
 .skill::-webkit-scrollbar { display: none; }
 .pills { display: flex; align-items: center; gap: 6px; height: 28px; margin-top: 13px; padding: 0 16px; width: max-content; }
@@ -660,7 +668,7 @@ html.no-set .ic-set { display: none !important; }   /* boss 2026-10-07: v1 has n
 
     <div class="scroll" id="scroll">
       <section class="pro" id="pro">
-        <h1 class="pro-title">Create Publish-Ready Videos</h1>
+        <h1 class="pro-title" aria-live="off"><span class="ln on">Let’s Make Something Amazing.</span><span class="ln sub">Tell AI your idea and watch it come alive.</span></h1>
         <div class="input-box">
           <div class="icard" id="icard">
             <div class="ic-body">
@@ -1275,6 +1283,16 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   function resetInput() { S.input = 'default'; S.model = null; S.product = null; S.didPhoto = false; S.routeDone = false; S.ratio = SET0.ratio; S.dur = SET0.dur; prevKeys = {}; renderInput(); }
 
   /* ── Settings (Figma F6_Edit): opens at the defaults 9:16 · 15s; ✕ discards, ✓ applies. The input shows only what was changed. ── */
+  (function titleCarousel() {                              // 3s per line, 0.5s slide; pauses while the tab is hidden
+    var ls = document.querySelectorAll('.pro-title .ln'), i = 0;
+    if (ls.length < 2) return;
+    setInterval(function () { if (document.hidden) return;
+      var cur = ls[i], nx = ls[(i + 1) % ls.length];
+      cur.classList.remove('on'); cur.classList.add('out');
+      nx.classList.remove('out'); void nx.offsetWidth; nx.classList.add('on');
+      setTimeout(function () { cur.classList.remove('out'); }, 520);
+      i = (i + 1) % ls.length; }, 3500);
+  })();
   var SHOW_SETTINGS = false;                               // false = no Settings button; the Agent confirms ratio / duration in chat
   if (!SHOW_SETTINGS) document.documentElement.classList.add('no-set');
   var SET0 = { ratio: '9:16', dur: 15 }, TRACK = 288;
