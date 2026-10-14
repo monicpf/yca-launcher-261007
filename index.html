@@ -1632,7 +1632,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     return '<div class="a-in">' + head() + '<div class="a-tx long">Great! Ready to generate?</div><div class="yn" data-yn><button class="btn-xs yes cost" data-v="Generate">Generate</button><button class="btn-xs no" data-v="Not Yet">Not Yet</button></div></div>';
   };
   M.noCredit = function () {                              // Figma F8 49:8394: the reply that stops the flow until credits are bought
-    return '<div class="a-in">' + head() + '<div class="a-tx long">Got it! Making this video takes about 210 credits (script, storyboard and video), and you have ' + CREDIT + ' left. Top up to continue, and I’ll pick up right where we left off.</div>' +
+    return '<div class="a-in">' + head() + '<div class="a-tx long">You don’t have enough credits for this step. Top up to keep going, and I’ll pick up right where we left off.</div>'   /* 2026-10-14 rule: credit charge failed → say so, never how many are missing */ +
       '<button class="a-buy" data-buy>Buy Credits' + coin() + '</button></div>';
   };
   M.progress = function () {
