@@ -378,6 +378,7 @@ html.no-set .ic-set { display: none !important; }   /* boss 2026-10-07: v1 has n
 .ag-btm .box .ph { position: absolute; left: 41px; top: 13px; font: 510 12px var(--sf); color: var(--ink-3); white-space: nowrap; }
 .ag-btm .box .pic { position: absolute; left: 1px; top: 1px; }
 .ag-btm .box .snd { position: absolute; right: 1px; top: 1px; }
+.ag-btm .box .mic { position: absolute; right: 43px; top: 7px; }   /* 2026-10-14: speech-to-text, same icon as the launcher input */
 .ag-btm .box svg { display: block; }
 .ag-btm .safe { height: 28px; }
 
@@ -759,7 +760,7 @@ html.no-set .ic-set { display: none !important; }   /* boss 2026-10-07: v1 has n
     <div class="ag-btm">
       <div class="in">
         <div class="quota">Remain daily query: 4 <span>/ 30</span></div>
-        <div class="box"><span class="pic" id="ag-pic"></span><span class="ph">Type your message here ...</span><span class="snd" id="ag-snd"></span></div>
+        <div class="box"><span class="pic" id="ag-pic"></span><span class="ph">Type your message here ...</span><span class="mic" id="ag-mic" aria-label="Voice input"></span><span class="snd" id="ag-snd"></span></div>
         <div class="safe"></div>
       </div>
     </div>
@@ -1563,7 +1564,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   $('sb-levels2').innerHTML = ICONS.statusLevels; $('credit-ic2').innerHTML = ICONS.credit;
   $('sb-levels3').innerHTML = ICONS.statusLevels;
   $('buy-back').innerHTML = '<svg width="8" height="12" viewBox="0 0 8 12" fill="none"><path d="M6.5 1L1.5 6l5 5" stroke="#1e1e1e" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-  $('ag-back').innerHTML = ICONS.back; $('ag-pic').innerHTML = ICONS.agentPhoto; $('ag-snd').innerHTML = ICONS.agSend;
+  $('ag-back').innerHTML = ICONS.back; $('ag-pic').innerHTML = ICONS.agentPhoto; $('ag-snd').innerHTML = ICONS.agSend; $('ag-mic').innerHTML = ICONS.mic;
   function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
   var AVN = 0;
   function avatar() { var k = ++AVN; return ICONS.agentAvatar.replace(/av_(g0|c)\b/g, 'av_$1_' + k); }   // unique gradient/clip ids: iOS drops a shared id once the message that owned it is removed
