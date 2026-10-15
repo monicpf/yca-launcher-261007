@@ -669,7 +669,7 @@ html.no-set .ic-set { display: none !important; }   /* boss 2026-10-07: v1 has n
 
     <div class="scroll" id="scroll">
       <section class="pro" id="pro">
-        <h1 class="pro-title" aria-live="off"><span class="ln on">Let’s Make Something Amazing.</span><span class="ln sub">Tell AI your idea and watch it come alive.</span></h1>
+        <h1 class="pro-title" aria-live="off"><span class="ln on">Let’s Make Something Amazing.</span><span class="ln">Bring Your Ideas to Life with AI</span></h1>
         <div class="input-box">
           <div class="icard" id="icard">
             <div class="ic-body">
@@ -1784,11 +1784,11 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
         h += '<div class="sv-ft"><button class="sv-next" disabled></button></div>';
         SV.innerHTML = '<div class="sv-grab" aria-label="Collapse"><i></i></div>' + h;
         /* Pick, then Next (Claude-style): a tap only selects (row tint); Next sends. If the pick generates a script or an image,
-           Next shows its credit cost instead of "Next" and charges it when tapped. Typing in the pen row counts as a pick. */
+           Next never shows a price; the step's cost is only queued and settled when the video is generated (2026-10-15). Typing in the pen row counts as a pick. */
         var ops = Array.prototype.slice.call(SV.querySelectorAll('.sv-op')), nx = SV.querySelector('.sv-next'), own = SV.querySelector('.sv-own.live'), inp = own && own.querySelector('input'), sel = null;
         function drawNext() {
-          nx.disabled = !sel || (sel.k === -1 && !sel.val); nx.classList.toggle('cost', !!(sel && sel.cost));
-          nx.innerHTML = (sel && sel.cost ? coin(16) + '<span>' + sel.cost + '</span>' : '<span>Next</span>') + ICONS.nextChev;
+          nx.disabled = !sel || (sel.k === -1 && !sel.val);
+          nx.innerHTML = '<span>Next</span>' + ICONS.nextChev;   // 2026-10-15: the app never shows prices — every survey CTA is plain Next
         }
         function pick(k, val, cost) {
           sel = k === null ? null : { k: k, val: val, cost: cost || 0 };
@@ -1824,7 +1824,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
           if (inp) inp.blur();
           var s0 = sel;
           if (s0.k === -1 && q.onText) q.onText(s0.val);
-          if (s0.cost) setCredit(CREDIT - s0.cost);           // charged only when Next is tapped
+          if (s0.cost) PENDING += s0.cost;                     // 2026-10-15: queued; the server settles everything at Generate
           setTimeout(function () { delete SV.dataset.lock; if (token === RUN) next(s0.val, s0.k); }, 200);
         };
       }
@@ -1911,12 +1911,13 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     var n = await say(M.ready(), token);
     var yn = n.querySelector('[data-yn]'), btns = Array.prototype.slice.call(yn.querySelectorAll('.btn-xs'));
     var b = await waitTap([btns[0]], btns[0], token);
-    if (b.classList.contains('cost')) setCredit(CREDIT - COST.video);   // demo: only Yes responds b.classList.add('press');
+    setCredit(CREDIT - COST.video - PENDING); PENDING = 0;   // 2026-10-15: one settlement for the whole round at Generate   // demo: only Yes responds b.classList.add('press');
     await wait(180); alive(token);
     yn.style.height = yn.offsetHeight + 'px'; void yn.offsetHeight; yn.classList.add('gone');   // pressed state, then the buttons fade away
     await wait(380); alive(token); yn.remove(); addFb(n); await user(M.answers([['', b.dataset.v]]), token);
   }
   async function generate(poster, dur, token, video) {
+    if (PENDING) { setCredit(CREDIT - PENDING); PENDING = 0; }   // a survey Regenerate is settled when it starts generating
     await think(token, 1200);
     // RD (2026-10-07): the generation time can't be known, so no progress bar — the Figma processing card with the blue spinner
     var n = await say(M.proc(), token);
@@ -1979,6 +1980,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
 
 
   /* ── Credits: one balance for the launcher, the Agent header and the Buy page ── */
+  var PENDING = 0;   // costs queued during the survey, charged at Generate
   var CREDIT0 = 16, CREDIT = CREDIT0, COST = { image: 25, script: 25, board: 60, reboard: 25, video: 100, regen: 25 };   // boss 2026-10-07   // Figma F8 / Buy_1–3: 16 → buy 2000 → 2016; the first Agent round of the demo tops up
   var COIN_N = 0;
   function coin(px) { var k = ++COIN_N, svg = ICONS.credit.replace(/cr_(p0|f1)\b/g, 'cr_$1_' + k);   // own ids per copy (iOS shared-id bug, skill 4B)
@@ -2158,7 +2160,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     if (S.sheet) closeSheet();
     closeSurvey(); S.onAgentPick = null; S.agentSheet = null; S.pickCell = null; S.agentHint = null;
     $('buy').classList.remove('in'); $('cr-toast').classList.remove('show');
-    if (S.round === 0) setCredit(CREDIT0);                   // the guided demo starts over → credits back to the opening balance
+    if (S.round === 0) { setCredit(CREDIT0); PENDING = 0; }                   // the guided demo starts over → credits back to the opening balance
     Array.prototype.forEach.call(document.querySelectorAll('#ag-list video'), function (v) { v.pause(); });
     $('agent').classList.remove('in'); $('launcher').classList.remove('pushed');
     S.agent = false; S.agentDone = false; hideHint();
