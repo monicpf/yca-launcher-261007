@@ -671,7 +671,7 @@ html.no-set .ic-set { display: none !important; }   /* boss 2026-10-07: v1 has n
 .qs-grid { display: grid; grid-template-columns: 140px 140px; gap: 8px; padding: 0 16px; }
 .qs-e { display: block; text-align: left; }
 .qs-e .im { position: relative; display: block; width: 140px; height: 84px; border-radius: 12px; overflow: hidden; background: #e9eaf2; }
-.qs-e .im img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.qs-e .im img, .qs-e .im video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .qs-e .im .half { position: absolute; left: 0; top: 0; bottom: 0; width: 70px; -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); background: rgba(255,255,255,.08); }
 .qs-e .im .split { position: absolute; left: 69px; top: 0; bottom: 0; width: 2px; background: #fff; }
 .qs-e .im .badge { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); }
@@ -681,7 +681,7 @@ html.no-set .ic-set { display: none !important; }   /* boss 2026-10-07: v1 has n
 .qs-rows { display: inline-flex; flex-direction: column; gap: 8px; padding: 0 16px; }
 .qs-rows .r { display: flex; gap: 8px; }
 .qs-c { position: relative; display: block; width: 120px; height: 90px; border-radius: 14px; overflow: hidden; flex-shrink: 0; text-align: left; background: #e9eaf2; }
-.qs-c img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.qs-c img, .qs-c video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
 .qs-c::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 56px; background: linear-gradient(rgba(21,23,31,0), rgba(21,23,31,.75)); }
 .qs-c span { position: absolute; z-index: 1; left: 10px; right: 8px; bottom: 9px; font: 600 12px/15px var(--sf); color: #fff; white-space: pre-line; }
 .hub-in { position: absolute; z-index: 46; left: 16px; width: 288px; bottom: 86px; transition: transform .34s var(--ease-out); }
@@ -708,7 +708,7 @@ html.no-set .ic-set { display: none !important; }   /* boss 2026-10-07: v1 has n
   font: 510 12px/14px var(--sf); white-space: nowrap; transition: background .18s var(--ease-io), color .18s var(--ease-io), border-color .18s var(--ease-io); }
 .hpill.on { background: var(--brand); border-color: var(--brand); color: #fff; }
 #hub-rc { display: none; height: 87px; padding: 0 12px; overflow: hidden; }
-.hub-card.rc textarea { display: none; }
+.hub-card.rc textarea { position: absolute; left: 12px; top: 12px; width: 1px; height: 1px; opacity: 0; pointer-events: none; }   /* stays focused → keyboard stays up */
 #hub.compose .hub-card.rc #hub-rc { display: block; }
 #hub-snd.ic-send:not(.on) { opacity: .5; }
 .drw { position: absolute; inset: 0; z-index: 50; pointer-events: none; }
@@ -740,19 +740,20 @@ html.no-set .ic-set { display: none !important; }   /* boss 2026-10-07: v1 has n
 /* Edit chats (old Agent): the skill text waits with an Add Photo tile (Figma inchat_edit); free users see their daily allowance */
 .ag-btm .quota { display: none; }
 .ag-btm.free .quota { display: block; }
-.ag-btm .cmp { display: none; position: relative; width: 288px; padding: 10px; border-radius: 12px; background: #eff0f3; }
-.ag-btm.cmp { height: 196px; }
+.ag-btm .cmp { display: none; position: relative; width: 288px; height: 141px; border-radius: 10px; background: #eff0f3; }   /* Figma inchat_edit › input_ */
+.ag-btm.cmp { height: 214px; }
 .ag-btm.cmp .cmp { display: block; }
 .ag-btm.cmp .box { display: none; }
-.cmp .tile { position: relative; width: 70px; height: 70px; border-radius: 8px; overflow: hidden; background: #f6f7ff; border: 1px solid var(--line-brand);
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font: 400 8px var(--sf); color: var(--ink); }
+.cmp .tile { position: absolute; left: 9px; top: 9px; width: 70px; height: 90px; border-radius: 10px; overflow: hidden; box-sizing: border-box; background: #f1f3ff; border: .6px solid #bebdda;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 7px; font: 400 10px var(--sf); color: #15171f; }
 .cmp .tile svg { display: block; width: 24px; height: 24px; }
 .cmp .tile img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.cmp .tx { margin-top: 12px; padding-right: 36px; font: 400 12px/16px var(--sf); color: var(--ink); }
-.cmp .tx::after { content: ''; display: inline-block; width: 1px; height: 13px; margin-left: 1px; vertical-align: -2px; background: var(--ink); animation: caret 1s steps(1) infinite; }
-@keyframes caret { 50% { opacity: 0; } }
-.cmp .sd { position: absolute; right: 8px; bottom: 8px; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; }
+.cmp .tx { position: absolute; left: 9px; top: 105px; width: 228px; height: 28px; padding: 7px 0; margin: 0; border: 0; outline: none; resize: none; background: transparent; box-sizing: border-box;
+  font: 400 12px/14px var(--sf); color: #15171f; caret-color: #15171f; }
+.cmp .sd { position: absolute; right: 0; bottom: 0; width: 40px; height: 40px; }
 .cmp .sd svg { display: block; }
+@keyframes caret { 50% { opacity: 0; } }
+#kb-proxy { position: fixed; left: 0; top: 0; width: 1px; height: 1px; opacity: 0; border: 0; padding: 0; font-size: 16px; pointer-events: none; }
 img.lofi, video.lofi { filter: blur(1.4px) contrast(.86) saturate(.78) brightness(1.05); }
 /* Before / after compare (drag the handle) */
 .a-cmp { position: relative; margin: 6px 0 2px; border-radius: 10px; overflow: hidden; background: #d9dbe8; touch-action: none; --x: 50%; }
@@ -911,10 +912,11 @@ img.lofi, video.lofi { filter: blur(1.4px) contrast(.86) saturate(.78) brightnes
     <div class="scroll" id="ag-scroll"><div class="ag-list" id="ag-list"></div></div>
     <div class="ag-survey" id="ag-survey"></div>
     <button class="sv-pend" id="sv-pend"><span></span><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3.5 10L8 5.5 12.5 10" stroke="#6f779b" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <input id="kb-proxy" aria-hidden="true" tabindex="-1">
     <div class="ag-btm">
       <div class="in">
         <div class="quota" id="ag-quota">Remain daily query: <span class="n" id="ag-free">20</span> <span>/ 30</span></div>
-        <div class="cmp" id="ag-cmp"><div class="tile" id="cmp-tile"></div><div class="tx" id="cmp-tx"></div><span class="sd" id="cmp-snd" role="button" aria-label="Send"></span></div>
+        <div class="cmp" id="ag-cmp"><div class="tile" id="cmp-tile"></div><textarea class="tx" id="cmp-tx" rows="1" enterkeyhint="send"></textarea><span class="sd" id="cmp-snd" role="button" aria-label="Send"></span></div>
         <div class="box"><span class="pic" id="ag-pic"></span><span class="ph">Type your message here ...</span><span class="mic" id="ag-mic" aria-label="Voice input"></span><span class="snd" id="ag-snd"></span></div>
         <div class="safe"></div>
       </div>
@@ -1008,6 +1010,8 @@ ICONS.tiles = [
 ICONS.del = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="7" cy="7" r="6.41" fill="#171717" fill-opacity="0.8" stroke="white" stroke-width="0.7"/><path d="M9.48 4.06C9.61 3.93 9.81 3.93 9.93 4.06C10.06 4.18 10.06 4.38 9.93 4.51L7.45 7.00L9.93 9.48C10.05 9.61 10.05 9.81 9.93 9.93C9.80 10.06 9.60 10.06 9.47 9.93L6.99 7.45L4.52 9.93C4.39 10.06 4.19 10.06 4.06 9.93C3.94 9.81 3.94 9.61 4.06 9.48L6.54 7.00L4.06 4.51C3.93 4.38 3.93 4.18 4.06 4.06C4.18 3.93 4.38 3.93 4.51 4.06L6.99 6.55L9.48 4.06Z" fill="white" stroke="white" stroke-width="0.33"/></svg>`;
 ICONS.plusPurple = `<svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M23.0865 20.9135H28.913C29.5941 20.9135 29.9999 21.4657 30 21.9995C30 22.2934 29.856 22.5631 29.6663 22.7528C29.4766 22.9425 29.2069 23.0865 28.913 23.0865H23.0865V28.913C23.0865 29.2069 22.9425 29.4766 22.7528 29.6663C22.5631 29.856 22.2934 30 21.9995 30C21.7059 29.9999 21.4369 29.8558 21.2472 29.6663C21.0575 29.4766 20.9135 29.2069 20.9135 28.913V23.0865H15.086C14.7924 23.0864 14.5234 22.9423 14.3337 22.7528C14.144 22.5631 14 22.2934 14 21.9995C14.0001 21.7057 14.144 21.4369 14.3337 21.2472C14.5234 21.0575 14.7922 20.9136 15.086 20.9135H20.9135V15.086C20.9136 14.405 21.4657 14.0001 21.9995 14C22.2934 14 22.5631 14.144 22.7528 14.3337C22.9423 14.5234 23.0864 14.7924 23.0865 15.086V20.9135Z" fill="#403EDF"/></svg>`;
 ICONS.cross = `<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="14" cy="14" r="10" fill="#15171F"/><path d="M13.62 9C14.10 9 14.5 9.39 14.5 9.87V13.5H18.12C18.60 13.5 19 13.89 19 14.37C19 14.85 18.60 15.25 18.12 15.25H14.5V18.12C14.5 18.60 14.10 19 13.62 19C13.14 19 12.75 18.60 12.75 18.12V15.25H9.87C9.39 15.25 9.00 14.85 9 14.37C9 13.89 9.39 13.5 9.87 13.5H12.75V9.87C12.75 9.39 13.14 9 13.62 9Z" fill="white"/></svg>`;
+ICONS.agSendOn = `<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 12.0015C12.0002 11.2381 12.8218 10.756 13.4883 11.1284L27.4375 18.9243C28.1204 19.306 28.1204 20.2888 27.4375 20.6704L13.4883 28.4663C12.8218 28.8388 12.0002 28.3567 12 27.5933V21.7661L19 19.7974L12 17.8286V12.0015Z" fill="#15171F"/></svg>`;
+ICONS.addPhoto = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="12" fill="#15171F"/><path d="M12 6.5C12.4142 6.5 12.75 6.83579 12.75 7.25V11.25H16.75C17.1642 11.25 17.5 11.5858 17.5 12C17.5 12.4142 17.1642 12.75 16.75 12.75H12.75V16.75C12.75 17.1642 12.4142 17.5 12 17.5C11.5858 17.5 11.25 17.1642 11.25 16.75V12.75H7.25C6.83579 12.75 6.5 12.4142 6.5 12C6.5 11.5858 6.83579 11.25 7.25 11.25H11.25V7.25C11.25 6.83579 11.5858 6.5 12 6.5Z" fill="white"/></svg>`;
 ICONS.agSend = `<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><g opacity="0.5"><path d="M12 12.0012C12.0002 11.2378 12.8218 10.7558 13.4883 11.1282L27.4375 18.9241C28.1204 19.3057 28.1204 20.2886 27.4375 20.6702L13.4883 28.4661C12.8218 28.8385 12.0002 28.3565 12 27.593V21.7659L19 19.7971L12 17.8284V12.0012Z" fill="#15171F"/></g></svg>`;
 ICONS.svEdit = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17.3395 10.2487L8.24451 19.3454C8.03589 19.5534 7.77927 19.7071 7.49744 19.7928L3.57926 20.9802C3.50152 21.0035 3.41892 21.0062 3.3402 20.9864C3.26145 20.9665 3.18937 20.9251 3.1319 20.8677C3.07464 20.8104 3.03404 20.7388 3.01413 20.6603C2.99423 20.5817 2.99539 20.4989 3.01852 20.4212L4.20768 16.5039C4.29419 16.2218 4.44874 15.9652 4.65769 15.7569L13.7509 6.66014L17.3395 10.2487Z" fill="#6F779B"/><path d="M18.4636 3.00037C19.1363 3.00054 19.7818 3.26728 20.2574 3.74304C20.7331 4.21888 21.0002 4.86493 21.0001 5.53778C20.9999 6.21048 20.7323 6.85601 20.2566 7.33163L19.2485 8.33974L15.6599 4.75115L16.6689 3.74304C17.1447 3.26732 17.7907 3.00028 18.4636 3.00037Z" fill="#6F779B"/></svg>`;
 ICONS.svPen = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="8" fill="#ECEEFF"/><path d="M13.67 9.35L14.81 10.5L15.02 10.72L14.81 10.93L8.5 17.12L8.46 17.16L8.4 17.18L6.89 17.77C6.79 17.8 6.69 17.81 6.58 17.78C6.48 17.76 6.4 17.7 6.34 17.63C6.28 17.57 6.23 17.49 6.21 17.39C6.19 17.29 6.2 17.19 6.24 17.1L6.86 15.63L6.88 15.58L6.93 15.54L13.24 9.35L13.45 9.14L13.67 9.35Z" fill="#403EDF" stroke="#6F779B" stroke-width="0.6"/><path d="M14.34 7.9L16.09 9.66L17.09 8.67C17.35 8.41 17.49 8.15 17.5 7.89C17.51 7.63 17.4 7.38 17.17 7.15L16.84 6.81C16.61 6.58 16.37 6.48 16.1 6.5C15.85 6.52 15.59 6.65 15.34 6.9L14.34 7.9Z" fill="#403EDF"/></svg>`;
@@ -1508,6 +1512,8 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   }
   function closeSheet(cb) {
     if (!S.sheet) return;
+    if ((S.pickFor && S.pickFor.indexOf('hub:') === 0) || S.linkFor === 'hub') $('hub-ta').focus({ preventScroll: true });   // ✕ on a hub picker → keyboard back
+    if (S.pickFor === 'agent' && agBtm().classList.contains('cmp')) $('cmp-tx').focus({ preventScroll: true });
     var o = $(S.sheet); o.classList.add('closing'); o.classList.remove('open'); S.sheet = null; S.pickFor = null; S.linkFor = null;
     if (S.agent && S.onAgentPick) S.agentHint = $('ag-pic');             // closed the picker without a photo → point at the chat's photo button
     setTimeout(function () { o.classList.remove('closing'); if (typeof cb === 'function') cb(); scheduleHint(); }, 260);
@@ -1544,7 +1550,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   }
   function submitLink() {
     var u = LINK.text.trim();
-    if (S.linkFor === 'hub') { S.linkFor = null; closeSheet(function () { HUB.rc.url = u || null; if (u) HUB.rc.product = false; drawRecipe(); }); return; }
+    if (S.linkFor === 'hub') { $('hub-ta').focus({ preventScroll: true }); S.linkFor = null; closeSheet(function () { HUB.rc.url = u || null; if (u) HUB.rc.product = false; drawRecipe(); }); return; }
     closeSheet(function () {
       if (u) S.product = { type: 'url', url: u };
       else if (S.product && S.product.type === 'url') S.product = null;   // cleared → back to the 🔗 Product URL chip
@@ -1609,10 +1615,12 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     if (!S.pickFor || S.busy) return;
     if (S.pickFor === 'agent') {                                // picked inside the Agent chat → the photo is posted as a message
       hideHint(); var done = S.onAgentPick; S.onAgentPick = null;
+      if (agBtm().classList.contains('cmp')) $('cmp-tx').focus({ preventScroll: true });
       closeSheet(function () { if (done) done(); }); return;
     }
     var slot = S.pickFor; S.busy = true; hideHint();
     var hubSlot = slot.indexOf('hub:') === 0 ? slot.slice(4) : null;
+    if (hubSlot) $('hub-ta').focus({ preventScroll: true });
     var from = frameXY(cellBtn), p = cellXY(r, c);
     var fly = el('div', 'fly');
     fly.style.backgroundImage = 'url("' + GRID[id].src + '")';
@@ -1726,6 +1734,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   $('sb-levels2').innerHTML = ICONS.statusLevels; $('credit-ic2').innerHTML = ICONS.credit;
   $('sb-levels3').innerHTML = ICONS.statusLevels;
   $('buy-back').innerHTML = '<svg width="8" height="12" viewBox="0 0 8 12" fill="none"><path d="M6.5 1L1.5 6l5 5" stroke="#1e1e1e" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  $('cmp-snd').innerHTML = ICONS.agSendOn;
   $('ag-back').innerHTML = ICONS.back; $('ag-pic').innerHTML = ICONS.agentPhoto; $('ag-snd').innerHTML = ICONS.agSend; $('ag-mic').innerHTML = ICONS.mic;
   function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
   var AVN = 0;
@@ -1757,7 +1766,6 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     }
   };
   var TG = function (s) { return '<span class="tgi">' + s + '</span>'; };
-  function preImgs(pre, photo) { return pre && pre.url && !pre.photo ? [] : [photo]; }   // a product link from the hub: no photo, the link is the product
   var PRODUCT_NAME = 'Firming Vegan Collagen Prep Serum';
   var PRODUCT_DESC = 'Firming Vegan Collagen Prep Serum is a lightweight, fast-absorbing treatment that helps skin look firmer, smoother, and more supple. Powered by vegan collagen and hydrating ingredients, it replenishes moisture while improving the appearance of elasticity, texture, and fine lines. Suitable for daily use and all skin types.';
   var ASK_NAME = 'What is the name of this product? The product name helps me write a better script.';
@@ -1837,15 +1845,18 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   var RUN = 0;
   function wait(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
   function alive(token) { if (token !== RUN) throw 'stop'; }
+  function kbUp() { var k = $('kb-proxy'); if (k && document.activeElement !== k) k.focus({ preventScroll: true }); }
   function openAgent(which) {
     FB = null; LASTA = null;
     if (S.busy || S.agent) return; S.busy = true; hideHint();
+    var pill = S.hubPre && S.hubPre.id === which;
+    if (/^E[1-4]$/.test(which) && !(pill && S.hubPre.photo)) kbUp();   // AI Edit chats open on the compose with the keyboard up
     var list = $('ag-list'); list.innerHTML = ''; $('ag-scroll').scrollTop = 0;
     S.fromHub = !!S.hub; $(S.fromHub ? 'hub' : 'launcher').classList.add('pushed'); $('agent').classList.add('in');
     agBtm().classList.toggle('free', /^E|^H[245]$/.test(which) || (which === 'T' && S.typedMode === 'edit'));   // AI Edit = old Agent: free daily allowance
     S.agent = true; S.agentDone = false; S.which = which; S.agentHint = null;
     var token = ++RUN;
-    setTimeout(function () { S.busy = false; FLOW[which](token).catch(function () {}); }, 420);
+    setTimeout(function () { S.busy = false; (pill ? pillFlow : FLOW[which])(token).catch(function () {}); }, 420);
   }
   function makeMsg(k, html) {
     var d = el('div', 'msg ' + (k === 'think' ? 'thinking' : k));
@@ -2209,19 +2220,16 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     F7: async function (token) {
       var cfg = { ratio: S.ratio, dur: S.dur };
       await wait(250);
-      var pre = hubPre('F7'), pimg = preImgs(pre, { src: IMG.product, tag: '@product' });
-      if (pre && pre.model) pimg.unshift({ src: IMG.picked, tag: '@model' });
-      await user(M.userImgs(pimg, 'Create a UGC Review video for ',
-        TG(pre && pre.url && !pre.photo ? pre.url.split('/')[0] : '@product') + (pre && pre.model ? '<span class="t12">featuring</span>' + TG('@model') : '<span class="t12">featuring a model</span>'), true), token);
+      await user(M.userImgs([{ src: IMG.product, tag: '@product' }], 'Create a UGC Review video for ',
+        TG('@product') + '<span class="t12">featuring a model</span>', true), token);
       await think(token, 2600);
       if (CREDIT < 210) { await creditGate(token); await think(token, 1200); }   // demo round 1 (16 credits): top up first, Figma F8 → Buy_1–3
       await say(M.text(S.setDone ? 'Before we start, let me confirm the video settings you picked.' : 'Before we start, let me confirm the video settings. This one is set to ' + cfg.ratio + ' at ' + cfg.dur + ' seconds by default.'), token);
       var a = await ask(settingsQs(cfg), token);
       await think(token, 1600);
-      var MODEL = IMG.picked;
-      if (!(pre && pre.model)) {                              // a model photo added in the hub → nothing to ask
       await say(M.text('Got it. I still need a model for this video. Would you like to upload a photo, or should I create one for you?'), token);
       var m = await ask([{ raw: true, fixed: true, any: true, num: true, q: 'How should we add your model?', o: [['Upload a photo', 'Pick one from your camera roll'], ['Generate one with AI', 'I’ll create a model that fits the product', null, COST.image]] }], token);
+      var MODEL = IMG.picked;
       if (m[0][2] === 1) {                                    // AI model: Next showed and charged -25 (character image); the agent makes one
         await user(M.answers([['', 'Generate one with AI']]), token);
         MODEL = IMG.sample;
@@ -2229,7 +2237,6 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
         S.pickFor = 'agent'; S.agentHint = null; S.agentDone = false; openSheet('ov-recents');
         await new Promise(function (res) { S.onAgentPick = res; }); alive(token);
         await user(M.userPhoto(IMG.picked), token);
-      }
       }
       await think(token, 1600);
       await say(M.assets('Here’s what I’ll work with:', [{ src: MODEL, tag: '@model' }, { src: IMG.product, tag: '@product', fit: true }],
@@ -2293,9 +2300,8 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     F9: async function (token) {
       var cfg = { ratio: '9:16', dur: 15 };
       await wait(250);
-      var pre = hubPre('F9');
-      if (!pre) await greetAndUpload('Hi there! 👋 I’m your AI Shorts agent. Send me a photo of <span class="pick">your product</span>, and I’ll turn it into a polished showcase video. ✨', 'ov-product', [1, 0], token);
-      await user(M.userImgs(preImgs(pre, { src: 'media/agent-f9-bag.png', tag: '@product', fit: true }), 'Create product showcase storyboard ', 'infographic for' + TG(pre && pre.url && !pre.photo ? pre.url.split('/')[0] : '@product')), token);
+      await greetAndUpload('Hi there! 👋 I’m your AI Shorts agent. Send me a photo of <span class="pick">your product</span>, and I’ll turn it into a polished showcase video. ✨', 'ov-product', [1, 0], token);
+      await user(M.userImgs([{ src: 'media/agent-f9-bag.png', tag: '@product', fit: true }], 'Create product showcase storyboard ', 'infographic for' + TG('@product')), token);
       await think(token, 2600);
       if (CREDIT < 210) { await creditGate(token); await think(token, 1200); }
       await say(M.text('Before we start, let me confirm the video settings. This template is set to 9:16 at 15 seconds.'), token);
@@ -2365,16 +2371,15 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
 
   var HUB = { mode: 'edit', step: 0 }, FREE = 20;
   var HUB_COPY = { edit: ['What should we polish today?', 'Upload a photo or video and tell me what to fix'], create: ['What story do you want to tell?', 'Describe the video you want to make'] };
-  var EDIT_SK = [['E1', 'Turn my photo into a video', 'media/bonjour-selfie.jpg', 'play'], ['E2', 'Enhance photo quality', 'media/model-picked.jpg', 'split'],
-                 ['E3', 'Enhance video quality', 'media/teatime-date.jpg', 'split'], ['E4', 'Remove unwanted\nobjects or people', 'media/ugc-hand-gesture.jpg']];
-  var CREATE_SK = [[['F7', 'UGC Review', 'media/skin-renewal-effect.jpg'], ['F9', 'Product\nShowcase Ad', 'media/product-detail-demo.jpg'], ['C4', 'Product Demo\n& Solution', 'media/product-demo-watch.jpg'], ['C2', 'UGC Tutorial', 'media/beauty-natalie.jpg']],
-                   [['C5', 'Cinematic\nBrand Ad', 'media/luxe-product-reveal.jpg'], ['C6', 'Unboxing &\nFirst-Use', 'media/themed-sale-unbox.jpg'], ['C7', 'Person\nAction Remix', 'media/fashion-ava.jpg']]];
+  var EDIT_SK = [['E1', 'Turn my photo into a video', 'media/hub-e1.jpg'], ['E2', 'Enhance photo quality', 'media/hub-e2.jpg'],      // 2026-10-16: Monic's batch6 card art (before/after split is in the art)
+                 ['E3', 'Enhance video quality', 'media/hub-e3.jpg', 'media/hub-e3.mp4'], ['E4', 'Remove unwanted\nobjects or people', 'media/hub-e4.jpg']];
+  var CREATE_SK = [[['F7', 'UGC Review', 'media/hub-f7.jpg'], ['F9', 'Product\nShowcase Ad', 'media/hub-f9.jpg', 'media/hub-f9.mp4'], ['C4', 'Product Demo\n& Solution', 'media/hub-c4.jpg', 'media/hub-c4.mp4'], ['C2', 'UGC Tutorial', 'media/hub-c2.jpg']],
+                   [['C5', 'Cinematic\nBrand Ad', 'media/hub-c5.jpg', 'media/hub-c5.mp4'], ['C6', 'Unboxing &\nFirst-Use', 'media/hub-c6.jpg'], ['C7', 'Person\nAction Remix', 'media/hub-c7.jpg']]];
+  function cardMedia(src, vid) { return vid ? '<video src="' + vid + '" poster="' + src + '" muted loop autoplay playsinline webkit-playsinline preload="auto"></video>' : '<img src="' + src + '" alt="">'; }
   $('qs-edit-grid').innerHTML = EDIT_SK.map(function (s) {
-    return '<button class="qs-e" data-f="' + s[0] + '"><span class="im"><img src="' + s[2] + '" alt="">' +
-      (s[3] === 'split' ? '<span class="half"></span><span class="split"></span>' : s[3] === 'play' ? '<span class="badge"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="14" fill="#fff" fill-opacity=".92"/><path d="M11.5 9.2v9.6l7.6-4.8z" fill="#403EDF"/></svg></span>' : '') +
-      '</span><span class="lb">' + esc(s[1]).replace(/\n/g, '<br>') + '</span></button>'; }).join('');
+    return '<button class="qs-e" data-f="' + s[0] + '"><span class="im">' + cardMedia(s[2], s[3]) + '</span><span class="lb">' + esc(s[1]).replace(/\n/g, '<br>') + '</span></button>'; }).join('');
   $('qs-create-rows').innerHTML = CREATE_SK.map(function (row) {
-    return '<div class="r">' + row.map(function (s) { return '<button class="qs-c" data-f="' + s[0] + '"><img src="' + s[2] + '" alt=""><span>' + esc(s[1]) + '</span></button>'; }).join('') + '</div>'; }).join('');
+    return '<div class="r">' + row.map(function (s) { return '<button class="qs-c" data-f="' + s[0] + '">' + cardMedia(s[2], s[3]) + '<span>' + esc(s[1]) + '</span></button>'; }).join('') + '</div>'; }).join('');
   Array.prototype.forEach.call(document.querySelectorAll('#hub [data-f]'), function (b) { b.onclick = function () { if (!$('hub').classList.contains('compose')) openAgent(b.dataset.f); }; });
 
   function setHubMode(m) {
@@ -2402,12 +2407,44 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   /* B-3: tap the input → the page dims and the card rises above the keyboard (a real text field, so the phone shows its own keyboard) */
   function openCompose() {
     var h = $('hub'); if (h.classList.contains('compose')) return;
-    var ib = $('hub-in'), k = frameScale(), r = ib.getBoundingClientRect(), hr = h.getBoundingClientRect();
-    var curTop = (r.top - hr.top) / k, target = Math.max(parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--safe-top')) || 44, 0) + 190;
-    h.classList.add('compose'); ib.style.transform = 'translateY(' + Math.round(target - curTop + 77) + 'px)';   // +77: pill row (+12) and typing area 22 → 87 (+65); the block is anchored at the bottom
+    h.classList.add('compose'); HUB.top = null; placeCompose();
     hideHint(); $('hub-ta').focus({ preventScroll: true });
   }
-  function closeCompose() { var h = $('hub'); if (!h.classList.contains('compose')) return; h.classList.remove('compose'); selPill(null); $('hub-in').style.transform = ''; $('hub-ta').blur(); scheduleHint(); }
+  function closeCompose() { var h = $('hub'); if (!h.classList.contains('compose')) return; h.classList.remove('compose'); selPill(null); $('hub-in').style.transform = ''; HUB.top = null; $('hub-ta').blur(); scheduleHint(); }
+
+  /* Keyboard (2026-10-16): the pills + card sit at one fixed spot above the keyboard and never jump.
+     Spot = Figma B-3 (pills at safe-top + 208), raised only if the keyboard would cover the card; it never moves back down while typing.
+     iOS also scrolls hidden-overflow parents to reveal a focused field, so those scrolls are undone. */
+  function kbTopPx() {                                        // keyboard top in viewport px (null = no keyboard)
+    var vv = window.visualViewport, H = window.innerHeight;
+    if (vv && vv.height < H - 120) return vv.height + vv.offsetTop;
+    if (matchMedia('(pointer: coarse)').matches) return H - 392;   // phone, keyboard not up yet: plan for keyboard + predictions + accessory bar
+    return null;
+  }
+  function placeCompose() {
+    var h = $('hub'); if (!h.classList.contains('compose')) return;
+    var ib = $('hub-in'), k = frameScale(), hr = h.getBoundingClientRect();
+    var cur = ib.offsetTop, bh = ib.offsetHeight;             // layout px (unaffected by the running transform transition)
+    var top = (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--safe-top')) || 44) + 208;
+    var kt = kbTopPx(); if (kt != null) top = Math.min(top, (kt - hr.top) / k - 10 - bh);
+    if (HUB.top != null) top = Math.min(top, HUB.top); HUB.top = top;
+    ib.style.transform = 'translateY(' + Math.round(top - cur) + 'px)';
+  }
+  function placeAgentCompose() {                              // AI Edit chat compose: lift the input box just above the keyboard
+    var b = agBtm(); if (!b.classList.contains('cmp')) { b.style.transform = ''; b._lift = 0; return; }
+    var kt = kbTopPx(), ar = $('agent').getBoundingClientRect(), k = frameScale();
+    var lift = kt == null ? 0 : Math.max(0, (ar.bottom - kt) / k - 28 + 8);   // 28 = home-indicator space the keyboard replaces
+    lift = Math.max(lift, b._lift || 0); b._lift = lift;      // only ever moves up, so it stays put once the keyboard settles
+    b.style.transform = lift ? 'translateY(' + (-Math.round(lift)) + 'px)' : '';
+  }
+  function unscroll() {
+    var busy = $('hub').classList.contains('compose') || agBtm().classList.contains('cmp'); if (!busy) return;
+    if (window.scrollY) window.scrollTo(0, 0);
+    [$('hub'), $('agent')].forEach(function (n) { for (; n && n !== document.body; n = n.parentElement) if (n.scrollTop) n.scrollTop = 0; });
+  }
+  document.addEventListener('scroll', function (e) { if (e.target === document || /^(hub|agent|frame)$/.test(e.target.id || '') || (e.target.contains && (e.target.contains($('hub')) || e.target.contains($('agent'))))) unscroll(); }, true);
+  if (window.visualViewport) ['resize', 'scroll'].forEach(function (ev) { window.visualViewport.addEventListener(ev, function () { unscroll(); placeCompose(); placeAgentCompose(); }); });
+  $('hub-ta').addEventListener('focus', function () { setTimeout(function () { unscroll(); placeCompose(); }, 60); });
   $('hub-card').addEventListener('click', function (e) {
     if (!$('hub').classList.contains('compose')) { openCompose(); return; }
     if (e.target.closest('#hub-snd')) { if (HUB.sel) sendRecipe(); else sendTyped(); }
@@ -2438,12 +2475,13 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   HUB.sel = null; HUB.rc = {};
   function drawPills() {
     $('hub-pills').innerHTML = PILLS[HUB.mode].map(function (p) { return '<button class="hpill' + (HUB.sel === p[0] ? ' on' : '') + '" data-p="' + p[0] + '">' + esc(p[1]) + '</button>'; }).join('');
-    Array.prototype.forEach.call($('hub-pills').children, function (b) { b.onclick = function (e) { e.stopPropagation(); selPill(HUB.sel === b.dataset.p ? null : b.dataset.p); }; });
+    Array.prototype.forEach.call($('hub-pills').children, function (b) {
+      b.onmousedown = function (e) { e.preventDefault(); };   // keep the text field focused → keyboard stays up
+      b.onclick = function (e) { e.stopPropagation(); selPill(HUB.sel === b.dataset.p ? null : b.dataset.p); $('hub-ta').focus({ preventScroll: true }); }; });
   }
   function selPill(id) {                                      // pick → typed text is cleared and the skill's requirements fill the card; tap again / another pill → released
     HUB.sel = id; HUB.rc = {};
     $('hub-ta').value = ''; $('hub-card').classList.toggle('rc', !!id);
-    if (id) $('hub-ta').blur();
     drawPills(); drawRecipe(); syncHubSend();
   }
   function drawRecipe() {
@@ -2467,9 +2505,13 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   }
   function syncHubSend() { $('hub-snd').classList.toggle('on', !!HUB.sel || !!$('hub-ta').value.trim()); }
   $('hub-snd').classList.add('ic-send');
-  $('hub-ta').addEventListener('input', syncHubSend);
-  function hubPick(slot) { if (S.busy || S.sheet) return; S.pickFor = 'hub:' + slot; openSheet(slot === 'product' ? 'ov-product' : 'ov-recents'); }
-  function hubLink() { if (S.busy || S.sheet) return; S.linkFor = 'hub'; LINK.text = HUB.rc.url || DEMO_URL; drawLink(); openSheet('ov-link'); }
+  $('hub-ta').addEventListener('input', function () {           // typing while a pill is picked → the pill lets go and the typed text shows
+    var ta = $('hub-ta');
+    if (HUB.sel && ta.value) { var v = ta.value; selPill(null); ta.value = v; }
+    syncHubSend();
+  });
+  function hubPick(slot) { if (S.busy || S.sheet) return; $('hub-ta').blur(); S.pickFor = 'hub:' + slot; openSheet(slot === 'product' ? 'ov-product' : 'ov-recents'); }
+  function hubLink() { if (S.busy || S.sheet) return; $('hub-ta').blur(); S.linkFor = 'hub'; LINK.text = HUB.rc.url || DEMO_URL; drawLink(); openSheet('ov-link'); }
   function hubPicked(slot) { HUB.rc[slot] = true; if (slot === 'product') HUB.rc.url = null; drawRecipe(); }
   function sendRecipe() {                                     // nothing uploaded → the chat asks for it, as when the skill card is tapped
     var c = RCP[HUB.sel], R = HUB.rc, pre = { id: HUB.sel };
@@ -2477,11 +2519,11 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     if (R.product) pre.photo = c.prod;
     if (R.url) pre.url = R.url;
     if (R.model) pre.model = c.model;
-    S.hubPre = (pre.photo || pre.url || pre.model) ? pre : null;
+    S.hubPre = pre;                                           // the chat runs the pill demo (first step only)
+    if (/^E/.test(pre.id) && !pre.photo) kbUp();               // AI Edit without a photo opens on the compose: keep the keyboard up
     var id = HUB.sel; closeCompose(); setTimeout(function () { openAgent(id); }, 120);
   }
   drawPills(); syncHubSend();
-  function hubPre(id) { var p = S.hubPre; S.hubPre = null; return p && p.id === id ? p : null; }
 
   /* B-4: ☰ → chats drawer (Video Creator / Basic Editor mixed, tagged); tap the dark glass to close; each chat opens a mock page */
   var HIST = [['Today', [['H1', 'UGC Video: Firming Vegan Collagen Prep Serum', 'v', 'media/skin-renewal-effect.jpg'], ['H2', 'enhance the video', 'b', 'media/teatime-date.jpg']]],
@@ -2511,7 +2553,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     if (HUB_STEP_FLOW[HUB.step] === S.which) HUB.step++;
     $('agent').classList.remove('in'); $('hub').classList.remove('pushed');
     S.agent = false; S.agentDone = false; S.fromHub = false; hideHint();
-    setTimeout(function () { $('ag-list').innerHTML = ''; $('ag-list').style.paddingBottom = ''; agBtm().classList.remove('cmp', 'free'); S.busy = false; scheduleHint(); }, 420);
+    setTimeout(function () { $('ag-list').innerHTML = ''; $('ag-list').style.paddingBottom = ''; agBtm().classList.remove('cmp', 'free'); agBtm().style.transform = ''; agBtm()._lift = 0; S.busy = false; scheduleHint(); }, 420);
   }
   function agBtm() { return document.querySelector('#agent .ag-btm'); }
 
@@ -2565,21 +2607,26 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   function finish(token) { if (token !== RUN) return; S.agentDone = true; S.agentHint = null; scheduleHint(); }   // guide → back
 
   /* AI Edit chats (Figma inchat_edit): the skill text is already typed; add a photo, send, get the result. Free daily allowance, no credits. */
+  function showCompose(text) {                                // Figma inchat_edit: Add Photo tile + the skill text already typed, keyboard up
+    var b = agBtm(), ta = $('cmp-tx');
+    $('cmp-tile').innerHTML = ICONS.addPhoto + '<span>Add Photo</span>'; ta.value = text;
+    b.classList.add('cmp'); $('ag-list').style.paddingBottom = '230px';
+    ta.focus({ preventScroll: true }); try { ta.setSelectionRange(text.length, text.length); } catch (x) {}   // the keyboard came up with the tap that opened this chat (kb-proxy)
+  }
   async function editCompose(text, src, lofi, cell, token) {
-    if (hubPre(S.which)) { await user(M.userPhotoText(src, text, lofi), token); return; }   // photo already added from the hub pill
     var b = agBtm(), tile = $('cmp-tile'), snd = $('cmp-snd');
-    tile.innerHTML = uniqIds(ICONS.cross, '_t') + '<span>Add Photo</span>'; $('cmp-tx').textContent = text;
-    b.classList.add('cmp'); $('ag-list').style.paddingBottom = '210px';
+    showCompose(text); placeAgentCompose();
     await new Promise(function (res) {
       S.agentSheet = 'ov-recents'; S.pickCell = cell || [2, 0]; S.onAgentPick = res;
-      tile.onclick = function () { if (token === RUN && S.onAgentPick && !S.sheet) { S.agentHint = null; S.pickFor = 'agent'; openSheet('ov-recents'); } };
+      tile.onclick = function () { if (token === RUN && S.onAgentPick && !S.sheet) { S.agentHint = null; S.pickFor = 'agent'; $('cmp-tx').blur(); openSheet('ov-recents'); } };
       S.agentHint = tile; S.agentDone = true; scheduleHint();
     });
     alive(token); tile.onclick = null; S.agentSheet = null; S.pickCell = null;
     tile.innerHTML = '<img src="' + src + '" alt=""' + (lofi ? ' class="lofi"' : '') + '>';
     await waitTap([snd], snd, token);
-    b.classList.remove('cmp'); $('ag-list').style.paddingBottom = '';
-    await user(M.userPhotoText(src, text, lofi), token);
+    var said = $('cmp-tx').value.trim() || text; $('cmp-tx').blur();
+    b.classList.remove('cmp'); b.style.transform = ''; b._lift = 0; $('ag-list').style.paddingBottom = '';
+    await user(M.userPhotoText(src, said, lofi), token);
   }
   var EDIT_FLOWS = {
     E1: async function (token) {
@@ -2668,9 +2715,8 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   async function createFlow(c, token) {
     var cfg = { ratio: '9:16', dur: 15 };
     await wait(250);
-    var pre = hubPre(S.which);                                // sent from a hub pill with the material already added → no upload step
-    if (!pre) await greetAndUpload(c.greet, c.sheet, c.cell, token);
-    await user(M.userImgs(preImgs(pre, c.photo), c.l1, pre && pre.url && !pre.photo ? TG(pre.url.split('/')[0]) : c.l2), token);
+    await greetAndUpload(c.greet, c.sheet, c.cell, token);
+    await user(M.userImgs([c.photo], c.l1, c.l2), token);
     await think(token, 2400);
     if (CREDIT < 210) { await creditGate(token); await think(token, 1200); }
     await say(M.text('Before we start, let me confirm the video settings. This one is set to ' + cfg.ratio + ' at ' + cfg.dur + ' seconds by default.'), token);
@@ -2694,6 +2740,42 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     await think(token, 1800);
     await say(M.text(S.typedMode === 'edit' ? 'Got it! Send me the photo or video you’d like me to work on, and I’ll take it from there.'
       : 'Love that idea! Send me a photo of your product or subject, and I’ll plan the video with you.'), token);
+    finish(token);
+  }
+
+  /* Hub pill → chat, first step only (2026-10-16). Nothing added → the agent asks for it; material added → the first question. Hint → Back. */
+  var PILL_GREET = { F7: 'Hi there! 👋 I’m your AI Shorts agent. Send me a photo of <span class="pick">your product</span> and <span class="pick">a model</span>, and I’ll turn them into a UGC review video. ✨',
+    F9: 'Hi there! 👋 I’m your AI Shorts agent. Send me a photo of <span class="pick">your product</span>, and I’ll turn it into a polished showcase video. ✨' };
+  async function pillFlow(token) {
+    var p = S.hubPre; S.hubPre = null;
+    var id = p.id, c = RCP[id], label = PILLS.edit.concat(PILLS.create).filter(function (x) { return x[0] === id; })[0][1];
+    await wait(250);
+    if (/^E/.test(id)) {
+      if (!p.photo) { showCompose(label); placeAgentCompose(); finish(token); return; }   // Add Photo + keyboard; the guide points at Back
+      await user(M.userPhotoText(p.photo, label, c.lofi), token);
+      await think(token, 1600);
+      var Q = {
+        E1: ['What a cute photo! Let’s bring it to life. How should it move?', { label: 'Motion', q: 'Which motion style?', o: [['Gentle breeze', 'Hair and clothes sway softly'], ['Slow push-in', 'The camera glides in closer'], ['Playful wave', 'A natural wave and a smile']] }],
+        E2: ['Here’s my plan: boost clarity and sharpness so details pop, clean up the noise, and bring back natural color.'],
+        E3: ['Got your video. How far should I take the quality?', { label: 'Quality', q: 'Which quality boost?', o: [['Upscale to 1080p', 'Sharper detail, smoother motion'], ['Upscale to 4K', 'Maximum detail, takes a little longer']] }],
+        E4: ['I can see a text label across the top of your photo. What should I remove?', { label: 'Remove', q: 'What should I remove?', live: 'Describe what to remove…', o: [['The text label', '“Ampoule Sheet Mask” at the top']] }]
+      }[id];
+      await say(M.text(Q[0]), token);
+      if (Q[1]) { Q[1].nohint = true; ask([Q[1]], token).catch(function () {}); }
+      finish(token); return;
+    }
+    if (!(p.photo || p.url || p.model)) { await say(M.text(PILL_GREET[id] || CR[id].greet), token); finish(token); return; }
+    var tag = c.one ? '@' + c.one[0] : '@product', imgs = [];
+    if (p.model) imgs.push({ src: p.model, tag: '@model' });
+    if (p.photo) imgs.push({ src: p.photo, tag: tag, fit: id === 'F9' });
+    var l2 = p.url ? TG(p.url.split('/')[0]) : p.photo ? TG(tag) : 'your product';
+    if (c.tail) l2 += '<span class="t12">featuring</span>' + (p.model ? TG('@model') : '<span class="t12">a model</span>');
+    if (c.after) l2 += '<span class="t12">' + esc(c.after) + '</span>';
+    await user(M.userImgs(imgs, c.lead + ' ', l2, id === 'F7'), token);
+    await think(token, 1800);
+    await say(M.text('Before we start, let me confirm the video settings. This one is set to 9:16 at 15 seconds by default.'), token);
+    var q = settingsQs({ ratio: '9:16', dur: 15 }).slice(0, 1); q[0].nohint = true;
+    ask(q, token).catch(function () {});
     finish(token);
   }
 
