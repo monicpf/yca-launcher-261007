@@ -680,10 +680,11 @@ html.no-set .ic-set { display: none !important; }   /* boss 2026-10-07: v1 has n
 .qs-sc::-webkit-scrollbar { display: none; }
 .qs-rows { display: inline-flex; flex-direction: column; gap: 8px; padding: 0 16px; }
 .qs-rows .r { display: flex; gap: 8px; }
-.qs-c { position: relative; display: block; width: 120px; height: 90px; border-radius: 14px; overflow: hidden; flex-shrink: 0; text-align: left; background: #e9eaf2; }
-.qs-c img, .qs-c video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
-.qs-c::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 56px; background: linear-gradient(rgba(21,23,31,0), rgba(21,23,31,.75)); }
-.qs-c span { position: absolute; z-index: 1; left: 10px; right: 8px; bottom: 9px; font: 600 12px/15px var(--sf); color: #fff; white-space: pre-line; }
+.qs-c { position: relative; display: block; width: 120px; height: 90px; border-radius: 14px; overflow: hidden; flex-shrink: 0; text-align: left; background: #e9eaf2; isolation: isolate; -webkit-mask-image: -webkit-radial-gradient(white, black); }
+.qs-c img, .qs-c video { position: absolute; z-index: 0; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
+.qs-c::after { content: ''; position: absolute; z-index: 1; -webkit-transform: translateZ(0); transform: translateZ(0); left: 0; right: 0; bottom: 0; height: 56px; background: linear-gradient(rgba(21,23,31,0), rgba(21,23,31,.75)); }
+.qs-c span { position: absolute; z-index: 2; -webkit-transform: translateZ(0); transform: translateZ(0);   /* iOS paints playing <video> on its own layer: lift the label above it */
+   left: 10px; right: 8px; bottom: 9px; font: 600 12px/15px var(--sf); color: #fff; white-space: pre-line; }
 .hub-in { position: absolute; z-index: 46; left: 16px; width: 288px; bottom: 86px; transition: transform .34s var(--ease-out); }
 .hub-in .gr { margin-bottom: 10px; font: 500 13px/16px var(--sf); color: var(--ink); text-align: center; transition: color .25s; }
 .hub-card { position: relative; border-radius: 16px; border: 1px solid transparent; padding: 12px 0 8px;
