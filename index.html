@@ -374,6 +374,7 @@ html.no-set .ic-set { display: none !important; }   /* boss 2026-10-07: v1 has n
 .ag-btm .in { position: absolute; left: 16px; bottom: 2px; width: 288px; display: flex; flex-direction: column; gap: 4px; align-items: center; }
 .ag-btm .quota { font: 400 10px var(--sf); color: var(--brand); text-align: center; }
 .ag-btm .quota span { color: #b1b1c1; }
+.ag-btm .quota span.n { color: var(--brand); }
 .ag-btm .box { position: relative; width: 288px; height: 42px; border-radius: 10px; background: #eff0f3; }
 .ag-btm .box .ph { position: absolute; left: 41px; top: 13px; font: 510 12px var(--sf); color: var(--ink-3); white-space: nowrap; }
 .ag-btm .box .pic { position: absolute; left: 1px; top: 1px; }
@@ -649,6 +650,108 @@ html.no-set .ic-set { display: none !important; }   /* boss 2026-10-07: v1 has n
 .pchip, .ic-r, .ic-l { position: relative; }
 
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; } }
+
+/* ══ AI Agent hub (Figma YCA_APP_UI 7350:40537 · B-1 AI Edit / B-2 AI Create / B-3 typing / B-4 history) — 2026-10-16 ══ */
+#hub { z-index: 3; opacity: 0; pointer-events: none; transition: opacity .22s var(--ease-io), transform .38s var(--ease-out), filter .38s var(--ease-out); }
+#hub.in { opacity: 1; pointer-events: auto; }
+#hub.pushed { transform: translateX(-28%); filter: brightness(.92); }
+.hbar .menu { position: relative; width: 30px; height: 30px; }
+.hbar .menu i { position: absolute; right: 5.4px; height: 1.5px; border-radius: 10px; background: var(--ink); }
+.hbar .menu i:nth-child(1) { top: 8.6px; width: 19.2px; }
+.hbar .menu i:nth-child(2) { top: 14.6px; width: 14.4px; }
+.hbar .menu i:nth-child(3) { top: 20.6px; width: 9px; }
+.hub-sw { position: absolute; z-index: 2; left: 50px; top: calc(var(--safe-top) + 50px); width: 220px; height: 34px; padding: 3px; border-radius: 16px; background: #eff0f3; display: flex; }
+.hub-sw .knob { position: absolute; left: 3px; top: 3px; width: 107px; height: 28px; border-radius: 13px; background: #fff; box-shadow: 0 1px 4px rgba(64,61,222,.16); transition: transform .3s var(--ease-out); }
+.hub-sw.create .knob { transform: translateX(107px); }
+.hub-sw button { position: relative; flex: 1; height: 28px; font: 500 13px/18px var(--sf); color: var(--brand); }
+.hub-sw button.on { font-weight: 600; }
+.hub-qs { position: absolute; left: 0; right: 0; top: calc(var(--safe-top) + 99px); transition: opacity .22s var(--ease-io); }
+.hub-qs.off { opacity: 0; pointer-events: none; }
+.hub-qs h4 { margin: 0 16px 8px; font: 600 13px/18px var(--sf); color: var(--ink); }
+.qs-grid { display: grid; grid-template-columns: 140px 140px; gap: 8px; padding: 0 16px; }
+.qs-e { display: block; text-align: left; }
+.qs-e .im { position: relative; display: block; width: 140px; height: 84px; border-radius: 12px; overflow: hidden; background: #e9eaf2; }
+.qs-e .im img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.qs-e .im .half { position: absolute; left: 0; top: 0; bottom: 0; width: 70px; -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); background: rgba(255,255,255,.08); }
+.qs-e .im .split { position: absolute; left: 69px; top: 0; bottom: 0; width: 2px; background: #fff; }
+.qs-e .im .badge { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); }
+.qs-e .lb { display: block; margin-top: 6px; height: 26px; font: 500 11px/13px var(--sf); color: var(--ink); }
+.qs-sc { overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.qs-sc::-webkit-scrollbar { display: none; }
+.qs-rows { display: inline-flex; flex-direction: column; gap: 8px; padding: 0 16px; }
+.qs-rows .r { display: flex; gap: 8px; }
+.qs-c { position: relative; display: block; width: 120px; height: 90px; border-radius: 14px; overflow: hidden; flex-shrink: 0; text-align: left; background: #e9eaf2; }
+.qs-c img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.qs-c::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 56px; background: linear-gradient(rgba(21,23,31,0), rgba(21,23,31,.75)); }
+.qs-c span { position: absolute; z-index: 1; left: 10px; right: 8px; bottom: 9px; font: 600 12px/15px var(--sf); color: #fff; white-space: pre-line; }
+.hub-in { position: absolute; z-index: 46; left: 16px; width: 288px; bottom: 86px; transition: transform .34s var(--ease-out); }
+.hub-in .gr { margin-bottom: 10px; font: 500 13px/16px var(--sf); color: var(--ink); text-align: center; transition: color .25s; }
+.hub-card { position: relative; border-radius: 16px; border: 1px solid transparent; padding: 12px 0 8px;
+  background: linear-gradient(#fff, #fff) padding-box, var(--grad) border-box; box-shadow: 0 4px 6px rgba(213,60,255,.10); }
+.hub-card textarea { display: block; width: 100%; height: 22px; padding: 0 12px; margin: 0; border: 0; outline: none; resize: none; background: transparent;
+  font: 400 12px/14px var(--sf); color: var(--ink); pointer-events: none; transition: height .25s var(--ease-out); }
+.hub-card textarea::placeholder { color: var(--ink-3); opacity: 1; }
+#hub.compose .hub-card textarea { pointer-events: auto; height: 44px; }
+.hub-card .btm { display: flex; justify-content: space-between; align-items: center; padding: 0 8px; }
+.hub-card .btm .rr { display: flex; gap: 8px; }
+.hub-card .btm span { display: block; width: 28px; height: 28px; }
+.hub-card .btm svg { display: block; }
+#hub-dim { position: absolute; inset: 0; z-index: 45; background: rgba(0,0,0,.7); opacity: 0; pointer-events: none; transition: opacity .25s var(--ease-io); }
+#hub.compose #hub-dim { opacity: 1; pointer-events: auto; }
+#hub.compose .hub-in .gr { color: #fff; }
+.drw { position: absolute; inset: 0; z-index: 50; pointer-events: none; }
+.drw .scr { position: absolute; inset: 0; background: rgba(0,0,0,.7); opacity: 0; transition: opacity .3s var(--ease-io); }
+.drw .pn { position: absolute; top: 0; bottom: 0; right: 0; width: 256px; background: #fff; transform: translateX(100%); transition: transform .34s var(--ease-out); display: flex; flex-direction: column; }
+.drw.in { pointer-events: auto; }
+.drw.in .scr { opacity: 1; }
+.drw.in .pn { transform: none; }
+.drw .hd { position: relative; flex-shrink: 0; height: calc(var(--safe-top) + 34px); }
+.drw .hd b { position: absolute; left: 16px; bottom: 8px; font: 500 15px/20px var(--sf); color: var(--ink); }
+.drw .hd .inf { position: absolute; right: 14px; bottom: 7px; width: 22px; height: 22px; }
+.drw .nc { flex-shrink: 0; margin: 18px 16px 0; height: 40px; border-radius: 20px; background: var(--brand); color: #fff; font: 600 13px var(--sf);
+  display: flex; align-items: center; justify-content: center; gap: 6px; }
+.drw .nc svg { display: block; }
+.drw .ln { flex-shrink: 0; height: 1px; margin: 18px 16px 0; background: #e6e7ee; }
+.drw .ls { flex: 1; overflow-y: auto; padding: 8px 16px 12px; scrollbar-width: none; }
+.drw .g { margin: 10px 0 2px; font: 400 11px/14px var(--sf); color: var(--ink-3); }
+.drw .it { display: flex; gap: 10px; align-items: center; width: 100%; padding: 8px 0; text-align: left; }
+.drw .it img { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; flex-shrink: 0; }
+.drw .it .t { flex: 1; min-width: 0; }
+.drw .it .t b { display: block; font: 400 13px/18px var(--sf); color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.drw .tag { display: inline-block; margin-top: 4px; padding: 1px 6px; border-radius: 4px; font: 600 10px/14px var(--sf); }
+.drw .tag.v { background: var(--chip); color: var(--brand); }
+.drw .tag.b { background: #eff0f3; color: var(--ink); }
+.drw .bn { flex-shrink: 0; margin: 0 16px calc(16px + env(safe-area-inset-bottom, 0px)); height: 48px; border-radius: 8px; border: 2px solid #d9a93a;
+  background: radial-gradient(circle at 20% 30%, #3a3f8f 0, transparent 40%), radial-gradient(circle at 85% 70%, #4b2f7a 0, transparent 45%), #1b1f4b;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; font: 800 15px/17px var(--sf); color: #f6d27a; letter-spacing: .2px; }
+.drw .bn small { font: 800 12px/14px var(--sf); }
+/* Edit chats (old Agent): the skill text waits with an Add Photo tile (Figma inchat_edit); free users see their daily allowance */
+.ag-btm .quota { display: none; }
+.ag-btm.free .quota { display: block; }
+.ag-btm .cmp { display: none; position: relative; width: 288px; padding: 10px; border-radius: 12px; background: #eff0f3; }
+.ag-btm.cmp { height: 196px; }
+.ag-btm.cmp .cmp { display: block; }
+.ag-btm.cmp .box { display: none; }
+.cmp .tile { position: relative; width: 70px; height: 70px; border-radius: 8px; overflow: hidden; background: #f6f7ff; border: 1px solid var(--line-brand);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font: 400 8px var(--sf); color: var(--ink); }
+.cmp .tile svg { display: block; width: 24px; height: 24px; }
+.cmp .tile img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.cmp .tx { margin-top: 12px; padding-right: 36px; font: 400 12px/16px var(--sf); color: var(--ink); }
+.cmp .tx::after { content: ''; display: inline-block; width: 1px; height: 13px; margin-left: 1px; vertical-align: -2px; background: var(--ink); animation: caret 1s steps(1) infinite; }
+@keyframes caret { 50% { opacity: 0; } }
+.cmp .sd { position: absolute; right: 8px; bottom: 8px; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; }
+.cmp .sd svg { display: block; }
+img.lofi, video.lofi { filter: blur(1.4px) contrast(.86) saturate(.78) brightness(1.05); }
+/* Before / after compare (drag the handle) */
+.a-cmp { position: relative; margin: 6px 0 2px; border-radius: 10px; overflow: hidden; background: #d9dbe8; touch-action: none; --x: 50%; }
+.a-cmp > img, .a-cmp > video, .a-cmp .bf img, .a-cmp .bf video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.a-cmp .bf { position: absolute; inset: 0; clip-path: inset(0 calc(100% - var(--x)) 0 0); }
+.a-cmp .ln { position: absolute; top: 0; bottom: 0; left: var(--x); width: 2px; margin-left: -1px; background: #fff; }
+.a-cmp .kn { position: absolute; top: 50%; left: var(--x); width: 26px; height: 26px; margin: -13px 0 0 -13px; border-radius: 50%; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.3);
+  display: flex; align-items: center; justify-content: center; }
+.a-cmp .tg { position: absolute; top: 8px; padding: 2px 6px; border-radius: 4px; background: rgba(21,23,31,.6); font: 600 10px/14px var(--sf); color: #fff; }
+.a-cmp .tg.l { left: 8px; }
+.a-cmp .tg.r { right: 8px; }
 </style>
 
 </head>
@@ -741,6 +844,43 @@ html.no-set .ic-set { display: none !important; }   /* boss 2026-10-07: v1 has n
     <nav class="nav" id="nav"></nav>
   </div>
 
+  <!-- ═════════ AI Agent hub (Figma YCA_APP_UI 7350:40537 · B-1 / B-2 / B-3 / B-4) ═════════ -->
+  <div class="screen" id="hub" aria-hidden="true">
+    <div class="hdr">
+      <div class="statusbar"><div class="time">9:41</div><div class="levels" id="sb-levels4"></div></div>
+      <div class="hbar">
+        <div class="logo" id="logo2" aria-label="YouCam AI Pro"></div>
+        <div class="right">
+          <div class="credit"><div class="in"><span id="credit-ic4"></span><span class="cr-n">16</span></div></div>
+          <button id="hub-set" aria-label="Settings"></button>
+          <button class="menu" id="hub-menu" aria-label="Chats"><i></i><i></i><i></i></button>
+        </div>
+      </div>
+    </div>
+    <div class="hub-sw" id="hub-sw"><i class="knob"></i><button class="on" id="sw-edit" data-m="edit">AI Edit</button><button id="sw-create" data-m="create">AI Create</button></div>
+    <div class="hub-qs" id="qs-edit"><h4>Quick skills</h4><div class="qs-grid" id="qs-edit-grid"></div></div>
+    <div class="hub-qs off" id="qs-create"><h4>Quick skills</h4><div class="qs-sc" id="qs-create-sc"><div class="qs-rows" id="qs-create-rows"></div></div></div>
+    <div id="hub-dim"></div>
+    <div class="hub-in" id="hub-in">
+      <div class="gr" id="hub-gr">What should we polish today?</div>
+      <div class="hub-card" id="hub-card">
+        <textarea id="hub-ta" rows="2" enterkeyhint="send" placeholder="Upload a photo or video and tell me what to fix"></textarea>
+        <div class="btm"><span id="hub-add"></span><div class="rr"><span id="hub-mic"></span><span id="hub-snd" role="button" aria-label="Send"></span></div></div>
+      </div>
+    </div>
+    <nav class="nav" id="hub-nav"></nav>
+    <div class="drw" id="hub-drw">
+      <div class="scr" id="drw-scr"></div>
+      <div class="pn">
+        <div class="hd"><b>Chats</b><span class="inf"></span></div>
+        <button class="nc" id="drw-new"></button>
+        <div class="ln"></div>
+        <div class="ls" id="drw-ls"></div>
+        <div class="bn">Holiday Sale<small>Credit Discount</small></div>
+      </div>
+    </div>
+  </div>
+
   <!-- ═════════ Agent ═════════ -->
   <div class="screen" id="agent">
     <div class="hdr">
@@ -759,6 +899,8 @@ html.no-set .ic-set { display: none !important; }   /* boss 2026-10-07: v1 has n
     <button class="sv-pend" id="sv-pend"><span></span><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3.5 10L8 5.5 12.5 10" stroke="#6f779b" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     <div class="ag-btm">
       <div class="in">
+        <div class="quota" id="ag-quota">Remain daily query: <span class="n" id="ag-free">20</span> <span>/ 30</span></div>
+        <div class="cmp" id="ag-cmp"><div class="tile" id="cmp-tile"></div><div class="tx" id="cmp-tx"></div><span class="sd" id="cmp-snd" role="button" aria-label="Send"></span></div>
         <div class="box"><span class="pic" id="ag-pic"></span><span class="ph">Type your message here ...</span><span class="mic" id="ag-mic" aria-label="Voice input"></span><span class="snd" id="ag-snd"></span></div>
         <div class="safe"></div>
       </div>
@@ -1487,7 +1629,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     if (S.agent && !S.sheet) {
       if ($('buy').classList.contains('in') && S.agentHint !== $('buy-cta')) return null;
       if (S.agentHint) {
-        var h = S.agentHint, host = h.closest('#buy .cta-w') || h.closest('#ag-survey') || h.closest('.msg') || h.closest('.box') || (h.id === 'sv-pend' ? $('agent') : null);
+        var h = S.agentHint, host = h.closest('#buy .cta-w') || h.closest('#ag-survey') || h.closest('.msg') || h.closest('.box') || h.closest('.ag-btm') || (h.id === 'sv-pend' ? $('agent') : null);
         var t = at(host, h);
         if (h.classList.contains('cost')) {                  // cost buttons: keep the tap dot off the credit coin (Next → over ›, Yes → over "Yes")
           var kk = frameScale(), hr = h.getBoundingClientRect();
@@ -1511,6 +1653,8 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
       return at(document.querySelector('#' + S.sheet + ' .pk-grid'), document.querySelector('#' + S.sheet + ' [data-rc="' + rc.join(',') + '"]'));
     }
     if (S.sheet || S.busy) return null;
+    if (S.hub) return hubHint();
+    if (S.round === 3) return at($('nav'), $('nav-ai'));                       // after the three rounds: the new AI Agent hub
     var pro = $('pro');
     if (S.round === 1) {                                                        // Creator template → F8
       if (tab !== 'crt') return at($('tabs'), $('tab-crt'));
@@ -1677,7 +1821,8 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     FB = null; LASTA = null;
     if (S.busy || S.agent) return; S.busy = true; hideHint();
     var list = $('ag-list'); list.innerHTML = ''; $('ag-scroll').scrollTop = 0;
-    $('launcher').classList.add('pushed'); $('agent').classList.add('in');
+    S.fromHub = !!S.hub; $(S.fromHub ? 'hub' : 'launcher').classList.add('pushed'); $('agent').classList.add('in');
+    agBtm().classList.toggle('free', /^E|^H[245]$/.test(which) || (which === 'T' && S.typedMode === 'edit'));   // AI Edit = old Agent: free daily allowance
     S.agent = true; S.agentDone = false; S.which = which; S.agentHint = null;
     var token = ++RUN;
     setTimeout(function () { S.busy = false; FLOW[which](token).catch(function () {}); }, 420);
@@ -2153,9 +2298,10 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     }
   };
   function restart() {                                       // back → always start over
+    if (S.fromHub) { backToHub(); return; }
     RUN++;
     var ROUND_OF = { F7: 0, F8: 1, F9: 2 };
-    if (S.which && ROUND_OF[S.which] === S.round) S.round = (S.round + 1) % 3;   // advance the guided round
+    if (S.which && ROUND_OF[S.which] === S.round) S.round = S.round + 1;   // advance the guided round (after F9 → round 3: the AI Agent nav)
     if (S.sheet) closeSheet();
     closeSurvey(); S.onAgentPick = null; S.agentSheet = null; S.pickCell = null; S.agentHint = null;
     $('buy').classList.remove('in'); $('cr-toast').classList.remove('show');
@@ -2176,6 +2322,313 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   $('ag-pic').onclick = function () { if (S.agent && S.onAgentPick && !S.sheet) { S.agentHint = null; S.pickFor = 'agent'; openSheet(S.agentSheet || 'ov-recents'); } };
   $('ic-send').onclick = function () { if (ready()) openAgent('F7'); };
   document.querySelectorAll('.card[data-action]').forEach(function (c) { c.onclick = function () { openAgent(c.dataset.action); }; });
+
+
+  /* ══ AI Agent hub (Figma YCA_APP_UI 7350:40537) — 2026-10-16
+        Launcher nav “AI Agent” → hub. AI Edit = the old Agent (free daily allowance), AI Create = the AI Shorts agent (credits).
+        Guided tour after the three launcher rounds: Enhance photo quality → AI Create → Cinematic Brand Ad → ☰ chats → close → Explore. ══ */
+  function uniqIds(svg, sfx) { return svg.replace(/(id="|url\(#|href="#)([A-Za-z0-9_-]+)/g, '$1$2' + sfx); }   // iOS shared-id bug (skill 4B)
+  $('logo2').innerHTML = uniqIds(ICONS.logo, '_h'); $('sb-levels4').innerHTML = ICONS.statusLevels; $('credit-ic4').innerHTML = uniqIds(ICONS.credit, '_h');
+  $('hub-set').innerHTML = uniqIds(ICONS.settings, '_h'); $('hub-add').innerHTML = uniqIds(ICONS.cross, '_h'); $('hub-mic').innerHTML = uniqIds(ICONS.mic, '_h'); $('hub-snd').innerHTML = uniqIds(ICONS.send, '_h');
+  document.querySelector('#hub-drw .inf').innerHTML = '<svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="8.6" stroke="#15171F" stroke-width="1.4"/><path d="M11 10v5" stroke="#15171F" stroke-width="1.5" stroke-linecap="round"/><circle cx="11" cy="7.1" r="1" fill="#15171F"/></svg>';
+  $('drw-new').innerHTML = '<svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7.4" stroke="#fff" stroke-width="1.4"/><path d="M9 5.8v6.4M5.8 9h6.4" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/></svg>Create New Chat';
+  (function () {                                              // the launcher nav and the hub nav share one look; “AI Agent” / “Explore” switch screens
+    var items = $('nav').querySelectorAll('.it'); items[1].id = 'nav-ai';
+    Array.prototype.forEach.call(items, function (it, i) { var c = it.cloneNode(true); c.id = ['hnav-ex', 'hnav-ai', 'hnav-tools', 'hnav-hist'][i]; $('hub-nav').appendChild(c); });
+  })();
+
+  var HUB = { mode: 'edit', step: 0 }, FREE = 20;
+  var HUB_COPY = { edit: ['What should we polish today?', 'Upload a photo or video and tell me what to fix'], create: ['What story do you want to tell?', 'Describe the video you want to make'] };
+  var EDIT_SK = [['E1', 'Turn my photo into a video', 'media/bonjour-selfie.jpg', 'play'], ['E2', 'Enhance photo quality', 'media/model-picked.jpg', 'split'],
+                 ['E3', 'Enhance video quality', 'media/teatime-date.jpg', 'split'], ['E4', 'Remove unwanted\nobjects or people', 'media/ugc-hand-gesture.jpg']];
+  var CREATE_SK = [[['F7', 'UGC Review', 'media/skin-renewal-effect.jpg'], ['F9', 'Product\nShowcase Ad', 'media/product-detail-demo.jpg'], ['C4', 'Product Demo\n& Solution', 'media/product-demo-watch.jpg'], ['C2', 'UGC Tutorial', 'media/beauty-natalie.jpg']],
+                   [['C5', 'Cinematic\nBrand Ad', 'media/luxe-product-reveal.jpg'], ['C6', 'Unboxing &\nFirst-Use', 'media/themed-sale-unbox.jpg'], ['C7', 'Person\nAction Remix', 'media/fashion-ava.jpg']]];
+  $('qs-edit-grid').innerHTML = EDIT_SK.map(function (s) {
+    return '<button class="qs-e" data-f="' + s[0] + '"><span class="im"><img src="' + s[2] + '" alt="">' +
+      (s[3] === 'split' ? '<span class="half"></span><span class="split"></span>' : s[3] === 'play' ? '<span class="badge"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="14" fill="#fff" fill-opacity=".92"/><path d="M11.5 9.2v9.6l7.6-4.8z" fill="#403EDF"/></svg></span>' : '') +
+      '</span><span class="lb">' + esc(s[1]).replace(/\n/g, '<br>') + '</span></button>'; }).join('');
+  $('qs-create-rows').innerHTML = CREATE_SK.map(function (row) {
+    return '<div class="r">' + row.map(function (s) { return '<button class="qs-c" data-f="' + s[0] + '"><img src="' + s[2] + '" alt=""><span>' + esc(s[1]) + '</span></button>'; }).join('') + '</div>'; }).join('');
+  Array.prototype.forEach.call(document.querySelectorAll('#hub [data-f]'), function (b) { b.onclick = function () { if (!$('hub').classList.contains('compose')) openAgent(b.dataset.f); }; });
+
+  function setHubMode(m) {
+    if (HUB.mode === m) return; HUB.mode = m;
+    $('hub-sw').classList.toggle('create', m === 'create');
+    $('sw-edit').classList.toggle('on', m === 'edit'); $('sw-create').classList.toggle('on', m === 'create');
+    $('qs-edit').classList.toggle('off', m !== 'edit'); $('qs-create').classList.toggle('off', m !== 'create');
+    $('hub-gr').textContent = HUB_COPY[m][0]; $('hub-ta').placeholder = HUB_COPY[m][1];
+    scheduleHint();
+  }
+  $('sw-edit').onclick = function () { setHubMode('edit'); }; $('sw-create').onclick = function () { setHubMode('create'); };
+  function openHub() {
+    if (S.busy || S.agent || S.sheet || S.hub) return;
+    hideHint(); S.hub = true; HUB.step = 0; setHubMode('edit'); $('qs-create-sc').scrollLeft = 0;
+    var h = $('hub'); h.removeAttribute('aria-hidden'); h.classList.add('in'); scheduleHint();
+  }
+  function closeHub() {                                       // Explore → the launcher; the guided demo starts over from round 0
+    closeCompose(); closeDrawer(); hideHint();
+    var h = $('hub'); h.classList.remove('in'); h.setAttribute('aria-hidden', 'true'); S.hub = false;
+    if (S.round === 3) { S.round = 0; setCredit(CREDIT0); PENDING = 0; }
+    setTimeout(scheduleHint, 250);
+  }
+  $('nav-ai').onclick = openHub; $('hnav-ex').onclick = closeHub;
+
+  /* B-3: tap the input → the page dims and the card rises above the keyboard (a real text field, so the phone shows its own keyboard) */
+  function openCompose() {
+    var h = $('hub'); if (h.classList.contains('compose')) return;
+    var ib = $('hub-in'), k = frameScale(), r = ib.getBoundingClientRect(), hr = h.getBoundingClientRect();
+    var curTop = (r.top - hr.top) / k, target = Math.max(parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--safe-top')) || 44, 0) + 190;
+    h.classList.add('compose'); ib.style.transform = 'translateY(' + Math.round(target - curTop) + 'px)';
+    hideHint(); $('hub-ta').focus({ preventScroll: true });
+  }
+  function closeCompose() { var h = $('hub'); if (!h.classList.contains('compose')) return; h.classList.remove('compose'); $('hub-in').style.transform = ''; $('hub-ta').blur(); scheduleHint(); }
+  $('hub-card').addEventListener('click', function (e) {
+    if (!$('hub').classList.contains('compose')) { openCompose(); return; }
+    if (e.target.closest('#hub-snd')) sendTyped();
+  });
+  $('hub-ta').addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendTyped(); } });
+  $('hub-dim').onclick = closeCompose;
+  function sendTyped() {
+    var v = $('hub-ta').value.trim(); if (!v) return;
+    S.typed = v; S.typedMode = HUB.mode; $('hub-ta').value = ''; closeCompose(); setTimeout(function () { openAgent('T'); }, 120);
+  }
+
+  /* B-4: ☰ → chats drawer (Video Creator / Basic Editor mixed, tagged); tap the dark glass to close; each chat opens a mock page */
+  var HIST = [['Today', [['H1', 'UGC Video: Firming Vegan Collagen Prep Serum', 'v', 'media/skin-renewal-effect.jpg'], ['H2', 'enhance the video', 'b', 'media/teatime-date.jpg']]],
+              ['Yesterday', [['H3', 'Creative: Pet Diary', 'v', 'media/Pet_storyboard.jpg'], ['H4', 'turn my photo into a video', 'b', 'media/bonjour-selfie.jpg'], ['H5', 'crop the photo and keep the girl in my photo', 'b', 'media/model-picked.jpg']]]];
+  $('drw-ls').innerHTML = HIST.map(function (g) {
+    return '<div class="g">' + g[0] + '</div>' + g[1].map(function (it) {
+      return '<button class="it" data-h="' + it[0] + '"><img src="' + it[3] + '" alt=""><span class="t"><b>' + esc(it[1]) + '</b><span class="tag ' + it[2] + '">' + (it[2] === 'v' ? 'Video Creator' : 'Basic Editor') + '</span></span></button>'; }).join(''); }).join('');
+  function openDrawer() { if (S.busy || S.agent) return; closeCompose(); $('hub-drw').classList.add('in'); if (HUB.step === 2) HUB.step = 3; hideHint(); scheduleHint(); }
+  function closeDrawer() { var d = $('hub-drw'); if (!d.classList.contains('in')) return; d.classList.remove('in'); if (HUB.step === 3) HUB.step = 4; hideHint(); scheduleHint(); }
+  $('hub-menu').onclick = openDrawer; $('drw-scr').onclick = closeDrawer; $('drw-new').onclick = closeDrawer;
+  Array.prototype.forEach.call(document.querySelectorAll('#drw-ls [data-h]'), function (b) { b.onclick = function () { closeDrawer(); setTimeout(function () { openAgent(b.dataset.h); }, 320); }; });
+
+  function hubHint() {
+    var h = $('hub');
+    if ($('hub-drw').classList.contains('in')) return { parent: $('hub-drw'), x: 32, y: Math.round(h.getBoundingClientRect().height / frameScale() / 2) };   // the dark glass
+    if (h.classList.contains('compose')) return null;
+    if (HUB.step === 0) return HUB.mode !== 'edit' ? at(h, $('sw-edit')) : at(h, document.querySelector('#qs-edit [data-f="E2"] .im'));
+    if (HUB.step === 1) return HUB.mode !== 'create' ? at(h, $('sw-create')) : at(h, document.querySelector('#qs-create [data-f="C5"]'));
+    if (HUB.step === 2) return at(h, $('hub-menu'));
+    if (HUB.step >= 4) return at($('hub-nav'), $('hnav-ex'));
+    return null;
+  }
+  var HUB_STEP_FLOW = { 0: 'E2', 1: 'C5' };
+  function backToHub() {                                      // back from a chat that started in the hub
+    RUN++;
+    if (S.sheet) closeSheet();
+    closeSurvey(); S.onAgentPick = null; S.agentSheet = null; S.pickCell = null; S.agentHint = null;
+    $('buy').classList.remove('in'); $('cr-toast').classList.remove('show');
+    Array.prototype.forEach.call(document.querySelectorAll('#ag-list video'), function (v) { v.pause(); });
+    if (HUB_STEP_FLOW[HUB.step] === S.which) HUB.step++;
+    $('agent').classList.remove('in'); $('hub').classList.remove('pushed');
+    S.agent = false; S.agentDone = false; S.fromHub = false; hideHint();
+    setTimeout(function () { $('ag-list').innerHTML = ''; $('ag-list').style.paddingBottom = ''; agBtm().classList.remove('cmp', 'free'); S.busy = false; scheduleHint(); }, 420);
+  }
+  function agBtm() { return document.querySelector('#agent .ag-btm'); }
+
+  /* ── Shared bits for the new chats ── */
+  M.userPhotoText = function (src, text, lofi, tag) {
+    return '<div class="u-imgs"><div class="u-ph"><img src="' + src + '" alt=""' + (lofi ? ' class="lofi"' : '') + '><span class="tg">' + (tag || '@photo') + '</span></div></div>' +
+      '<div class="u-bub ans" style="padding-top:8px"><div class="bub">' + esc(text) + '</div></div>';
+  };
+  M.procLite = function (s, left) {
+    return '<div class="a-proc"><div class="a-in" style="padding:0">' + head() + '<div class="a-tx">' + esc(s) + '</div></div>' +
+      '<div class="card">' + ICONS.waiting + '<span>' + (left || 'Less than a minute left') + '</span></div></div>';
+  };
+  M.compare = function (intro, before, after, size, outro, video) {   // before / after with a drag handle
+    function media(src, lofi) { return video ? '<video src="' + src + '" poster="' + src.replace(/\.mp4$/, '.jpg') + '" muted loop playsinline webkit-playsinline autoplay preload="auto"' + (lofi ? ' class="lofi"' : '') + '></video>'
+      : '<img src="' + src + '" alt=""' + (lofi ? ' class="lofi"' : '') + '>'; }
+    return '<div class="a-in">' + head() + '<div class="a-tx long">' + esc(intro) + '</div>' +
+      '<div class="a-cmp" data-cmp style="width:' + size[0] + 'px;height:' + size[1] + 'px">' + media(after.src) + '<div class="bf">' + media(before.src, before.lofi) + '</div>' +
+      '<span class="ln"></span><span class="kn"><svg width="14" height="10" viewBox="0 0 14 10" fill="none"><path d="M4.5 1.5L1 5l3.5 3.5M9.5 1.5L13 5 9.5 8.5" stroke="#15171F" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>' +
+      '<span class="tg l">Before</span><span class="tg r">After</span></div>' +
+      (outro ? '<div class="a-tx long">' + esc(outro) + '</div>' : '') + fbBar('media') + '</div>';
+  };
+  function wireCompare(n) {
+    var c = n.querySelector('[data-cmp]'); if (!c) return;
+    function setX(cx) { var r = c.getBoundingClientRect(); c.style.setProperty('--x', Math.max(4, Math.min(96, (cx - r.left) / r.width * 100)) + '%'); }
+    var drag = false;
+    c.addEventListener('pointerdown', function (e) { drag = true; c._user = true; try { c.setPointerCapture(e.pointerId); } catch (x) {} setX(e.clientX); });
+    c.addEventListener('pointermove', function (e) { if (drag) setX(e.clientX); });
+    ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(function (t) { c.addEventListener(t, function () { drag = false; }); });
+    var t0 = null;                                             // one gentle sweep so the comparison reads at a glance
+    function sweep(ts) { if (c._user || !c.isConnected) return; if (!t0) t0 = ts; var k = (ts - t0) / 1800; if (k > 1) { c.style.setProperty('--x', '50%'); return; }
+      c.style.setProperty('--x', (50 + 32 * Math.sin(k * Math.PI * 2)) + '%'); requestAnimationFrame(sweep); }
+    setTimeout(function () { requestAnimationFrame(sweep); }, 500);
+    Array.prototype.forEach.call(c.querySelectorAll('video'), function (v) { try { v.play().catch(function () {}); } catch (x) {} });
+  }
+  function wirePlayer(rn) {                                    // same tap-to-play as the generated videos
+    var v = rn.querySelector('[data-vid]'); if (!v) return; var box = v.parentNode;
+    box.onclick = function () { if (v.paused) { v.play(); box.classList.add('playing'); } else { v.pause(); box.classList.remove('playing'); } };
+    v.onended = function () { box.classList.remove('playing'); v.currentTime = 0.1; };
+  }
+  async function fadeOut(n) {
+    if (!n || !n.parentNode) return;
+    n.style.overflow = 'hidden'; n.style.height = n.offsetHeight + 'px'; void n.offsetHeight;
+    n.style.transition = 'opacity .3s var(--ease-io), height .38s var(--ease-out) .22s, padding .38s var(--ease-out) .22s';
+    n.style.opacity = 0; n.style.height = '0px'; n.style.paddingBottom = '0px';
+    setTimeout(function () { if (n.parentNode) n.remove(); }, 700);
+  }
+  async function processing(text, token, ms, left) {
+    var n = await say(M.procLite(text, left), token); await wait(ms || 2600); alive(token); setTimeout(function () { fadeOut(n); }, 300); return n;
+  }
+  function useFree() { FREE = Math.max(0, FREE - 1); $('ag-free').textContent = FREE; }
+  function finish(token) { if (token !== RUN) return; S.agentDone = true; S.agentHint = null; scheduleHint(); }   // guide → back
+
+  /* AI Edit chats (Figma inchat_edit): the skill text is already typed; add a photo, send, get the result. Free daily allowance, no credits. */
+  async function editCompose(text, src, lofi, cell, token) {
+    var b = agBtm(), tile = $('cmp-tile'), snd = $('cmp-snd');
+    tile.innerHTML = uniqIds(ICONS.cross, '_t') + '<span>Add Photo</span>'; $('cmp-tx').textContent = text;
+    b.classList.add('cmp'); $('ag-list').style.paddingBottom = '210px';
+    await new Promise(function (res) {
+      S.agentSheet = 'ov-recents'; S.pickCell = cell || [2, 0]; S.onAgentPick = res;
+      tile.onclick = function () { if (token === RUN && S.onAgentPick && !S.sheet) { S.agentHint = null; S.pickFor = 'agent'; openSheet('ov-recents'); } };
+      S.agentHint = tile; S.agentDone = true; scheduleHint();
+    });
+    alive(token); tile.onclick = null; S.agentSheet = null; S.pickCell = null;
+    tile.innerHTML = '<img src="' + src + '" alt=""' + (lofi ? ' class="lofi"' : '') + '>';
+    await waitTap([snd], snd, token);
+    b.classList.remove('cmp'); $('ag-list').style.paddingBottom = '';
+    await user(M.userPhotoText(src, text, lofi), token);
+  }
+  var EDIT_FLOWS = {
+    E1: async function (token) {
+      await wait(300); await editCompose('Turn my photo into a video', 'media/bonjour-selfie.jpg', false, [1, 1], token);
+      await think(token, 1800);
+      await say(M.text('What a cute photo! Let’s bring it to life. How should it move?'), token);
+      var a = await ask([{ label: 'Motion', q: 'Which motion style?', o: [['Gentle breeze', 'Hair and clothes sway softly'], ['Slow push-in', 'The camera glides in closer'], ['Playful wave', 'A natural wave and a smile']] }], token);
+      await think(token, 1400);
+      await say(M.text('Creating a 5-second clip: ' + a[0][1].toLowerCase() + ', soft window light, and a gentle camera move.'), token);
+      await processing('Video generation is processing...', token, 3000, 'About 1 minute left');
+      var rn = await say(M.result('media/bonjour-selfie.jpg', '00:05', 'Done! Here’s your video', 'Your photo is moving now. Want to try another motion?', 'media/bonjour-selfie.mp4'), token);
+      wirePlayer(rn); useFree(); finish(token);
+    },
+    E2: async function (token) {
+      await wait(300); await editCompose('Enhance photo quality', 'media/model-picked.jpg', true, [2, 0], token);
+      await think(token, 1800);
+      await say(M.text('Here’s my plan: boost clarity and sharpness so details pop, clean up the noise, and bring back natural color.'), token);
+      await processing('Enhancing your photo...', token, 2600);
+      var rn = await say(M.compare('Done! Here’s your enhanced photo. Drag to compare.', { src: 'media/model-picked.jpg', lofi: true }, { src: 'media/model-picked.jpg' }, [220, 220], 'Want me to try a stronger enhancement?'), token);
+      wireCompare(rn); useFree(); finish(token);
+    },
+    E3: async function (token) {
+      await wait(300); await editCompose('Enhance video quality', 'media/teatime-date.jpg', true, [0, 2], token);
+      await think(token, 1800);
+      await say(M.text('Got your video. How far should I take the quality?'), token);
+      await ask([{ label: 'Quality', q: 'Which quality boost?', o: [['Upscale to 1080p', 'Sharper detail, smoother motion'], ['Upscale to 4K', 'Maximum detail, takes a little longer']] }], token);
+      await processing('Enhancing your video...', token, 3000, 'About 1 minute left');
+      var rn = await say(M.compare('Done! Here’s your enhanced video. Drag to compare.', { src: 'media/teatime-date.mp4', lofi: true }, { src: 'media/teatime-date.mp4' }, [200, 267], '', true), token);
+      wireCompare(rn); useFree(); finish(token);
+    },
+    E4: async function (token) {
+      await wait(300); await editCompose('Remove unwanted objects or people', 'media/ugc-hand-gesture.jpg', false, [2, 2], token);
+      await think(token, 1800);
+      await say(M.text('I can see a text label across the top of your photo. What should I remove?'), token);
+      await ask([{ label: 'Remove', q: 'What should I remove?', live: 'Describe what to remove…', o: [['The text label', '“Ampoule Sheet Mask” at the top']] }], token);
+      await processing('Removing it from your photo...', token, 2600);
+      var rn = await say(M.compare('Done! The label is gone. Drag to compare.', { src: 'media/ugc-hand-gesture.jpg' }, { src: 'media/edit-remove-after.jpg' }, [180, 320], 'Anything else you’d like me to clean up?'), token);
+      wireCompare(rn); useFree(); finish(token);
+    }
+  };
+
+  /* AI Create chats (new skills): same agent flow as UGC Review — settings → style → script → plan → Generate (credits settle at Generate) */
+  var CR = {
+    C2: { greet: 'Hi there! 👋 I’m your AI Shorts agent. Send me a photo of <span class="pick">your product</span>, and I’ll turn it into a step-by-step tutorial video. ✨',
+      sheet: 'ov-product', cell: [1, 0], photo: { src: IMG.product, tag: '@product', fit: true }, l1: 'Create a UGC tutorial video showing how to use ', l2: TG('@product'),
+      intro: 'Let’s choose how the tutorial should feel.', styles: [['Step-by-step', 'Numbered steps with on-screen text'], ['Get ready with me', 'A casual routine, talking to camera'], ['Result first', 'Show the glow, then how to get it']],
+      script: 'Here’s the script for your tutorial:', vo: 'Model says',
+      shots: [['0–3s', 'She holds the serum up to the camera in soft morning light.', 'Here’s how I use my collagen prep serum.'], ['3–6s', 'Step 1: two drops on clean fingertips.', 'Step one: just two drops.'],
+        ['6–9s', 'Step 2: pressing it gently into her cheeks.', 'Press it in — don’t rub.'], ['9–12s', 'Step 3: a light layer of moisturizer on top.', 'Then lock it in with your moisturizer.'],
+        ['12–15s', 'Close-up of glowing skin, product name on screen.', 'That’s it. Glowy skin in under a minute.']],
+      poster: 'media/beauty-natalie.jpg', video: 'media/beauty-natalie.mp4' },
+    C4: { greet: 'Hi there! 👋 I’m your AI Shorts agent. Send me a photo of <span class="pick">your product</span>, and I’ll show the problem it solves in a short demo. ✨',
+      sheet: 'ov-product', cell: [1, 0], photo: { src: 'media/product-demo-watch.jpg', tag: '@product' }, l1: 'Create a problem-and-solution demo video for ', l2: TG('@product'),
+      intro: 'Which angle should the demo take?', styles: [['Everyday problem', 'Open on a relatable pain point'], ['Feature walkthrough', 'Each feature solves one need'], ['Side by side', 'Life without vs. with the product']],
+      script: 'Here’s the script for your demo:',
+      shots: [['0–3s', 'Rushing between meetings, he keeps checking his phone.'], ['3–6s', 'A glance at the watch: messages and calendar at a flick.'],
+        ['6–9s', 'Close-up on the crown and the crisp display.'], ['9–12s', 'A run at dusk, heart rate tracked on the wrist.'], ['12–15s', 'Hero shot of the watch, product name fades in.']],
+      poster: 'media/product-demo-watch.jpg', video: 'media/product-demo-watch.mp4' },
+    C5: { greet: 'Hi there! 👋 I’m your AI Shorts agent. Send me a photo of <span class="pick">your product</span>, and I’ll turn it into a cinematic brand ad. ✨',
+      sheet: 'ov-product', cell: [1, 0], photo: { src: 'media/luxe-product-reveal.jpg', tag: '@product' }, l1: 'Create a cinematic brand ad for ', l2: TG('@product'),
+      intro: 'Let’s set the mood of your brand ad.', styles: [['Luxury reveal', 'Dramatic light, a slow reveal'], ['Moody noir', 'Deep shadows, high contrast'], ['Golden hour', 'Warm glow and soft flares']],
+      script: 'Here’s the script for your brand ad:',
+      shots: [['0–3s', 'Darkness, then a thin line of light sweeps across the frame.'], ['3–6s', 'The product emerges from shadow, slowly turning.'],
+        ['6–9s', 'Macro on the finish as light glides over every edge.'], ['9–12s', 'The camera pulls back; the product stands alone on stage.'], ['12–15s', 'Logo and tagline fade in over the hero shot.']],
+      poster: 'media/luxe-product-reveal.jpg', video: 'media/luxe-product-reveal.mp4' },
+    C6: { greet: 'Hi there! 👋 I’m your AI Shorts agent. Send me a photo of <span class="pick">your product</span>, and I’ll make an unboxing and first-use video. ✨',
+      sheet: 'ov-product', cell: [1, 0], photo: { src: 'media/themed-sale-unbox.jpg', tag: '@product' }, l1: 'Create an unboxing and first-use video for ', l2: TG('@product'),
+      intro: 'What kind of unboxing should it be?', styles: [['Cozy unboxing', 'Hands only, a warm desk setup'], ['ASMR close-ups', 'Crisp sounds, a slow peel'], ['First impressions', 'A talking reaction to camera']],
+      script: 'Here’s the script for your unboxing:',
+      shots: [['0–3s', 'The parcel lands on a warm wooden desk.'], ['3–6s', 'Hands lift the lid; tissue paper rustles open.'],
+        ['6–9s', 'The product comes out, turned toward the light.'], ['9–12s', 'First use: a quick close-up of it in action.'], ['12–15s', 'Everything laid out neatly, product name on screen.']],
+      poster: 'media/themed-sale-unbox.jpg', video: 'media/themed-sale-unbox.mp4' },
+    C7: { greet: 'Hi there! 👋 I’m your AI Shorts agent. Send me a photo of <span class="pick">a person</span>, and I’ll remix it into a short action clip. ✨',
+      sheet: 'ov-recents', cell: [2, 0], photo: { src: 'media/fashion-ava.jpg', tag: '@person' }, l1: 'Remix a short action video featuring ', l2: TG('@person'),
+      intro: 'What should she do in the clip?', styles: [['Runway walk', 'A confident walk toward the camera'], ['Twirl & pose', 'A spin that ends in a pose'], ['Dance groove', 'A short, upbeat dance']],
+      script: 'Here’s the script for your remix:',
+      shots: [['0–3s', 'She stands still in a bright living room, looking at the camera.'], ['3–6s', 'She starts to move, the dress catching the light.'],
+        ['6–9s', 'A turn, the skirt flaring out.'], ['9–12s', 'The camera circles her as she moves.'], ['12–15s', 'She lands in a pose and smiles.']],
+      poster: 'media/fashion-ava.jpg', video: 'media/fashion-ava.mp4' }
+  };
+  NEXT['media/beauty-natalie.mp4'] = ['Enhance video quality', 'Make a 30s version', 'Try another model'];
+  NEXT['media/product-demo-watch.mp4'] = ['Enhance video quality', 'Change the background', 'Make a 1:1 feed version'];
+  NEXT['media/luxe-product-reveal.mp4'] = ['Enhance video quality', 'Try another mood', 'Make a 1:1 feed version'];
+  NEXT['media/themed-sale-unbox.mp4'] = ['Enhance video quality', 'Make a 30s version', 'Add a voiceover'];
+  NEXT['media/fashion-ava.mp4'] = ['Enhance video quality', 'Try another move', 'Change the outfit'];
+  async function createFlow(c, token) {
+    var cfg = { ratio: '9:16', dur: 15 };
+    await wait(250);
+    await greetAndUpload(c.greet, c.sheet, c.cell, token);
+    await user(M.userImgs([c.photo], c.l1, c.l2), token);
+    await think(token, 2400);
+    if (CREDIT < 210) { await creditGate(token); await think(token, 1200); }
+    await say(M.text('Before we start, let me confirm the video settings. This one is set to ' + cfg.ratio + ' at ' + cfg.dur + ' seconds by default.'), token);
+    var a = await ask(settingsQs(cfg), token);
+    await think(token, 1600);
+    await say(M.text(c.intro), token);
+    var d = await ask([{ label: 'Video style', q: 'Which video style?', o: c.styles }], token);
+    await think(token, 2200);
+    PENDING += COST.script;                                   // the script is generated now; settled with everything else at Generate
+    var meta = [['Duration', cfg.dur + 's'], ['Shots', '' + c.shots.length], ['Ratio', cfg.ratio]];
+    await say(M.script(c.script, meta, c.shots, c.vo), token);
+    await ask([{ q: 'How does the script look?', live: 'Tell me what to change…', liveCost: COST.script, o: [['Looks good', 'Go on to the plan']] }], token);
+    await think(token, 1400);
+    await confirmYes([c.photo], [['Video style', d[0][1]]], { meta: meta.concat([['Resolution', a[1][1]]]), shots: c.shots, vo: c.vo }, token);
+    await generate(c.poster, '00:' + cfg.dur, token, c.video);
+  }
+
+  /* Typed in the hub input: the agent picks it up and asks for the photo */
+  async function typedFlow(token) {
+    await wait(250); await user(M.answers([['', S.typed || '']]), token);
+    await think(token, 1800);
+    await say(M.text(S.typedMode === 'edit' ? 'Got it! Send me the photo or video you’d like me to work on, and I’ll take it from there.'
+      : 'Love that idea! Send me a photo of your product or subject, and I’ll plan the video with you.'), token);
+    finish(token);
+  }
+
+  /* Chats drawer → mock pages of finished chats (no animation) */
+  function staticMsg(k, html) { var n = makeMsg(k, html); n.classList.add(k === 'user' ? 'show' : 'agent-done'); if (k === 'agent') n.classList.remove('agent'); $('ag-list').appendChild(n); return n; }
+  var HIST_PAGES = {
+    H1: function () { staticMsg('user', M.userImgs([{ src: IMG.product, tag: '@product' }], 'Create a UGC Review video for ', TG('@product') + '<span class="t12">featuring a model</span>', true));
+      wirePlayer(staticMsg('agent', M.result('media/skin-renewal-effect.jpg', '00:15', 'Done! Here’s your video', 'This looks polished! There’s plenty more you can create.', 'media/UGC_agent.mp4'))); },
+    H2: function () { staticMsg('user', M.userPhotoText('media/teatime-date.jpg', 'enhance the video', true));
+      wireCompare(staticMsg('agent', M.compare('Done! Here’s your enhanced video. Drag to compare.', { src: 'media/teatime-date.mp4', lofi: true }, { src: 'media/teatime-date.mp4' }, [200, 267], '', true))); },
+    H3: function () { staticMsg('user', M.userImgs([{ src: 'media/Pet_diary.PNG', tag: '@pet' }], 'Create a 15-second photorealistic short about your pet’s daily moment', 'featuring' + TG('@pet')));
+      wirePlayer(staticMsg('agent', M.result('media/Pet_storyboard.jpg', '00:15', 'Done! Here’s your video', 'This looks polished! There’s plenty more you can create.', 'media/Pet_diary_vdo.mp4'))); },
+    H4: function () { staticMsg('user', M.userPhotoText('media/bonjour-selfie.jpg', 'turn my photo into a video'));
+      wirePlayer(staticMsg('agent', M.result('media/bonjour-selfie.jpg', '00:05', 'Done! Here’s your video', 'Your photo is moving now. Want to try another motion?', 'media/bonjour-selfie.mp4'))); },
+    H5: function () { staticMsg('user', M.userPhotoText('media/model-picked.jpg', 'crop the photo and keep the girl in my photo'));
+      staticMsg('agent', '<div class="a-in">' + head() + '<div class="a-tx long">Done! I cropped it to 3:4 and kept her in the center.</div><div class="a-res"><img src="media/model-picked.jpg" alt=""></div>' + fbBar('media') + '</div>'); }
+  };
+  function histFlow(k) { return async function (token) { HIST_PAGES[k](); $('ag-scroll').scrollTop = 0; await wait(300); finish(token); }; }
+
+  Object.assign(FLOW, EDIT_FLOWS, {
+    C2: function (t) { return createFlow(CR.C2, t); }, C4: function (t) { return createFlow(CR.C4, t); }, C5: function (t) { return createFlow(CR.C5, t); },
+    C6: function (t) { return createFlow(CR.C6, t); }, C7: function (t) { return createFlow(CR.C7, t); }, T: typedFlow,
+    H1: histFlow('H1'), H2: histFlow('H2'), H3: histFlow('H3'), H4: histFlow('H4'), H5: histFlow('H5')
+  });
 
   renderInput();
 
