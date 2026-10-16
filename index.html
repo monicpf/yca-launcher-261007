@@ -2394,7 +2394,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     $('hub-gr').textContent = HUB_COPY[m][0]; $('hub-ta').placeholder = HUB_COPY[m][1]; if (typeof drawPills === 'function') { HUB.sel = null; $('hub-card').classList.remove('rc'); drawPills(); drawRecipe(); syncHubSend(); }
     scheduleHint();
   }
-  $('sw-edit').onclick = function () { setHubMode('edit'); }; $('sw-create').onclick = function () { setHubMode('create'); };
+  $('sw-edit').onclick = function () { HUB.step = 1; setHubMode('edit'); }; $('sw-create').onclick = function () { HUB.step = 1; setHubMode('create'); };   // any tap on the switcher ends the hub guidance
   function openHub() {
     if (S.busy || S.agent || S.sheet || S.hub) return;
     hideHint(); S.hub = true; HUB.step = 0; setHubMode('edit'); $('qs-create-sc').scrollLeft = 0;
@@ -2544,17 +2544,15 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     var h = $('hub');
     if ($('hub-drw').classList.contains('in')) return null;
     if (h.classList.contains('compose')) return null;
-    if (HUB.step === 0) return HUB.mode !== 'create' ? at(h, $('sw-create')) : at(h, document.querySelector('#qs-create [data-f="F7"]'));
+    if (HUB.step === 0 && HUB.mode !== 'create') return at(h, $('sw-create'));   // Monic 2026-10-16: once the mode is switched, no hint on Quick skills
     return null;                                              // after the UGC Review chat: no more guidance in the hub
   }
-  var HUB_STEP_FLOW = { 0: 'F7' };
   function backToHub() {                                      // back from a chat that started in the hub
     RUN++;
     if (S.sheet) closeSheet();
     closeSurvey(); S.onAgentPick = null; S.agentSheet = null; S.pickCell = null; S.agentHint = null;
     $('buy').classList.remove('in'); $('cr-toast').classList.remove('show');
     Array.prototype.forEach.call(document.querySelectorAll('#ag-list video'), function (v) { v.pause(); });
-    if (HUB_STEP_FLOW[HUB.step] === S.which) HUB.step++;
     $('agent').classList.remove('in'); $('hub').classList.remove('pushed');
     S.agent = false; S.agentDone = false; S.fromHub = false; hideHint();
     setTimeout(function () { $('ag-list').innerHTML = ''; $('ag-list').style.paddingBottom = ''; agBtm().classList.remove('cmp', 'free'); agBtm().style.transform = ''; agBtm()._lift = 0; S.busy = false; scheduleHint(); }, 420);
