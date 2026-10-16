@@ -718,25 +718,25 @@ html.no-set .ic-set { display: none !important; }   /* boss 2026-10-07: v1 has n
 .drw.in .scr { opacity: 1; }
 .drw.in .pn { transform: none; }
 .drw .hd { position: relative; flex-shrink: 0; height: calc(var(--safe-top) + 34px); }
-.drw .hd b { position: absolute; left: 16px; bottom: 8px; font: 500 15px/20px var(--sf); color: var(--ink); }
-.drw .hd .inf { position: absolute; right: 14px; bottom: 7px; width: 22px; height: 22px; }
-.drw .nc { flex-shrink: 0; margin: 18px 16px 0; height: 40px; border-radius: 20px; background: var(--brand); color: #fff; font: 600 13px var(--sf);
-  display: flex; align-items: center; justify-content: center; gap: 6px; }
+.drw .hd b { position: absolute; left: 16px; bottom: 6px; font: 500 15px/18px var(--sf); color: var(--ink); }   /* Figma B-4 sidedrawer (2026-10-16) */
+.drw .hd .inf { position: absolute; right: 16px; bottom: 0; width: 30px; height: 30px; }
+.drw .hd .inf svg { display: block; }
+.drw .nc { flex-shrink: 0; margin: 30px 16px 0; height: 40px; padding: 6px 12px 6px 8px; border-radius: 20px; background: var(--brand); color: #ddd; font: 700 13px var(--sf);
+  display: flex; align-items: center; justify-content: center; gap: 10px; }
 .drw .nc svg { display: block; }
-.drw .ln { flex-shrink: 0; height: 1px; margin: 18px 16px 0; background: #e6e7ee; }
-.drw .ls { flex: 1; overflow-y: auto; padding: 8px 16px 12px; scrollbar-width: none; }
-.drw .g { margin: 10px 0 2px; font: 400 11px/14px var(--sf); color: var(--ink-3); }
+.drw .ln { flex-shrink: 0; height: 1px; margin: 20px 16px 0; background: #e6e7ee; }
+.drw .ls { flex: 1; overflow-y: auto; padding: 16px; scrollbar-width: none; }
+.drw .grp + .grp { margin-top: 12px; }
+.drw .g { font: 510 11px/14px var(--sf); color: #6f779b; }
 .drw .it { display: flex; gap: 10px; align-items: center; width: 100%; padding: 8px 0; text-align: left; }
 .drw .it img { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; flex-shrink: 0; }
-.drw .it .t { flex: 1; min-width: 0; }
-.drw .it .t b { display: block; font: 400 13px/18px var(--sf); color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.drw .tag { display: inline-block; margin-top: 4px; padding: 1px 6px; border-radius: 4px; font: 600 10px/14px var(--sf); }
-.drw .tag.v { background: var(--chip); color: var(--brand); }
+.drw .it .t { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+.drw .it .t b { display: block; max-width: 100%; font: 400 13px/18px var(--sf); color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.drw .grp.new .it .t b { font-weight: 510; }
+.drw .tag { display: inline-block; padding: 1px 6px; border-radius: 4px; font: 590 10px/14px var(--sf); }
+.drw .tag.v { background: #eceeff; color: var(--brand); }
 .drw .tag.b { background: #eff0f3; color: var(--ink); }
-.drw .bn { flex-shrink: 0; margin: 0 16px calc(16px + env(safe-area-inset-bottom, 0px)); height: 48px; border-radius: 8px; border: 2px solid #d9a93a;
-  background: radial-gradient(circle at 20% 30%, #3a3f8f 0, transparent 40%), radial-gradient(circle at 85% 70%, #4b2f7a 0, transparent 45%), #1b1f4b;
-  display: flex; flex-direction: column; align-items: center; justify-content: center; font: 800 15px/17px var(--sf); color: #f6d27a; letter-spacing: .2px; }
-.drw .bn small { font: 800 12px/14px var(--sf); }
+.drw .bn { flex-shrink: 0; display: block; width: 224px; height: 50px; margin: 0 auto calc(32px + env(safe-area-inset-bottom, 0px)); }
 /* Edit chats (old Agent): the skill text waits with an Add Photo tile (Figma inchat_edit); free users see their daily allowance */
 .ag-btm .quota { display: none; }
 .ag-btm.free .quota { display: block; }
@@ -891,7 +891,7 @@ img.lofi, video.lofi { filter: blur(1.4px) contrast(.86) saturate(.78) brightnes
         <button class="nc" id="drw-new"></button>
         <div class="ln"></div>
         <div class="ls" id="drw-ls"></div>
-        <div class="bn">Holiday Sale<small>Credit Discount</small></div>
+        <img class="bn" src="media/hub-banner.png" alt="Holiday Sale · Credit Discount">
       </div>
     </div>
   </div>
@@ -2361,8 +2361,8 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   function uniqIds(svg, sfx) { return svg.replace(/(id="|url\(#|href="#)([A-Za-z0-9_-]+)/g, '$1$2' + sfx); }   // iOS shared-id bug (skill 4B)
   $('logo2').innerHTML = uniqIds(ICONS.logo, '_h'); $('sb-levels4').innerHTML = ICONS.statusLevels; $('credit-ic4').innerHTML = uniqIds(ICONS.credit, '_h');
   $('hub-set').innerHTML = uniqIds(ICONS.settings, '_h'); $('hub-add').innerHTML = uniqIds(ICONS.cross, '_h'); $('hub-mic').innerHTML = uniqIds(ICONS.mic, '_h'); $('hub-snd').innerHTML = uniqIds(ICONS.send, '_h');
-  document.querySelector('#hub-drw .inf').innerHTML = '<svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="8.6" stroke="#15171F" stroke-width="1.4"/><path d="M11 10v5" stroke="#15171F" stroke-width="1.5" stroke-linecap="round"/><circle cx="11" cy="7.1" r="1" fill="#15171F"/></svg>';
-  $('drw-new').innerHTML = '<svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7.4" stroke="#fff" stroke-width="1.4"/><path d="M9 5.8v6.4M5.8 9h6.4" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/></svg>Create New Chat';
+  document.querySelector('#hub-drw .inf').innerHTML = '<svg width="30" height="30" viewBox="0 0 30 30" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M14.8798 12.21C15.5098 12.21 15.9598 11.67 15.9598 11.13C15.9598 10.59 15.5098 9.95996 14.8798 9.95996C14.2498 9.95996 13.7998 10.5 13.7998 11.13C13.7998 11.76 14.2498 12.21 14.8798 12.21ZM14.8798 13.38C14.3398 13.38 13.9798 13.83 13.9798 14.28V19.14C13.9798 19.68 14.4298 20.04 14.8798 20.04C15.4198 20.04 15.7798 19.59 15.7798 19.14V14.28C15.8698 13.74 15.4198 13.38 14.8798 13.38Z" fill="#15171F"/><path d="M15 7.26C19.32 7.26 22.74 10.77 22.74 15C22.74 19.23 19.23 22.74 15 22.74C10.77 22.74 7.26 19.32 7.26 15C7.26 10.68 10.68 7.26 15 7.26ZM15 6C10.05 6 6 10.05 6 15C6 19.95 10.05 24 15 24C19.95 24 24 19.95 24 15C24 10.05 19.95 6 15 6Z" fill="#15171F"/></svg>';
+  $('drw-new').innerHTML = '<svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M0.93565 17.4001C0.864119 17.4001 0.792916 17.3773 0.733361 17.3323C0.624752 17.2505 0.576354 17.1113 0.610315 16.9798L1.63259 13.0341C0.956486 11.8015 0.599651 10.4097 0.599651 9.0001C0.599651 4.36829 4.36783 0.600098 8.99963 0.600098C13.6314 0.600098 17.3996 4.36829 17.3996 9.0001C17.3996 13.6319 13.6314 17.4001 8.99963 17.4001C7.17247 17.4001 5.38042 16.7955 3.92683 15.6937L1.10611 17.3537C1.05328 17.3847 0.994384 17.4001 0.93565 17.4001ZM2.28359 12.8213C2.32691 12.8974 2.33888 12.9874 2.31706 13.0722L1.46443 16.3631L3.78296 14.9986C3.83578 14.9674 3.89468 14.9522 3.95342 14.9522C4.02823 14.9522 4.10288 14.9771 4.16391 15.0263C5.54958 16.1397 7.2217 16.7281 8.99964 16.7281C13.2608 16.7281 16.7276 13.2613 16.7276 9.00014C16.7276 4.73895 13.2608 1.27215 8.99964 1.27215C4.73845 1.27215 1.27166 4.73895 1.27166 9.00014C1.27166 10.3392 1.6216 11.6606 2.28359 12.8213Z" fill="white" stroke="white" stroke-width=".48"/><path d="M9 5.1001C9.33106 5.10031 9.5994 5.36865 9.59961 5.69971V8.3999H12.2998C12.6311 8.40001 12.8994 8.66918 12.8994 9.00049C12.8992 9.33161 12.631 9.59999 12.2998 9.6001H9.59961V12.3003C9.5995 12.6314 9.33113 12.8997 9 12.8999C8.66869 12.8999 8.39952 12.6316 8.39941 12.3003V9.6001H5.69922C5.36816 9.59989 5.09982 9.33155 5.09961 9.00049C5.09961 8.66925 5.36803 8.40011 5.69922 8.3999H8.39941V5.69971C8.39963 5.36852 8.66876 5.1001 9 5.1001Z" fill="white"/></svg>Create New Chat';
   (function () {                                              // the launcher nav and the hub nav share one look; “AI Agent” / “Explore” switch screens
     var items = $('nav').querySelectorAll('.it'); items[1].id = 'nav-ai';
     Array.prototype.forEach.call(items, function (it, i) { var c = it.cloneNode(true); c.id = ['hnav-ex', 'hnav-ai', 'hnav-tools', 'hnav-hist'][i]; $('hub-nav').appendChild(c); });
@@ -2525,12 +2525,12 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   }
   drawPills(); syncHubSend();
 
-  /* B-4: ☰ → chats drawer (Video Creator / Basic Editor mixed, tagged); tap the dark glass to close; each chat opens a mock page */
-  var HIST = [['Today', [['H1', 'UGC Video: Firming Vegan Collagen Prep Serum', 'v', 'media/skin-renewal-effect.jpg'], ['H2', 'enhance the video', 'b', 'media/teatime-date.jpg']]],
-              ['Yesterday', [['H3', 'Creative: Pet Diary', 'v', 'media/Pet_storyboard.jpg'], ['H4', 'turn my photo into a video', 'b', 'media/bonjour-selfie.jpg'], ['H5', 'crop the photo and keep the girl in my photo', 'b', 'media/model-picked.jpg']]]];
-  $('drw-ls').innerHTML = HIST.map(function (g) {
-    return '<div class="g">' + g[0] + '</div>' + g[1].map(function (it) {
-      return '<button class="it" data-h="' + it[0] + '"><img src="' + it[3] + '" alt=""><span class="t"><b>' + esc(it[1]) + '</b><span class="tag ' + it[2] + '">' + (it[2] === 'v' ? 'Video Creator' : 'Basic Editor') + '</span></span></button>'; }).join(''); }).join('');
+  /* B-4: ☰ → chats drawer (AI Create / AI Edit mixed, tagged); tap the dark glass to close; each chat opens a mock page */
+  var HIST = [['Today', [['H1', 'UGC Video: Firming Vegan Collagen Prep Serum', 'v', 'media/hist-ugc.jpg'], ['H2', 'enhance the video', 'b']]],          // Figma B-4: only AI Create chats carry a thumbnail
+              ['Yesterday', [['H3', 'Creative: Pet Diary', 'v', 'media/hist-pet.jpg'], ['H4', 'turn my photo into a video', 'b'], ['H5', 'crop the photo and keep the girl in my photo', 'b']]]];
+  $('drw-ls').innerHTML = HIST.map(function (g, gi) {
+    return '<div class="grp' + (gi === 0 ? ' new' : '') + '"><div class="g">' + g[0] + '</div>' + g[1].map(function (it) {
+      return '<button class="it" data-h="' + it[0] + '">' + (it[3] ? '<img src="' + it[3] + '" alt="">' : '') + '<span class="t"><b>' + esc(it[1]) + '</b><span class="tag ' + it[2] + '">' + (it[2] === 'v' ? 'AI Create' : 'AI Edit') + '</span></span></button>'; }).join('') + '</div>'; }).join('');
   function openDrawer() { if (S.busy || S.agent) return; closeCompose(); $('hub-drw').classList.add('in'); hideHint(); scheduleHint(); }
   function closeDrawer() { var d = $('hub-drw'); if (!d.classList.contains('in')) return; d.classList.remove('in'); hideHint(); scheduleHint(); }
   $('hub-menu').onclick = openDrawer; $('drw-scr').onclick = closeDrawer; $('drw-new').onclick = closeDrawer;
