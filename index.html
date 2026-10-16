@@ -699,6 +699,18 @@ html.no-set .ic-set { display: none !important; }   /* boss 2026-10-07: v1 has n
 #hub-dim { position: absolute; inset: 0; z-index: 45; background: rgba(0,0,0,.7); opacity: 0; pointer-events: none; transition: opacity .25s var(--ease-io); }
 #hub.compose #hub-dim { opacity: 1; pointer-events: auto; }
 #hub.compose .hub-in .gr { color: #fff; }
+/* B-3 (2026-10-16): typing state swaps the greeting for skill pills; a picked pill fills the card with that skill's requirements */
+.hub-pills { display: none; gap: 6px; margin: 0 -16px 10px; padding: 0 16px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.hub-pills::-webkit-scrollbar { display: none; }
+#hub.compose .hub-pills { display: flex; }
+#hub.compose .hub-in .gr { display: none; }
+.hpill { flex: none; height: 28px; padding: 0 14px; border-radius: 999px; border: 1px solid #ddd; background: #fff; color: #15171f;
+  font: 510 12px/14px var(--sf); white-space: nowrap; transition: background .18s var(--ease-io), color .18s var(--ease-io), border-color .18s var(--ease-io); }
+.hpill.on { background: var(--brand); border-color: var(--brand); color: #fff; }
+#hub-rc { display: none; height: 87px; padding: 0 12px; overflow: hidden; }
+.hub-card.rc textarea { display: none; }
+#hub.compose .hub-card.rc #hub-rc { display: block; }
+#hub-snd.ic-send:not(.on) { opacity: .5; }
 .drw { position: absolute; inset: 0; z-index: 50; pointer-events: none; }
 .drw .scr { position: absolute; inset: 0; background: rgba(0,0,0,.7); opacity: 0; transition: opacity .3s var(--ease-io); }
 .drw .pn { position: absolute; top: 0; bottom: 0; right: 0; width: 256px; background: #fff; transform: translateX(100%); transition: transform .34s var(--ease-out); display: flex; flex-direction: column; }
@@ -863,7 +875,9 @@ img.lofi, video.lofi { filter: blur(1.4px) contrast(.86) saturate(.78) brightnes
     <div id="hub-dim"></div>
     <div class="hub-in" id="hub-in">
       <div class="gr" id="hub-gr">What should we polish today?</div>
+      <div class="hub-pills" id="hub-pills"></div>
       <div class="hub-card" id="hub-card">
+        <div id="hub-rc"></div>
         <textarea id="hub-ta" rows="2" enterkeyhint="send" placeholder="Upload a photo or video and tell me what to fix"></textarea>
         <div class="btm"><span id="hub-add"></span><div class="rr"><span id="hub-mic"></span><span id="hub-snd" role="button" aria-label="Send"></span></div></div>
       </div>
@@ -1494,7 +1508,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   }
   function closeSheet(cb) {
     if (!S.sheet) return;
-    var o = $(S.sheet); o.classList.add('closing'); o.classList.remove('open'); S.sheet = null; S.pickFor = null;
+    var o = $(S.sheet); o.classList.add('closing'); o.classList.remove('open'); S.sheet = null; S.pickFor = null; S.linkFor = null;
     if (S.agent && S.onAgentPick) S.agentHint = $('ag-pic');             // closed the picker without a photo → point at the chat's photo button
     setTimeout(function () { o.classList.remove('closing'); if (typeof cb === 'function') cb(); scheduleHint(); }, 260);
   }
@@ -1530,6 +1544,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   }
   function submitLink() {
     var u = LINK.text.trim();
+    if (S.linkFor === 'hub') { S.linkFor = null; closeSheet(function () { HUB.rc.url = u || null; if (u) HUB.rc.product = false; drawRecipe(); }); return; }
     closeSheet(function () {
       if (u) S.product = { type: 'url', url: u };
       else if (S.product && S.product.type === 'url') S.product = null;   // cleared → back to the 🔗 Product URL chip
@@ -1597,6 +1612,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
       closeSheet(function () { if (done) done(); }); return;
     }
     var slot = S.pickFor; S.busy = true; hideHint();
+    var hubSlot = slot.indexOf('hub:') === 0 ? slot.slice(4) : null;
     var from = frameXY(cellBtn), p = cellXY(r, c);
     var fly = el('div', 'fly');
     fly.style.backgroundImage = 'url("' + GRID[id].src + '")';
@@ -1604,7 +1620,8 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     fly.style.left = from.x + 'px'; fly.style.top = from.y + 'px';
     $('frame').appendChild(fly);
     closeSheet();
-    var slotEl = document.querySelectorAll('#ic-type .pchip .ph')[slot === 'model' ? 0 : 1];
+    var slotEl = hubSlot ? (document.querySelector('#hub-rc [data-slot="' + hubSlot + '"]') || document.querySelector('#hub-rc .tok') || $('hub-rc'))
+      : document.querySelectorAll('#ic-type .pchip .ph')[slot === 'model' ? 0 : 1];
     requestAnimationFrame(function () { requestAnimationFrame(function () {
       var to = frameXY(slotEl), k = 44 / CELL.h;
       fly.style.transform = 'translate(' + (to.x - from.x) + 'px,' + (to.y - from.y) + 'px) scale(' + k + ')';
@@ -1612,8 +1629,8 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
       fly.style.boxShadow = '0 0 0 rgba(0,0,0,0)';
     }); });
     setTimeout(function () {                                   // photo lands → the slot updates underneath it
-      if (slot === 'model') S.model = 'picked'; else { S.product = { type: 'photo' }; S.didPhoto = true; }
-      renderInput();
+      if (hubSlot) hubPicked(hubSlot);
+      else { if (slot === 'model') S.model = 'picked'; else { S.product = { type: 'photo' }; S.didPhoto = true; } renderInput(); }
     }, 440);
     setTimeout(function () { fly.style.opacity = 0; }, 480);
     setTimeout(function () { fly.remove(); S.busy = false; scheduleHint(); }, 700);
@@ -1740,6 +1757,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     }
   };
   var TG = function (s) { return '<span class="tgi">' + s + '</span>'; };
+  function preImgs(pre, photo) { return pre && pre.url && !pre.photo ? [] : [photo]; }   // a product link from the hub: no photo, the link is the product
   var PRODUCT_NAME = 'Firming Vegan Collagen Prep Serum';
   var PRODUCT_DESC = 'Firming Vegan Collagen Prep Serum is a lightweight, fast-absorbing treatment that helps skin look firmer, smoother, and more supple. Powered by vegan collagen and hydrating ingredients, it replenishes moisture while improving the appearance of elasticity, texture, and fine lines. Suitable for daily use and all skin types.';
   var ASK_NAME = 'What is the name of this product? The product name helps me write a better script.';
@@ -2191,16 +2209,19 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     F7: async function (token) {
       var cfg = { ratio: S.ratio, dur: S.dur };
       await wait(250);
-      await user(M.userImgs([{ src: IMG.product, tag: '@product' }], 'Create a UGC Review video for ',
-        TG('@product') + '<span class="t12">featuring a model</span>', true), token);
+      var pre = hubPre('F7'), pimg = preImgs(pre, { src: IMG.product, tag: '@product' });
+      if (pre && pre.model) pimg.unshift({ src: IMG.picked, tag: '@model' });
+      await user(M.userImgs(pimg, 'Create a UGC Review video for ',
+        TG(pre && pre.url && !pre.photo ? pre.url.split('/')[0] : '@product') + (pre && pre.model ? '<span class="t12">featuring</span>' + TG('@model') : '<span class="t12">featuring a model</span>'), true), token);
       await think(token, 2600);
       if (CREDIT < 210) { await creditGate(token); await think(token, 1200); }   // demo round 1 (16 credits): top up first, Figma F8 → Buy_1–3
       await say(M.text(S.setDone ? 'Before we start, let me confirm the video settings you picked.' : 'Before we start, let me confirm the video settings. This one is set to ' + cfg.ratio + ' at ' + cfg.dur + ' seconds by default.'), token);
       var a = await ask(settingsQs(cfg), token);
       await think(token, 1600);
+      var MODEL = IMG.picked;
+      if (!(pre && pre.model)) {                              // a model photo added in the hub → nothing to ask
       await say(M.text('Got it. I still need a model for this video. Would you like to upload a photo, or should I create one for you?'), token);
       var m = await ask([{ raw: true, fixed: true, any: true, num: true, q: 'How should we add your model?', o: [['Upload a photo', 'Pick one from your camera roll'], ['Generate one with AI', 'I’ll create a model that fits the product', null, COST.image]] }], token);
-      var MODEL = IMG.picked;
       if (m[0][2] === 1) {                                    // AI model: Next showed and charged -25 (character image); the agent makes one
         await user(M.answers([['', 'Generate one with AI']]), token);
         MODEL = IMG.sample;
@@ -2208,6 +2229,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
         S.pickFor = 'agent'; S.agentHint = null; S.agentDone = false; openSheet('ov-recents');
         await new Promise(function (res) { S.onAgentPick = res; }); alive(token);
         await user(M.userPhoto(IMG.picked), token);
+      }
       }
       await think(token, 1600);
       await say(M.assets('Here’s what I’ll work with:', [{ src: MODEL, tag: '@model' }, { src: IMG.product, tag: '@product', fit: true }],
@@ -2271,8 +2293,9 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     F9: async function (token) {
       var cfg = { ratio: '9:16', dur: 15 };
       await wait(250);
-      await greetAndUpload('Hi there! 👋 I’m your AI Shorts agent. Send me a photo of <span class="pick">your product</span>, and I’ll turn it into a polished showcase video. ✨', 'ov-product', [1, 0], token);
-      await user(M.userImgs([{ src: 'media/agent-f9-bag.png', tag: '@product', fit: true }], 'Create product showcase storyboard ', 'infographic for' + TG('@product')), token);
+      var pre = hubPre('F9');
+      if (!pre) await greetAndUpload('Hi there! 👋 I’m your AI Shorts agent. Send me a photo of <span class="pick">your product</span>, and I’ll turn it into a polished showcase video. ✨', 'ov-product', [1, 0], token);
+      await user(M.userImgs(preImgs(pre, { src: 'media/agent-f9-bag.png', tag: '@product', fit: true }), 'Create product showcase storyboard ', 'infographic for' + TG(pre && pre.url && !pre.photo ? pre.url.split('/')[0] : '@product')), token);
       await think(token, 2600);
       if (CREDIT < 210) { await creditGate(token); await think(token, 1200); }
       await say(M.text('Before we start, let me confirm the video settings. This template is set to 9:16 at 15 seconds.'), token);
@@ -2359,7 +2382,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     $('hub-sw').classList.toggle('create', m === 'create');
     $('sw-edit').classList.toggle('on', m === 'edit'); $('sw-create').classList.toggle('on', m === 'create');
     $('qs-edit').classList.toggle('off', m !== 'edit'); $('qs-create').classList.toggle('off', m !== 'create');
-    $('hub-gr').textContent = HUB_COPY[m][0]; $('hub-ta').placeholder = HUB_COPY[m][1];
+    $('hub-gr').textContent = HUB_COPY[m][0]; $('hub-ta').placeholder = HUB_COPY[m][1]; if (typeof drawPills === 'function') { HUB.sel = null; $('hub-card').classList.remove('rc'); drawPills(); drawRecipe(); syncHubSend(); }
     scheduleHint();
   }
   $('sw-edit').onclick = function () { setHubMode('edit'); }; $('sw-create').onclick = function () { setHubMode('create'); };
@@ -2381,13 +2404,13 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     var h = $('hub'); if (h.classList.contains('compose')) return;
     var ib = $('hub-in'), k = frameScale(), r = ib.getBoundingClientRect(), hr = h.getBoundingClientRect();
     var curTop = (r.top - hr.top) / k, target = Math.max(parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--safe-top')) || 44, 0) + 190;
-    h.classList.add('compose'); ib.style.transform = 'translateY(' + Math.round(target - curTop + 65) + 'px)';   // +65: the card grows upward (22 → 87 typing area) while anchored at the bottom
+    h.classList.add('compose'); ib.style.transform = 'translateY(' + Math.round(target - curTop + 77) + 'px)';   // +77: pill row (+12) and typing area 22 → 87 (+65); the block is anchored at the bottom
     hideHint(); $('hub-ta').focus({ preventScroll: true });
   }
-  function closeCompose() { var h = $('hub'); if (!h.classList.contains('compose')) return; h.classList.remove('compose'); $('hub-in').style.transform = ''; $('hub-ta').blur(); scheduleHint(); }
+  function closeCompose() { var h = $('hub'); if (!h.classList.contains('compose')) return; h.classList.remove('compose'); selPill(null); $('hub-in').style.transform = ''; $('hub-ta').blur(); scheduleHint(); }
   $('hub-card').addEventListener('click', function (e) {
     if (!$('hub').classList.contains('compose')) { openCompose(); return; }
-    if (e.target.closest('#hub-snd')) sendTyped();
+    if (e.target.closest('#hub-snd')) { if (HUB.sel) sendRecipe(); else sendTyped(); }
   });
   $('hub-ta').addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendTyped(); } });
   $('hub-dim').onclick = closeCompose;
@@ -2395,6 +2418,70 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     var v = $('hub-ta').value.trim(); if (!v) return;
     S.typed = v; S.typedMode = HUB.mode; $('hub-ta').value = ''; closeCompose(); setTimeout(function () { openAgent('T'); }, 120);
   }
+
+  /* B-3 skill pills → requirement recipe (same chips as the launcher input: tap a chip → picker / link sheet; send never blocks) */
+  var RCP = {                                                 // slot: what the chip asks for; src: the photo it resolves to (matches that skill's chat)
+    F7: { lead: 'Create a UGC before-and-after video for', url: true, tail: ['featuring', 'model'], prod: IMG.product, model: IMG.picked },
+    C2: { lead: 'Create a step-by-step tutorial video for', url: true, prod: IMG.product },
+    F9: { lead: 'Create a product showcase ad for', url: true, prod: 'media/agent-f9-bag.png' },
+    C4: { lead: 'Create a demo video showing the problem', after: 'solves.', prod: 'media/product-demo-watch.jpg' },
+    C5: { lead: 'Create a cinematic brand ad for', prod: 'media/luxe-product-reveal.jpg' },
+    C6: { lead: 'Create an unboxing and first-use video for', prod: 'media/themed-sale-unbox.jpg' },
+    C7: { lead: 'Remix', one: ['person', 'Person image', 'media/fashion-ava.jpg'], after: 'into a short action clip.' },
+    E1: { lead: 'Turn', one: ['photo', 'Photo', 'media/bonjour-selfie.jpg'], after: 'into a video.' },
+    E2: { lead: 'Enhance the quality of', one: ['photo', 'Photo', 'media/model-picked.jpg'], lofi: true },
+    E3: { lead: 'Enhance the quality of', one: ['video', 'Video', 'media/teatime-date.jpg'], lofi: true },
+    E4: { lead: 'Remove unwanted objects or people from', one: ['photo', 'Photo', 'media/ugc-hand-gesture.jpg'] }
+  };
+  var PILLS = { create: [['F7', 'UGC Review'], ['C2', 'UGC Tutorial'], ['F9', 'Product Showcase Ad'], ['C4', 'Product Demo & Solution'], ['C5', 'Cinematic Brand Ad'], ['C6', 'Unboxing & First-Use'], ['C7', 'Person Action Remix']],
+                edit: [['E1', 'Turn my photo into a video'], ['E2', 'Enhance photo quality'], ['E3', 'Enhance video quality'], ['E4', 'Remove unwanted objects or people']] };
+  HUB.sel = null; HUB.rc = {};
+  function drawPills() {
+    $('hub-pills').innerHTML = PILLS[HUB.mode].map(function (p) { return '<button class="hpill' + (HUB.sel === p[0] ? ' on' : '') + '" data-p="' + p[0] + '">' + esc(p[1]) + '</button>'; }).join('');
+    Array.prototype.forEach.call($('hub-pills').children, function (b) { b.onclick = function (e) { e.stopPropagation(); selPill(HUB.sel === b.dataset.p ? null : b.dataset.p); }; });
+  }
+  function selPill(id) {                                      // pick → typed text is cleared and the skill's requirements fill the card; tap again / another pill → released
+    HUB.sel = id; HUB.rc = {};
+    $('hub-ta').value = ''; $('hub-card').classList.toggle('rc', !!id);
+    if (id) $('hub-ta').blur();
+    drawPills(); drawRecipe(); syncHubSend();
+  }
+  function drawRecipe() {
+    var box = $('hub-rc'); box.innerHTML = ''; if (!HUB.sel) return;
+    var c = RCP[HUB.sel], R = HUB.rc, tx = el('div', 'ic-text');
+    function chip(label, slot) { var b = el('button', 'chip', label); b.dataset.slot = slot; b.onclick = function (e) { e.stopPropagation(); hubPick(slot); }; return b; }
+    function tok(label, fn) { var b = el('button', 'tok', label); b.onclick = function (e) { e.stopPropagation(); fn(); }; return b; }
+    tx.appendChild(el('span', 'lead', esc(c.lead)));
+    if (c.one) {
+      tx.appendChild(R[c.one[0]] ? tok('@' + c.one[1].split(' ')[0] + ' 1', function () { hubPick(c.one[0]); }) : chip('+ ' + c.one[1], c.one[0]));
+    } else if (R.url) tx.appendChild(tok(R.url.split('/')[0], hubLink));
+    else if (R.product) tx.appendChild(tok('@Product 1', function () { hubPick('product'); }));
+    else {
+      var g = el('span', 'grp'); g.appendChild(chip('+ Product image', 'product'));
+      if (c.url) { g.appendChild(el('span', null, 'or')); var u = el('button', 'chip', '🔗 Product URL'); u.onclick = function (e) { e.stopPropagation(); hubLink(); }; g.appendChild(u); }
+      tx.appendChild(g);
+    }
+    if (c.tail) { var f = el('span', 'grp'); f.appendChild(el('span', null, c.tail[0])); f.appendChild(R.model ? tok('@Model 1', function () { hubPick('model'); }) : chip('+ Model Image', 'model')); tx.appendChild(f); }
+    tx.appendChild(el('span', null, esc(c.after || '.')));    // Figma keeps the full stop as its own piece after the last chip
+    box.appendChild(tx);
+  }
+  function syncHubSend() { $('hub-snd').classList.toggle('on', !!HUB.sel || !!$('hub-ta').value.trim()); }
+  $('hub-snd').classList.add('ic-send');
+  $('hub-ta').addEventListener('input', syncHubSend);
+  function hubPick(slot) { if (S.busy || S.sheet) return; S.pickFor = 'hub:' + slot; openSheet(slot === 'product' ? 'ov-product' : 'ov-recents'); }
+  function hubLink() { if (S.busy || S.sheet) return; S.linkFor = 'hub'; LINK.text = HUB.rc.url || DEMO_URL; drawLink(); openSheet('ov-link'); }
+  function hubPicked(slot) { HUB.rc[slot] = true; if (slot === 'product') HUB.rc.url = null; drawRecipe(); }
+  function sendRecipe() {                                     // nothing uploaded → the chat asks for it, as when the skill card is tapped
+    var c = RCP[HUB.sel], R = HUB.rc, pre = { id: HUB.sel };
+    if (c.one && R[c.one[0]]) pre.photo = c.one[2];
+    if (R.product) pre.photo = c.prod;
+    if (R.url) pre.url = R.url;
+    if (R.model) pre.model = c.model;
+    S.hubPre = (pre.photo || pre.url || pre.model) ? pre : null;
+    var id = HUB.sel; closeCompose(); setTimeout(function () { openAgent(id); }, 120);
+  }
+  drawPills(); syncHubSend();
+  function hubPre(id) { var p = S.hubPre; S.hubPre = null; return p && p.id === id ? p : null; }
 
   /* B-4: ☰ → chats drawer (Video Creator / Basic Editor mixed, tagged); tap the dark glass to close; each chat opens a mock page */
   var HIST = [['Today', [['H1', 'UGC Video: Firming Vegan Collagen Prep Serum', 'v', 'media/skin-renewal-effect.jpg'], ['H2', 'enhance the video', 'b', 'media/teatime-date.jpg']]],
@@ -2479,6 +2566,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
 
   /* AI Edit chats (Figma inchat_edit): the skill text is already typed; add a photo, send, get the result. Free daily allowance, no credits. */
   async function editCompose(text, src, lofi, cell, token) {
+    if (hubPre(S.which)) { await user(M.userPhotoText(src, text, lofi), token); return; }   // photo already added from the hub pill
     var b = agBtm(), tile = $('cmp-tile'), snd = $('cmp-snd');
     tile.innerHTML = uniqIds(ICONS.cross, '_t') + '<span>Add Photo</span>'; $('cmp-tx').textContent = text;
     b.classList.add('cmp'); $('ag-list').style.paddingBottom = '210px';
@@ -2580,8 +2668,9 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   async function createFlow(c, token) {
     var cfg = { ratio: '9:16', dur: 15 };
     await wait(250);
-    await greetAndUpload(c.greet, c.sheet, c.cell, token);
-    await user(M.userImgs([c.photo], c.l1, c.l2), token);
+    var pre = hubPre(S.which);                                // sent from a hub pill with the material already added → no upload step
+    if (!pre) await greetAndUpload(c.greet, c.sheet, c.cell, token);
+    await user(M.userImgs(preImgs(pre, c.photo), c.l1, pre && pre.url && !pre.photo ? TG(pre.url.split('/')[0]) : c.l2), token);
     await think(token, 2400);
     if (CREDIT < 210) { await creditGate(token); await think(token, 1200); }
     await say(M.text('Before we start, let me confirm the video settings. This one is set to ' + cfg.ratio + ' at ' + cfg.dur + ' seconds by default.'), token);
