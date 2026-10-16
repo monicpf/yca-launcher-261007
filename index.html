@@ -708,6 +708,7 @@ html.no-set .ic-set { display: none !important; }   /* boss 2026-10-07: v1 has n
   font: 510 12px/14px var(--sf); white-space: nowrap; transition: background .18s var(--ease-io), color .18s var(--ease-io), border-color .18s var(--ease-io); }
 .hpill.on { background: var(--brand); border-color: var(--brand); color: #fff; }
 #hub-rc { display: none; height: 87px; padding: 0 12px; overflow: hidden; }
+#hub-rc .ic-text .lead { width: auto; }
 .hub-card.rc textarea { position: absolute; left: 12px; top: 12px; width: 1px; height: 1px; opacity: 0; pointer-events: none; }   /* stays focused → keyboard stays up */
 #hub.compose .hub-card.rc #hub-rc { display: block; }
 #hub-snd.ic-send:not(.on) { opacity: .5; }
@@ -2372,14 +2373,16 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   var HUB = { mode: 'edit', step: 0 }, FREE = 20;
   var HUB_COPY = { edit: ['What should we polish today?', 'Upload a photo or video and tell me what to fix'], create: ['What story do you want to tell?', 'Describe the video you want to make'] };
   var EDIT_SK = [['E1', 'Turn my photo into a video', 'media/hub-e1.jpg'], ['E2', 'Enhance photo quality', 'media/hub-e2.jpg'],      // 2026-10-16: Monic's batch6 card art (before/after split is in the art)
-                 ['E3', 'Enhance video quality', 'media/hub-e3.jpg'], ['E4', 'Remove unwanted\nobjects or people', 'media/hub-e4.jpg']];
-  var CREATE_SK = [[['F7', 'UGC Review', 'media/hub-f7.jpg'], ['F9', 'Product\nShowcase Ad', 'media/hub-f9.jpg'], ['C4', 'Product Demo\n& Solution', 'media/hub-c4.jpg'], ['C2', 'UGC Tutorial', 'media/hub-c2.jpg']],
-                   [['C5', 'Cinematic\nBrand Ad', 'media/hub-c5.jpg'], ['C6', 'Unboxing &\nFirst-Use', 'media/hub-c6.jpg'], ['C7', 'Person\nAction Remix', 'media/hub-c7.jpg']]];
-  function cardMedia(src) { return '<img src="' + src + '" alt="">'; }   // Monic 2026-10-16: hub thumbnails stay still (no video)
+                 ['E3', 'Enhance video quality', 'media/hub-e3.jpg', null, '50% 20%'], ['E4', 'Remove unwanted\nobjects or people', 'media/hub-e4.jpg']];
+  var CREATE_SK = [[['F7', 'UGC Review', 'media/hub-f7.jpg'], ['F9', 'Product\nShowcase Ad', 'media/hub-f9.jpg', 'media/hub-f9.mp4'], ['C4', 'Product Demo\n& Solution', 'media/hub-c4.jpg', 'media/hub-c4.mp4'], ['C2', 'UGC Tutorial', 'media/hub-c2.jpg']],
+                   [['C5', 'Cinematic\nBrand Ad', 'media/hub-c5.jpg', 'media/hub-c5.mp4'], ['C6', 'Unboxing &\nFirst-Use', 'media/hub-c6.jpg', null, '50% 6%'], ['C7', 'Person\nAction Remix', 'media/hub-c7.jpg']]];
+  function cardMedia(src, vid, pos) {                        // [code, label, image, video?, crop?] — AI Edit cards stay still; 3 AI Create cards play their clip (Monic 2026-10-16)
+    var st = pos ? ' style="object-position:' + pos + '"' : '';
+    return vid ? '<video src="' + vid + '" poster="' + src + '" muted loop autoplay playsinline webkit-playsinline preload="auto"' + st + '></video>' : '<img src="' + src + '" alt=""' + st + '>'; }
   $('qs-edit-grid').innerHTML = EDIT_SK.map(function (s) {
-    return '<button class="qs-e" data-f="' + s[0] + '"><span class="im">' + cardMedia(s[2], s[3]) + '</span><span class="lb">' + esc(s[1]).replace(/\n/g, '<br>') + '</span></button>'; }).join('');
+    return '<button class="qs-e" data-f="' + s[0] + '"><span class="im">' + cardMedia(s[2], s[3], s[4]) + '</span><span class="lb">' + esc(s[1]).replace(/\n/g, '<br>') + '</span></button>'; }).join('');
   $('qs-create-rows').innerHTML = CREATE_SK.map(function (row) {
-    return '<div class="r">' + row.map(function (s) { return '<button class="qs-c" data-f="' + s[0] + '">' + cardMedia(s[2], s[3]) + '<span>' + esc(s[1]) + '</span></button>'; }).join('') + '</div>'; }).join('');
+    return '<div class="r">' + row.map(function (s) { return '<button class="qs-c" data-f="' + s[0] + '">' + cardMedia(s[2], s[3], s[4]) + '<span>' + esc(s[1]) + '</span></button>'; }).join('') + '</div>'; }).join('');
   Array.prototype.forEach.call(document.querySelectorAll('#hub [data-f]'), function (b) { b.onclick = function () { if (!$('hub').classList.contains('compose')) openAgent(b.dataset.f); }; });
 
   function setHubMode(m) {
