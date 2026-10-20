@@ -686,19 +686,18 @@ html.no-set .ic-set { display: none !important; }   /* boss 2026-10-07: v1 has n
 .tl-t .tg { position: absolute; right: 2px; top: 0; }
 .tl-t .tg svg { display: block; }
 .tl-t.live { cursor: pointer; }
-/* AI Shorts icon (2026-10-20 r3): dots 1→2→3 hop fast (typing) → fold into a play button, the star blinks bigger as it lands · 3.2s loop, restarts on open */
+/* AI Shorts icon (2026-10-20 r3): dots 1→2→3 hop fast (typing) → fold into a play button, the star spins once, bigger mid-turn · 3.2s loop, restarts on open */
 .sh-ic .sh-d, .sh-ic .sh-pl, .sh-ic .sh-st { transform-box: fill-box; transform-origin: 50% 50%; }
 .sh-ic .sh-pl { opacity: 0; }
 .sh-ic.run .sh-d, .sh-ic.run .sh-pl, .sh-ic.run .sh-st { animation-duration: 3.2s; animation-iteration-count: infinite; animation-fill-mode: both; animation-timing-function: cubic-bezier(.5,0,.5,1); }
 .sh-ic.run .sh-d1 { animation-name: shD1; } .sh-ic.run .sh-d2 { animation-name: shD2; } .sh-ic.run .sh-d3 { animation-name: shD3; }
 .sh-ic.run .sh-pl { animation-name: shPl; } .sh-ic.run .sh-st { animation-name: shSt; }
 /* each hop 0.3s: up fast (ease-out), down with gravity (ease-in), 0.13s apart */
-@keyframes shD1 { 0%, 2% { transform: none; animation-timing-function: cubic-bezier(.2,.8,.4,1); } 6.5% { transform: translateY(-4px) scale(1.4); animation-timing-function: cubic-bezier(.6,0,.8,.5); } 11.5%, 30% { transform: none; opacity: 1; animation-timing-function: cubic-bezier(.5,0,.5,1); } 36%, 88% { transform: translateX(4.5px) scale(0); opacity: 0; } 100% { transform: none; opacity: 1; } }
-@keyframes shD2 { 0%, 6% { transform: none; animation-timing-function: cubic-bezier(.2,.8,.4,1); } 10.5% { transform: translateY(-4px) scale(1.4); animation-timing-function: cubic-bezier(.6,0,.8,.5); } 15.5%, 30% { transform: none; opacity: 1; animation-timing-function: cubic-bezier(.5,0,.5,1); } 36%, 88% { transform: scale(0); opacity: 0; } 100% { transform: none; opacity: 1; } }
-@keyframes shD3 { 0%, 10% { transform: none; animation-timing-function: cubic-bezier(.2,.8,.4,1); } 14.5% { transform: translateY(-4px) scale(1.4); animation-timing-function: cubic-bezier(.6,0,.8,.5); } 19.5%, 30% { transform: none; opacity: 1; animation-timing-function: cubic-bezier(.5,0,.5,1); } 36%, 88% { transform: translateX(-4.5px) scale(0); opacity: 0; } 100% { transform: none; opacity: 1; } }
+@keyframes shD1 { 0%, 2% { transform: none; animation-timing-function: cubic-bezier(.3,.6,.4,1); } 6.5% { transform: translateY(-3px) scale(1.25); animation-timing-function: cubic-bezier(.6,0,.7,.4); } 11.5%, 30% { transform: none; opacity: 1; animation-timing-function: cubic-bezier(.5,0,.5,1); } 36%, 88% { transform: translateX(4.5px) scale(0); opacity: 0; } 100% { transform: none; opacity: 1; } }
+@keyframes shD2 { 0%, 6% { transform: none; animation-timing-function: cubic-bezier(.3,.6,.4,1); } 10.5% { transform: translateY(-3px) scale(1.25); animation-timing-function: cubic-bezier(.6,0,.7,.4); } 15.5%, 30% { transform: none; opacity: 1; animation-timing-function: cubic-bezier(.5,0,.5,1); } 36%, 88% { transform: scale(0); opacity: 0; } 100% { transform: none; opacity: 1; } }
+@keyframes shD3 { 0%, 10% { transform: none; animation-timing-function: cubic-bezier(.3,.6,.4,1); } 14.5% { transform: translateY(-3px) scale(1.25); animation-timing-function: cubic-bezier(.6,0,.7,.4); } 19.5%, 30% { transform: none; opacity: 1; animation-timing-function: cubic-bezier(.5,0,.5,1); } 36%, 88% { transform: translateX(-4.5px) scale(0); opacity: 0; } 100% { transform: none; opacity: 1; } }
 @keyframes shPl { 0%, 35% { transform: scale(.3); opacity: 0; animation-timing-function: cubic-bezier(.3,1.5,.5,1); } 43%, 84% { transform: none; opacity: 1; } 91%, 100% { transform: scale(.3); opacity: 0; } }
-@keyframes shSt { 0%, 35% { transform: none; opacity: 1; animation-timing-function: ease-in-out; } 40% { transform: scale(1.75); opacity: .3; animation-timing-function: ease-in-out; } 45% { transform: none; opacity: 1; animation-timing-function: ease-in-out; }
-  50% { transform: scale(1.65); opacity: .35; animation-timing-function: ease-in-out; } 55%, 100% { transform: none; opacity: 1; } }
+@keyframes shSt { 0%, 36% { transform: none; animation-timing-function: cubic-bezier(.4,0,.2,1); } 45% { transform: rotate(180deg) scale(1.5); animation-timing-function: cubic-bezier(.4,0,.2,1); } 55%, 100% { transform: rotate(360deg); } }   /* star: one turn as the play lands, bigger mid-turn */
 @media (prefers-reduced-motion: reduce) { .sh-ic.run .sh-d, .sh-ic.run .sh-pl, .sh-ic.run .sh-st { animation: none !important; } }
 
 /* ══ AI Agent hub (Figma YCA_APP_UI 7350:40537 · B-1 AI Edit / B-2 AI Create / B-3 typing / B-4 history) — 2026-10-16 ══ */
