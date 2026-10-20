@@ -1730,8 +1730,9 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
         Rounds 1–2 (Creator / Marketer templates → Agent) arrive with the Agent pages. Add ?nohint to turn off. ── */
   var HINTS_ON = !/[?&]nohint/.test(location.search), hintTimer = null, hintEl = null;
   function hideHint() { clearTimeout(hintTimer); if (hintEl) { hintEl.remove(); hintEl = null; } }
+  var LAST_T = null;                                          // the element the last hint pointed at
   function at(parent, n) {                                    // centre of n, in parent's layout px
-    var k = frameScale(), pr = parent.getBoundingClientRect(), r = n.getBoundingClientRect();
+    LAST_T = n; var k = frameScale(), pr = parent.getBoundingClientRect(), r = n.getBoundingClientRect();
     return { parent: parent, x: (r.left - pr.left + r.width / 2) / k, y: (r.top - pr.top + r.height / 2) / k };
   }
   function hintTarget() {
@@ -1754,7 +1755,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     if (S.sheet === 'ov-set') {
       var sh = document.querySelector('#ov-set .sheet');
       if (SET.ratio !== '3:4') return at(sh, document.querySelector('#st-rat [data-r="3:4"]'));
-      if (SET.dur !== 30) { var k = frameScale(), r = $('sl').getBoundingClientRect(), pr = sh.getBoundingClientRect();
+      if (SET.dur !== 30) { LAST_T = $('sl'); var k = frameScale(), r = $('sl').getBoundingClientRect(), pr = sh.getBoundingClientRect();
         return { parent: sh, x: (r.left - pr.left) / k + TRACK / 2, y: (r.top - pr.top) / k + 4 }; }   // drag to the 30s mark
       return at(sh, $('set-ok'));
     }
@@ -1788,6 +1789,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     var sc = $('scroll'), k = frameScale(), r = card.getBoundingClientRect(), s = sc.getBoundingClientRect();
     var limit = s.bottom - (66 + 16) * k;                                      // keep it clear of the glass nav
     if (r.bottom <= limit && r.top >= s.top + 90 * k) return at(pane, card);
+    LAST_T = card; if (PROBE) return null;
     if (!autoScrolling) {
       autoScrolling = true;
       var dy = (r.bottom - limit) / k;
@@ -1803,12 +1805,22 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     hideHint();
     hintTimer = setTimeout(function () {
       if (S.busy) { scheduleHint(); return; }
-      var tg = hintTarget(); if (!tg || !tg.parent) return;
+      var tg;
+      if (launcherCtx() && !S.hubSeen) tg = at($('nav'), $('nav-ai'));   // 2026-10-20: first visit → only AI Agent is pointed at
+      else { tg = hintTarget(); if (launcherCtx() && !S.nudge) return; }    // after the hub: launcher hints only show after a wrong tap
+      if (!tg || !tg.parent) return;
       hintEl = el('div', 'hint'); hintEl.appendChild(el('i'));
       hintEl.style.left = tg.x + 'px'; hintEl.style.top = tg.y + 'px';
       tg.parent.appendChild(hintEl);
     }, 600);
   }
+  function launcherCtx() { return !S.hub && !S.agent && !S.tools; }
+  var PROBE = false;
+  $('frame').addEventListener('click', function (e) {          // a tap (not a scroll drag) somewhere other than the next step → the launcher hint shows
+    if (!HINTS_ON || !launcherCtx() || !S.hubSeen) return;
+    PROBE = true; LAST_T = null; var t = hintTarget(); PROBE = false;
+    S.nudge = !!(LAST_T && !LAST_T.contains(e.target)); if (S.nudge) { hideHint(); scheduleHint(); }
+  }, true);
   $('frame').addEventListener('pointerdown', function () { hideHint(); scheduleHint(); }, true);
   $('scroll').addEventListener('scroll', function () { if (hintEl && hintEl.parentNode === $('pro')) { hideHint(); scheduleHint(); } }, { passive: true });
 
@@ -2485,7 +2497,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   $('sw-edit').onclick = function () { HUB.step = 1; setHubMode('edit'); }; $('sw-create').onclick = function () { HUB.step = 1; setHubMode('create'); };   // any tap on the switcher ends the hub guidance
   function openHub() {
     if (S.busy || S.agent || S.sheet || S.hub) return;
-    hideHint(); S.hub = true; HUB.step = 0; setHubMode('edit'); $('qs-create-sc').scrollLeft = 0; $('qs-edit-sc').scrollLeft = 0;
+    hideHint(); S.hub = true; S.hubSeen = true; S.nudge = false; HUB.step = 0; setHubMode('edit'); $('qs-create-sc').scrollLeft = 0; $('qs-edit-sc').scrollLeft = 0;
     var h = $('hub'); h.removeAttribute('aria-hidden'); h.classList.add('in'); $('launcher').classList.add('away'); scheduleHint();
   }
   function closeHub() {                                       // Explore → the launcher; the guided demo starts over from round 0
