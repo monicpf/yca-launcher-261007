@@ -1951,7 +1951,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     FB = null; LASTA = null;
     if (S.busy || S.agent) return; S.busy = true; hideHint();
     var pill = S.hubPre && S.hubPre.id === which;
-    if (/^E\d$/.test(which) && !(pill && S.hubPre.photo)) kbUp();   // AI Edit chats open on the compose with the keyboard up
+    if (/^E\d$/.test(which) && !pill) kbUp();               // AI Edit chats (not from the hub) open on the compose with the keyboard up
     var list = $('ag-list'); list.innerHTML = ''; $('ag-scroll').scrollTop = 0;
     S.fromHub = !!S.hub; $(S.fromHub ? 'hub' : 'launcher').classList.add('pushed'); $('agent').classList.add('in');
     agBtm().classList.toggle('free', /^E|^H[245]$/.test(which) || (which === 'T' && S.typedMode === 'edit'));   // AI Edit = old Agent: free daily allowance
@@ -2697,7 +2697,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     if (R.model) pre.model = c.model;
     if (/^E/.test(HUB.sel)) pre.text = $('hub-ta').value.trim();   // Image/Video: the (edited) prompt goes into the chat
     S.hubPre = pre;                                           // the chat runs the pill demo (first step only)
-    if (/^E/.test(pre.id) && !pre.photo) kbUp(); else $('hub-ta').blur();   // Image/Video without a photo opens on the compose: keep the keyboard up
+    $('hub-ta').blur();                                       // 2026-10-20: every send opens as a user message, so the keyboard goes down
     var id = HUB.sel; openAgent(id);
     setTimeout(function () { closeCompose(); selPill(null); setHubPhoto(null); }, 460);   // reset only once the chat covers the hub
   }
@@ -2929,7 +2929,14 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     await wait(250);
     if (/^E/.test(id)) {
       var said = p.text || label;
-      if (!p.photo) { showCompose(said); $('cmp-tx').scrollTop = 0; placeAgentCompose(); await say(M.editGreet(), token); var sc = $('ag-scroll'); sc.scrollTo({ top: sc.scrollHeight, behavior: 'smooth' }); finish(token); return; }   // compose + keyboard right away; the greeting types in above   // Add Photo + the prompt + keyboard; the guide points at Back
+      if (!p.photo) {                                         // 2026-10-20 (Monic): no photo → the prompt is the user's message; the agent thinks, then asks for the photo
+        await user('<div class="u-bub ans"><div class="bub' + (said.length > 180 ? ' clamp"><span class="clp">' + esc(said) + '</span>' : '">' + esc(said)) + '</div></div>', token);
+        await think(token, 1600);
+        await say(M.text({ E1: 'Love it! Upload the photo you’d like to turn into a video.', E2: 'Sure! Upload the photo you’d like me to enhance.', E3: 'Sure! Upload the video you’d like me to enhance.',
+          E4: 'Got it. Upload the photo you’d like me to clean up.', E5: 'Sounds lovely! Upload a photo of yourself and I’ll place you in the scene.', E6: 'Fun! Upload a clear photo of yourself for the 9 looks.',
+          E7: 'Sure! Upload the photos you’d like to combine into one.' }[id]), token);
+        finish(token); return;
+      }
       await user(M.userPhotoText(p.photo, said, c.lofi, null, said.length > 180), token);
       await think(token, 1600);
       var Q = {
