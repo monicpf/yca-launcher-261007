@@ -692,6 +692,7 @@ html.no-set .ic-set { display: none !important; }   /* boss 2026-10-07: v1 has n
 /* AI Shorts icon (2026-10-20 r3): dots 1→2→3 hop fast (typing) → fold into a play button, the star spins once, bigger mid-turn · 3.2s loop, restarts on open */
 .sh-ic .sh-d, .sh-ic .sh-pl, .sh-ic .sh-st { transform-box: fill-box; transform-origin: 50% 50%; }
 .sh-ic .sh-pl { opacity: 0; }
+.sh-ic { overflow: visible; }                                 /* the spinning star grows past the 22px box — don't clip it */
 .sh-ic.run .sh-d, .sh-ic.run .sh-pl, .sh-ic.run .sh-st { animation-duration: 3.2s; animation-iteration-count: infinite; animation-fill-mode: both; animation-timing-function: cubic-bezier(.5,0,.5,1); }
 .sh-ic.run .sh-d1 { animation-name: shD1; } .sh-ic.run .sh-d2 { animation-name: shD2; } .sh-ic.run .sh-d3 { animation-name: shD3; }
 .sh-ic.run .sh-pl { animation-name: shPl; } .sh-ic.run .sh-st { animation-name: shSt; }
