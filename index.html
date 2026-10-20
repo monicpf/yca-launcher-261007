@@ -1633,7 +1633,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   }
   function submitLink() {
     var u = LINK.text.trim();
-    if (S.linkFor === 'hub') { $('hub-ta').focus({ preventScroll: true }); S.linkFor = null; closeSheet(function () { HUB.rc.url = u || null; if (u) HUB.rc.product = false; drawRecipe(); }); return; }
+    if (S.linkFor === 'hub') { if ($('hub').classList.contains('compose')) $('hub-ta').focus({ preventScroll: true }); S.linkFor = null; /* card at rest → no keyboard */ closeSheet(function () { HUB.rc.url = u || null; if (u) HUB.rc.product = false; drawRecipe(); }); return; }
     closeSheet(function () {
       if (u) S.product = { type: 'url', url: u };
       else if (S.product && S.product.type === 'url') S.product = null;   // cleared → back to the 🔗 Product URL chip
@@ -2711,6 +2711,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     $('buy').classList.remove('in'); $('cr-toast').classList.remove('show');
     Array.prototype.forEach.call(document.querySelectorAll('#ag-list video'), function (v) { v.pause(); });
     $('agent').classList.remove('in'); $('hub').classList.remove('pushed');
+    if (document.activeElement && document.activeElement.blur) document.activeElement.blur();   // back on the hub at rest: no keyboard
     S.agent = false; S.agentDone = false; S.fromHub = false; hideHint();
     setTimeout(function () { $('ag-list').innerHTML = ''; $('ag-list').style.paddingBottom = ''; agBtm().classList.remove('cmp', 'free', 'tall'); agBtm().style.transform = ''; agBtm()._lift = 0; S.busy = false; scheduleHint(); }, 420);
   }
