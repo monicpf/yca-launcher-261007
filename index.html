@@ -1704,27 +1704,10 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     var slot = S.pickFor; S.busy = true; hideHint();
     var hubSlot = slot.indexOf('hub:') === 0 ? slot.slice(4) : null;
     if (hubSlot && $('hub').classList.contains('compose')) $('hub-ta').focus({ preventScroll: true });   // picked from the card at rest → no keyboard
-    var from = frameXY(cellBtn), p = cellXY(r, c);
-    var fly = el('div', 'fly');
-    fly.style.backgroundImage = 'url("' + GRID[id].src + '")';
-    fly.style.backgroundSize = '320px 507px'; fly.style.backgroundPosition = (-p.x) + 'px ' + (-p.y) + 'px';
-    fly.style.left = from.x + 'px'; fly.style.top = from.y + 'px';
-    $('frame').appendChild(fly);
-    closeSheet();
-    var slotEl = hubSlot ? (hubSlot === 'photo' ? $('hub-add') : (document.querySelector('#hub-rc [data-slot="' + hubSlot + '"]') || document.querySelector('#hub-rc .tok') || $('hub-rc')))
-      : document.querySelectorAll('#ic-type .pchip .ph')[slot === 'model' ? 0 : 1];
-    requestAnimationFrame(function () { requestAnimationFrame(function () {
-      var to = frameXY(slotEl), k = 44 / CELL.h;
-      fly.style.transform = 'translate(' + (to.x - from.x) + 'px,' + (to.y - from.y) + 'px) scale(' + k + ')';
-      fly.style.borderRadius = (8 / k) + 'px';
-      fly.style.boxShadow = '0 0 0 rgba(0,0,0,0)';
-    }); });
-    setTimeout(function () {                                   // photo lands → the slot updates underneath it
-      if (hubSlot) hubPicked(hubSlot);
-      else { if (slot === 'model') S.model = 'picked'; else { S.product = { type: 'photo' }; S.didPhoto = true; } renderInput(); }
-    }, 440);
-    setTimeout(function () { fly.style.opacity = 0; }, 480);
-    setTimeout(function () { fly.remove(); S.busy = false; scheduleHint(); }, 700);
+    closeSheet();                                             // 2026-10-20 (Monic): no flying thumbnail — the slot just updates as the picker closes
+    if (hubSlot) hubPicked(hubSlot);
+    else { if (slot === 'model') S.model = 'picked'; else { S.product = { type: 'photo' }; S.didPhoto = true; } renderInput(); }
+    setTimeout(function () { S.busy = false; scheduleHint(); }, 280);
   }
 
   /* ── Guide hints (cut version round 0): UGC → Before & After → Model → Product → ✕ product → 🔗 Product URL → send.
