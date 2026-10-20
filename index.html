@@ -2622,12 +2622,12 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   };
   var PROMPT = {                                              // Image/Video skills fill the input with an editable prompt (E1 = Figma AURA prompt; the rest drafted 2026-10-20)
     E1: "High resolution, high quality, Preserve the uploaded face identity and exact hairstyle, but regenerate head ratio to make the size moderate. Apply subtle professional beauty retouching: gently refine the complexion, slightly soften uneven skin texture, brighten underexposed facial areas, reduce dull or yellow undertones, and add a natural healthy glow, pearl stud earrings. Hair with a single delicate rose-gold crystal flower hairpin, catching soft warm highlights. Ensure the person always at the center of magazine cover.\nConcept: viral 3D dreamland art installation — a luxury fashion magazine cover — not a thick book or box, not tilted — with a slim visible edge along its top and side, titled \"AURA\" in embossed 3D rose-gold typography, breaking out of its own 2D frame into physical space.\nFraming & 3D Object Presence: The magazine cover is rendered visible page-edge depth along its top and side, viewed at a slight three-quarter angle so both the printed front face and the dimensional edge are visible, establishing it as a freestanding object in the scene. A grounded contact shadow falls from the ledge and arm onto the floor of roses below, anchoring the object's weight in the scene.\nFX: translucent glass-prism butterflies with rainbow refractions hover near fingertips. The front plane displays a short two-to-three-word editorial coverline match the person's vibe, in fine rose-gold serif type consistent with the masthead style, plus two brief coverline captions tucked near the corners — a kicker line above the masthead and a teaser line near the base — and a subtle vertical barcode motif in the lower corner, fashion-magazine front-cover layout, no date.\nPalette: lavender, baby pink, champagne cream, sky blue. Setting: neoclassical white marble terrace under a bright azure sky, soft top-corner sunlight, a distant minimalist stone archway veiled in pastel-pink clouds. The frame's base emerges from a bed of blush-pink roses, with cascading petals, soap bubbles, and diamond light-dust spilling into the foreground.\nLighting: volumetric god rays casting a golden rim light on her hair and sweater; diamond sparkle dust, rainbow-caustic bubbles, crisp horizontal lens flares on jewelry and the glossy cover edge.\nShot with an 85mm portrait telephoto lens perspective to eliminate wide-angle distortion (moderate natural head size, perfect head-to-shoulder ratio, slender neck). Poised, upright, and centered posture with leveled shoulders. Wearing a soft asymmetric mohair-knit cardigan in dusty lavender draped off one shoulder, with the other shoulder fully covered by the knit, finely spun fluffy fibers catching the light, for a romantic goddess silhouette; a delicate lace-trim camisole underneath; a layered pearl necklace. Both arms rest gracefully and horizontally across the lower marble frame ledge.\nFinish: high resolution, sleek fitted silhouette, slim cover edge with clean minimal typography, natural skin retouching — brighten shadows, neutralize yellow undertones, healthy glow, no wrinkles, camera level and unrotated. Ensure the head must regenerate into a moderate size, no big head. Perfect head-to-body ratio. No date. No cleavage. Retain the input face features and hairstyle. Remove eye bags and dark circles. No under-eye circles",
-    E2: 'Enhance this photo to high resolution: sharpen fine details and textures, remove noise and compression artifacts, correct exposure and white balance, and restore natural skin tones. Keep the face, expression and composition exactly the same.',
+    E2: 'Enhance this photo to high resolution with sharper details, less noise and natural colors, keeping everything else the same.',
     E5: 'Place the person from my photo in a sunny Parisian street café: cream stone buildings with wrought-iron balconies, golden-hour light, a small round table with macarons and flowers. Restyle the outfit to a cream blazer with a silk neck scarf. Keep the face, hairstyle and body proportions the same. Photorealistic, 3:4.',
     E6: 'Create a 3×3 grid of nine portraits of the person in my photo, each with a different look: change the sunglasses, headscarf, hat, outfit color and a solid pastel background in every tile. Keep the same face, hairstyle and camera framing throughout. Bright, playful editorial style.',
-    E3: 'Upscale this video to 1080p: sharpen details frame by frame, reduce noise and flicker, keep color and exposure consistent across shots, and keep motion smooth and natural. Do not change the people, timing or framing.',
-    E4: 'Remove the unwanted objects and people from this photo. Fill the removed areas with background that matches the surrounding texture, lighting and perspective, with no blur, smudges or leftover edges. Keep the main subject untouched.',
-    E7: 'Combine the people and pets from my photos into one natural group photo: same location, consistent lighting, shadows and color, everyone standing together at the right scale. Keep each face, outfit and pose recognizable. Photorealistic, with no visible seams.'
+    E3: 'Upscale this video to 1080p with sharper, cleaner frames and smooth motion, without changing the people or framing.',
+    E4: 'Remove the unwanted objects and people from this photo and fill the gaps seamlessly with matching background.',
+    E7: 'Combine the people and pets from my photos into one natural group photo with consistent lighting and scale.'
   };
   var PILLS = { create: [['F7', 'UGC Review'], ['C2', 'UGC Tutorial'], ['F9', 'Product Showcase Ad'], ['C4', 'Product Demo & Solution'], ['C5', 'Cinematic Brand Ad'], ['C6', 'Unboxing & First-Use'], ['C7', 'Person Action Remix']],
                 edit: [['E1', 'Turn my photo into a video'], ['E2', 'Enhance photo quality'], ['E5', 'Restyle the scene'], ['E6', 'Make a 9-look grid'], ['E3', 'Enhance video quality'], ['E4', 'Remove unwanted objects'], ['E7', 'Combine photos into one']] };
@@ -2923,6 +2923,12 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   /* Hub pill → chat, first step only (2026-10-16). Nothing added → the agent asks for it; material added → the first question. Hint → Back. */
   var PILL_GREET = { F7: 'Hi there! 👋 I’m your AI Shorts agent. Send me a photo of <span class="pick">your product</span> and <span class="pick">a model</span>, and I’ll turn them into a UGC review video. ✨',
     F9: 'Hi there! 👋 I’m your AI Shorts agent. Send me a photo of <span class="pick">your product</span>, and I’ll turn it into a polished showcase video. ✨' };
+  async function chatPick(gn, token) {                        // wait for a photo from the chat's picker (⊕ or an underlined .pick word)
+    Array.prototype.forEach.call(gn ? gn.querySelectorAll('.pick') : [], function (k) { k.onclick = function () { $('ag-pic').onclick(); }; });
+    S.agentSheet = 'ov-recents'; S.pickCell = [1, 1];
+    await new Promise(function (res) { S.onAgentPick = res; S.agentHint = null; S.agentDone = true; scheduleHint(); });
+    alive(token); S.agentSheet = null; S.pickCell = null; S.agentDone = false; hideHint();
+  }
   async function pillFlow(token) {
     var p = S.hubPre; S.hubPre = null;
     var id = p.id, c = RCP[id], label = PILLS.edit.concat(PILLS.create).filter(function (x) { return x[0] === id; })[0][1];
@@ -2932,12 +2938,13 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
       if (!p.photo) {                                         // 2026-10-20 (Monic): no photo → the prompt is the user's message; the agent thinks, then asks for the photo
         await user('<div class="u-bub ans"><div class="bub' + (said.length > 180 ? ' clamp"><span class="clp">' + esc(said) + '</span>' : '">' + esc(said)) + '</div></div>', token);
         await think(token, 1600);
-        await say(M.text({ E1: 'Love it! Upload the photo you’d like to turn into a video.', E2: 'Sure! Upload the photo you’d like me to enhance.', E3: 'Sure! Upload the video you’d like me to enhance.',
-          E4: 'Got it. Upload the photo you’d like me to clean up.', E5: 'Sounds lovely! Upload a photo of yourself and I’ll place you in the scene.', E6: 'Fun! Upload a clear photo of yourself for the 9 looks.',
-          E7: 'Sure! Upload the photos you’d like to combine into one.' }[id]), token);
-        finish(token); return;
-      }
-      await user(M.userPhotoText(p.photo, said, c.lofi, null, said.length > 180), token);
+        var gn = await say(M.text({ E1: 'Love it! Upload <span class="pick">the photo</span> you’d like to turn into a video.', E2: 'Sure! Upload <span class="pick">the photo</span> you’d like me to enhance.',
+          E3: 'Sure! Upload <span class="pick">the video</span> you’d like me to enhance.', E4: 'Got it. Upload <span class="pick">the photo</span> you’d like me to clean up.',
+          E5: 'Sounds lovely! Upload <span class="pick">a photo of yourself</span> and I’ll place you in the scene.', E6: 'Fun! Upload <span class="pick">a clear photo of yourself</span> for the 9 looks.',
+          E7: 'Sure! Upload <span class="pick">the photos</span> you’d like to combine into one.' }[id]), token);
+        await chatPick(gn, token);                            // the underlined words (or ⊕) open the picker, as in AI Shorts
+        await user('<div class="u-imgs"><div class="u-ph"><img src="' + c.photo + '" alt=""' + (c.lofi ? ' class="lofi"' : '') + '><span class="tg">@photo</span></div></div>', token);
+      } else await user(M.userPhotoText(p.photo, said, c.lofi, null, said.length > 180), token);
       await think(token, 1600);
       var Q = {
         E1: ['What a cute photo! Let’s bring it to life. How should it move?', { label: 'Motion', q: 'Which motion style?', o: [['Gentle breeze', 'Hair and clothes sway softly'], ['Slow push-in', 'The camera glides in closer'], ['Playful wave', 'A natural wave and a smile']] }],
@@ -2952,7 +2959,10 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
       if (Q[1]) { Q[1].nohint = true; ask([Q[1]], token).catch(function () {}); }
       finish(token); return;
     }
-    if (!(p.photo || p.url || p.model)) { await say(M.text(PILL_GREET[id] || CR[id].greet), token); finish(token); return; }
+    if (!(p.photo || p.url || p.model)) {                    // nothing attached: greet → the underlined words / ⊕ open the picker → carry on with that photo
+      await chatPick(await say(M.text(PILL_GREET[id] || CR[id].greet), token), token);
+      p.photo = c.one ? c.one[2] : c.prod;
+    }
     var tag = c.one ? '@' + c.one[0] : '@product', imgs = [];
     if (p.model) imgs.push({ src: p.model, tag: '@model' });
     if (p.photo) imgs.push({ src: p.photo, tag: tag, fit: id === 'F9' });
