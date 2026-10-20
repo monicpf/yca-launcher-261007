@@ -651,6 +651,53 @@ html.no-set .ic-set { display: none !important; }   /* boss 2026-10-07: v1 has n
 
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; } }
 
+/* ══ All Tools panel (Figma 7380:32957) — 2026-10-20 ══ */
+#tools { position: absolute; inset: 0; z-index: 70; pointer-events: none; }
+#tools.open { pointer-events: auto; }
+.tl-dim { position: absolute; inset: 0; background: rgba(21,23,31,.3); opacity: 0; transition: opacity .26s var(--ease-io); }
+#tools.open .tl-dim { opacity: 1; }
+.tl-sh { position: absolute; left: 0; right: 0; bottom: 0; top: calc(var(--safe-top) + 56px); background: #fff; border-radius: 20px 20px 0 0; box-shadow: 0 -2px 5px rgba(0,0,0,.2);
+  display: flex; flex-direction: column; transform: translateY(105%); transition: transform .34s var(--ease-out); }
+#tools.open .tl-sh { transform: none; }
+.tl-hd { position: relative; flex-shrink: 0; height: 46px; display: flex; align-items: center; justify-content: center; font: 510 15px var(--sf); color: var(--ink); }
+.tl-hd b { font-weight: 510; }
+.tl-hd button { position: absolute; left: 12px; top: 8px; width: 30px; height: 30px; }
+.tl-hd button svg { display: block; }
+.tl-tabs { flex-shrink: 0; display: flex; justify-content: center; gap: 15px; padding: 2px 0 12px; }
+.tl-tabs button { height: 24px; padding: 4px 16px; border-radius: 100px; font: 510 12px/16px var(--sf); color: var(--ink); opacity: .6; transition: background .18s, color .18s, opacity .18s; }
+.tl-tabs button.on { background: #15171f; color: #fff; opacity: 1; }
+.tl-bd { position: relative; flex: 1; overflow-y: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; padding: 0 16px 60px; }
+.tl-bd::-webkit-scrollbar { display: none; }
+.tl-bd h5 { margin: 4px 0 8px; font: 700 12px var(--sf); color: var(--ink); }
+.tl-rec { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.tl-rec span { height: 24px; padding: 0 10px; border-radius: 100px; background: #eceeff; font: 400 11px/24px var(--sf); color: var(--ink); }
+.tl-sec { width: 288px; padding: 12px; border-radius: 20px; background: #f6f7ff; margin-bottom: 10px; }
+.tl-sec h5 { margin: 0 0 10px; }
+.tl-grid { display: grid; grid-template-columns: repeat(4, 62px); gap: 8px 5px; }
+.tl-t { position: relative; width: 62px; height: 56px; }
+.tl-t .i { position: absolute; left: 19px; top: 3px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; }
+.tl-t .i svg, .tl-t .i img { display: block; }
+.tl-t .l { position: absolute; left: 0; right: 0; top: 34px; height: 22px; display: flex; align-items: center; justify-content: center; text-align: center;
+  font: 500 9px/11px var(--sf); color: var(--ink); opacity: .6; }
+.tl-t .tg { position: absolute; right: 2px; top: 0; }
+.tl-t .tg svg { display: block; }
+.tl-t.live { cursor: pointer; }
+/* AI Shorts icon: the chat dots type (Figma motion, 2s) → fold into a play button → the star blinks · 4s loop */
+.sh-ic .sh-d, .sh-ic .sh-pl, .sh-ic .sh-st { transform-box: fill-box; transform-origin: 50% 50%; animation-duration: 4s; animation-iteration-count: infinite; animation-fill-mode: both; }
+.sh-ic .sh-d1 { animation-name: shD1; } .sh-ic .sh-d2 { animation-name: shD2; } .sh-ic .sh-d3 { animation-name: shD3; }
+.sh-ic .sh-pl { animation-name: shPl; } .sh-ic .sh-st { animation-name: shSt; }
+@keyframes shD1 { 0% { transform: none; animation-timing-function: cubic-bezier(.5,0,.5,1); } 7.65% { transform: translateY(-3px) scale(1.3); animation-timing-function: cubic-bezier(.5,0,.5,1); }
+  14.8%, 35.2% { transform: none; animation-timing-function: cubic-bezier(.5,0,.5,1); } 42.9% { transform: translateY(-3px) scale(1.3); animation-timing-function: cubic-bezier(.5,0,.5,1); }
+  50% { transform: none; opacity: 1; animation-timing-function: cubic-bezier(.5,0,.5,1); } 58.75%, 90% { transform: translateX(4.5px) scale(0); opacity: 0; animation-timing-function: cubic-bezier(.5,0,.5,1); } 100% { transform: none; opacity: 1; } }
+@keyframes shD2 { 0%, 12% { transform: none; animation-timing-function: cubic-bezier(.5,0,.5,1); } 19.75% { transform: translateY(-3px) scale(1.3); animation-timing-function: cubic-bezier(.5,0,.5,1); }
+  27.5%, 50% { transform: none; opacity: 1; animation-timing-function: cubic-bezier(.5,0,.5,1); } 58.75%, 90% { transform: scale(0); opacity: 0; animation-timing-function: cubic-bezier(.5,0,.5,1); } 100% { transform: none; opacity: 1; } }
+@keyframes shD3 { 0%, 24.8% { transform: none; animation-timing-function: cubic-bezier(.5,0,.5,1); } 32.65% { transform: translateY(-3px) scale(1.3); animation-timing-function: cubic-bezier(.5,0,.5,1); }
+  40.5%, 50% { transform: none; opacity: 1; animation-timing-function: cubic-bezier(.5,0,.5,1); } 58.75%, 90% { transform: translateX(-4.5px) scale(0); opacity: 0; animation-timing-function: cubic-bezier(.5,0,.5,1); } 100% { transform: none; opacity: 1; } }
+@keyframes shPl { 0%, 52.5% { transform: scale(.3); opacity: 0; animation-timing-function: cubic-bezier(.3,1.4,.5,1); } 61% { transform: none; opacity: 1; } 90% { transform: none; opacity: 1; animation-timing-function: cubic-bezier(.5,0,.5,1); } 97.5%, 100% { transform: scale(.3); opacity: 0; } }
+@keyframes shSt { 0%, 58% { transform: none; opacity: 1; animation-timing-function: ease-in-out; } 62% { transform: scale(1.35); opacity: .35; animation-timing-function: ease-in-out; } 66% { transform: none; opacity: 1; animation-timing-function: ease-in-out; }
+  70% { transform: scale(1.3); opacity: .4; animation-timing-function: ease-in-out; } 74%, 100% { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .sh-ic .sh-d, .sh-ic .sh-pl, .sh-ic .sh-st { animation: none !important; } .sh-ic .sh-pl { opacity: 0; } }
+
 /* ══ AI Agent hub (Figma YCA_APP_UI 7350:40537 · B-1 AI Edit / B-2 AI Create / B-3 typing / B-4 history) — 2026-10-16 ══ */
 #hub { z-index: 3; opacity: 0; pointer-events: none; transition: opacity .22s var(--ease-io), transform .38s var(--ease-out), filter .38s var(--ease-out); }
 #hub.in { opacity: 1; pointer-events: auto; }
@@ -684,7 +731,10 @@ html.no-set .ic-set { display: none !important; }   /* boss 2026-10-07: v1 has n
 .qs-c img, .qs-c video { position: absolute; z-index: 0; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
 .qs-c::after { content: ''; position: absolute; z-index: 1; -webkit-transform: translateZ(0); transform: translateZ(0); left: 0; right: 0; bottom: 0; height: 56px; background: linear-gradient(rgba(21,23,31,0), rgba(21,23,31,.75)); }
 .qs-c span { position: absolute; z-index: 2; -webkit-transform: translateZ(0); transform: translateZ(0);   /* iOS paints playing <video> on its own layer: lift the label above it */
-   left: 10px; right: 8px; bottom: 9px; font: 600 12px/15px var(--sf); color: #fff; white-space: pre-line; }
+   left: 10px; right: 8px; bottom: 8px; font: 590 11px/13px var(--sf); color: #fff; white-space: pre-line; }   /* Figma qs_card_video (2026-10-20) */
+.qs-c .ring { position: absolute; z-index: 3; inset: 0; border-radius: 14px; padding: 3px; background: var(--grad); opacity: 0; transition: opacity .18s var(--ease-io);   /* selected card: 3px gradient outline */
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); }
+.qs-c.on .ring { opacity: 1; }
 .hub-in { position: absolute; z-index: 46; left: 16px; width: 288px; bottom: 86px; transition: transform .34s var(--ease-out); }
 .hub-in .gr { margin-bottom: 10px; font: 500 13px/16px var(--sf); color: var(--ink); text-align: center; transition: color .25s; }
 .hub-card { position: relative; border-radius: 16px; border: 1px solid transparent; padding: 12px 0 8px;
@@ -693,8 +743,13 @@ html.no-set .ic-set { display: none !important; }   /* boss 2026-10-07: v1 has n
   font: 400 12px/14px var(--sf); color: var(--ink); pointer-events: none; transition: height .25s var(--ease-out); }
 .hub-card textarea::placeholder { color: var(--ink-3); opacity: 1; }
 #hub.compose .hub-card textarea { pointer-events: auto; height: 87px; }
+.hub-card.sel textarea { height: 87px; color: var(--ink); font-weight: 510; }   /* a picked skill fills the card (Figma Agent_landing_3img / 3shorts) */
 .hub-card .btm { display: flex; justify-content: space-between; align-items: center; padding: 0 8px; }
 .hub-card .btm .rr { display: flex; gap: 8px; }
+.hub-card .btm .ll { display: flex; gap: 6px; align-items: center; }
+.hub-card .btm .att { display: none; position: relative; width: 28px !important; height: 28px !important; border-radius: 6px; overflow: hidden; }
+.hub-card .btm .att.on { display: block; }
+.hub-card .btm .att img { width: 100%; height: 100%; object-fit: cover; }
 .hub-card .btm span { display: block; width: 28px; height: 28px; }
 .hub-card .btm svg { display: block; }
 #hub-dim { position: absolute; inset: 0; z-index: 45; background: rgba(0,0,0,.7); opacity: 0; pointer-events: none; transition: opacity .25s var(--ease-io); }
@@ -711,7 +766,7 @@ html.no-set .ic-set { display: none !important; }   /* boss 2026-10-07: v1 has n
 #hub-rc { display: none; height: 87px; padding: 0 12px; overflow: hidden; }
 #hub-rc .ic-text .lead { width: auto; }
 .hub-card.rc textarea { position: absolute; left: 12px; top: 12px; width: 1px; height: 1px; opacity: 0; pointer-events: none; }   /* stays focused → keyboard stays up */
-#hub.compose .hub-card.rc #hub-rc { display: block; }
+#hub.compose .hub-card.rc #hub-rc, .hub-card.rc #hub-rc { display: block; }
 #hub-snd.ic-send:not(.on) { opacity: .5; }
 .drw { position: absolute; inset: 0; z-index: 50; pointer-events: none; }
 .drw .scr { position: absolute; inset: 0; background: rgba(0,0,0,.7); opacity: 0; transition: opacity .3s var(--ease-io); }
@@ -787,7 +842,7 @@ img.lofi, video.lofi { filter: blur(1.4px) contrast(.86) saturate(.78) brightnes
 
     <div class="scroll" id="scroll">
       <section class="pro" id="pro">
-        <h1 class="pro-title" aria-live="off"><span class="ln on">Let’s Make Something Amazing.</span><span class="ln">Bring Your Ideas to Life with AI</span></h1>
+        <h1 class="pro-title" aria-live="off"><span class="ln on">Big Ideas. Short Videos.</span><span class="ln">Let’s Chat. Let’s Create.</span></h1>
         <div class="input-box">
           <div class="icard" id="icard">
             <div class="ic-body">
@@ -859,6 +914,16 @@ img.lofi, video.lofi { filter: blur(1.4px) contrast(.86) saturate(.78) brightnes
     <nav class="nav" id="nav"></nav>
   </div>
 
+  <!-- ═════════ All Tools panel (Figma YCA_APP_UI 7380:32957) — covers the launcher / hub; only AI Shorts is live ═════════ -->
+  <div id="tools" aria-hidden="true">
+    <div class="tl-dim" id="tl-dim"></div>
+    <div class="tl-sh">
+      <div class="tl-hd"><button id="tl-x" aria-label="Close"></button><b>All Tools</b></div>
+      <div class="tl-tabs" id="tl-tabs"><button class="on">AI Video</button><button>AI Image</button><button>AI Portrait</button></div>
+      <div class="tl-bd" id="tl-bd"></div>
+    </div>
+  </div>
+
   <!-- ═════════ AI Agent hub (Figma YCA_APP_UI 7350:40537 · B-1 / B-2 / B-3 / B-4) ═════════ -->
   <div class="screen" id="hub" aria-hidden="true">
     <div class="hdr">
@@ -872,8 +937,8 @@ img.lofi, video.lofi { filter: blur(1.4px) contrast(.86) saturate(.78) brightnes
         </div>
       </div>
     </div>
-    <div class="hub-sw" id="hub-sw"><i class="knob"></i><button class="on" id="sw-edit" data-m="edit">AI Edit</button><button id="sw-create" data-m="create">AI Create</button></div>
-    <div class="hub-qs" id="qs-edit"><h4>Quick skills</h4><div class="qs-grid" id="qs-edit-grid"></div></div>
+    <div class="hub-sw" id="hub-sw"><i class="knob"></i><button class="on" id="sw-edit" data-m="edit">Image/Video</button><button id="sw-create" data-m="create">AI Shorts</button></div>
+    <div class="hub-qs" id="qs-edit"><h4>Quick skills</h4><div class="qs-sc" id="qs-edit-sc"><div class="qs-rows" id="qs-edit-rows"></div></div></div>
     <div class="hub-qs off" id="qs-create"><h4>Quick skills</h4><div class="qs-sc" id="qs-create-sc"><div class="qs-rows" id="qs-create-rows"></div></div></div>
     <div id="hub-dim"></div>
     <div class="hub-in" id="hub-in">
@@ -882,7 +947,7 @@ img.lofi, video.lofi { filter: blur(1.4px) contrast(.86) saturate(.78) brightnes
       <div class="hub-card" id="hub-card">
         <div id="hub-rc"></div>
         <textarea id="hub-ta" rows="2" enterkeyhint="send" placeholder="Upload a photo or video and tell me what to fix"></textarea>
-        <div class="btm"><span id="hub-add"></span><div class="rr"><span id="hub-mic"></span><span id="hub-snd" role="button" aria-label="Send"></span></div></div>
+        <div class="btm"><div class="ll"><span id="hub-add" role="button" aria-label="Add"></span><span class="att" id="hub-att"></span></div><div class="rr"><span id="hub-mic"></span><span id="hub-snd" role="button" aria-label="Send"></span></div></div>
       </div>
     </div>
     <nav class="nav" id="hub-nav"></nav>
@@ -1514,7 +1579,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   }
   function closeSheet(cb) {
     if (!S.sheet) return;
-    if ((S.pickFor && S.pickFor.indexOf('hub:') === 0) || S.linkFor === 'hub') $('hub-ta').focus({ preventScroll: true });   // ✕ on a hub picker → keyboard back
+    if (((S.pickFor && S.pickFor.indexOf('hub:') === 0) || S.linkFor === 'hub') && $('hub').classList.contains('compose')) $('hub-ta').focus({ preventScroll: true });   // ✕ on a hub picker → keyboard back
     if (S.pickFor === 'agent' && agBtm().classList.contains('cmp')) $('cmp-tx').focus({ preventScroll: true });
     var o = $(S.sheet); o.classList.add('closing'); o.classList.remove('open'); S.sheet = null; S.pickFor = null; S.linkFor = null;
     if (S.agent && S.onAgentPick) S.agentHint = $('ag-pic');             // closed the picker without a photo → point at the chat's photo button
@@ -1622,7 +1687,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     }
     var slot = S.pickFor; S.busy = true; hideHint();
     var hubSlot = slot.indexOf('hub:') === 0 ? slot.slice(4) : null;
-    if (hubSlot) $('hub-ta').focus({ preventScroll: true });
+    if (hubSlot && $('hub').classList.contains('compose')) $('hub-ta').focus({ preventScroll: true });   // picked from the card at rest → no keyboard
     var from = frameXY(cellBtn), p = cellXY(r, c);
     var fly = el('div', 'fly');
     fly.style.backgroundImage = 'url("' + GRID[id].src + '")';
@@ -1630,7 +1695,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     fly.style.left = from.x + 'px'; fly.style.top = from.y + 'px';
     $('frame').appendChild(fly);
     closeSheet();
-    var slotEl = hubSlot ? (document.querySelector('#hub-rc [data-slot="' + hubSlot + '"]') || document.querySelector('#hub-rc .tok') || $('hub-rc'))
+    var slotEl = hubSlot ? (hubSlot === 'photo' ? $('hub-add') : (document.querySelector('#hub-rc [data-slot="' + hubSlot + '"]') || document.querySelector('#hub-rc .tok') || $('hub-rc')))
       : document.querySelectorAll('#ic-type .pchip .ph')[slot === 'model' ? 0 : 1];
     requestAnimationFrame(function () { requestAnimationFrame(function () {
       var to = frameXY(slotEl), k = 44 / CELL.h;
@@ -1655,6 +1720,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     return { parent: parent, x: (r.left - pr.left + r.width / 2) / k, y: (r.top - pr.top + r.height / 2) / k };
   }
   function hintTarget() {
+    if (S.tools) return null;
     if (S.agent && !S.sheet) {
       if ($('buy').classList.contains('in') && S.agentHint !== $('buy-cta')) return null;
       if (S.agentHint) {
@@ -2357,7 +2423,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   document.querySelectorAll('.card[data-action]').forEach(function (c) { c.onclick = function () { openAgent(c.dataset.action); }; });
 
 
-  /* ══ AI Agent hub (Figma YCA_APP_UI 7350:40537) — 2026-10-16
+  /* ══ AI Agent hub JS (Figma YCA_APP_UI 7350:40537) — 2026-10-16
         Launcher nav “AI Agent” → hub. AI Edit = the old Agent (free daily allowance), AI Create = the AI Shorts agent (credits).
         Guided tour after the three launcher rounds: Enhance photo quality → AI Create → Cinematic Brand Ad → ☰ chats → close → Explore. ══ */
   function uniqIds(svg, sfx) { return svg.replace(/(id="|url\(#|href="#)([A-Za-z0-9_-]+)/g, '$1$2' + sfx); }   // iOS shared-id bug (skill 4B)
@@ -2373,31 +2439,32 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
 
   var HUB = { mode: 'edit', step: 0 }, FREE = 20;
   var HUB_COPY = { edit: ['What should we polish today?', 'Upload a photo or video and tell me what to fix'], create: ['What story do you want to tell?', 'Describe the video you want to make'] };
-  var EDIT_SK = [['E1', 'Turn my photo into a video', 'media/hub-e1.jpg'], ['E2', 'Enhance photo quality', 'media/hub-e2.jpg'],      // 2026-10-16: Monic's batch6 card art (before/after split is in the art)
-                 ['E3', 'Enhance video quality', 'media/hub-e3.jpg', null, '50% 20%'], ['E4', 'Remove unwanted\nobjects or people', 'media/hub-e4.jpg']];
+  var EDIT_SK = [[['E1', 'Turn photo into a\nvideo', 'media/hub-e1.jpg'], ['E2', 'Enhance photo\nquality', 'media/hub-e2.jpg'], ['E5', 'Restyle the\nscene', 'media/hub-e5.jpg'], ['E6', 'Make a 9-look\ngrid', 'media/hub-e6.jpg']],   // Figma Agent_landing_1 (2026-10-20)
+                 [['E3', 'Enhance video\nquality', 'media/hub-e3.jpg', null, '50% 20%'], ['E4', 'Remove unwanted\nobjects', 'media/hub-e4.jpg'], ['E7', 'Combine photos\ninto one', 'media/hub-e7.jpg']]];
   var CREATE_SK = [[['F7', 'UGC Review', 'media/hub-f7.jpg'], ['F9', 'Product\nShowcase Ad', 'media/hub-f9.jpg', 'media/hub-f9.mp4'], ['C4', 'Product Demo\n& Solution', 'media/hub-c4.jpg', 'media/hub-c4.mp4'], ['C2', 'UGC Tutorial', 'media/hub-c2.jpg']],
                    [['C5', 'Cinematic\nBrand Ad', 'media/hub-c5.jpg', 'media/hub-c5.mp4'], ['C6', 'Unboxing &\nFirst-Use', 'media/hub-c6.jpg', null, '50% 6%'], ['C7', 'Person\nAction Remix', 'media/hub-c7.jpg']]];
   function cardMedia(src, vid, pos) {                        // [code, label, image, video?, crop?] — AI Edit cards stay still; 3 AI Create cards play their clip (Monic 2026-10-16)
     var st = pos ? ' style="object-position:' + pos + '"' : '';
     return vid ? '<video src="' + vid + '" poster="' + src + '" muted loop autoplay playsinline webkit-playsinline preload="auto"' + st + '></video>' : '<img src="' + src + '" alt=""' + st + '>'; }
-  $('qs-edit-grid').innerHTML = EDIT_SK.map(function (s) {
-    return '<button class="qs-e" data-f="' + s[0] + '"><span class="im">' + cardMedia(s[2], s[3], s[4]) + '</span><span class="lb">' + esc(s[1]).replace(/\n/g, '<br>') + '</span></button>'; }).join('');
-  $('qs-create-rows').innerHTML = CREATE_SK.map(function (row) {
-    return '<div class="r">' + row.map(function (s) { return '<button class="qs-c" data-f="' + s[0] + '">' + cardMedia(s[2], s[3], s[4]) + '<span>' + esc(s[1]) + '</span></button>'; }).join('') + '</div>'; }).join('');
-  Array.prototype.forEach.call(document.querySelectorAll('#hub [data-f]'), function (b) { b.onclick = function () { if (!$('hub').classList.contains('compose')) openAgent(b.dataset.f); }; });
+  function cardRows(rows) { return rows.map(function (row) {
+    return '<div class="r">' + row.map(function (s) { return '<button class="qs-c" data-f="' + s[0] + '">' + cardMedia(s[2], s[3], s[4]) + '<span>' + esc(s[1]) + '</span><i class="ring"></i></button>'; }).join('') + '</div>'; }).join(''); }
+  $('qs-edit-rows').innerHTML = cardRows(EDIT_SK);
+  $('qs-create-rows').innerHTML = cardRows(CREATE_SK);
+  Array.prototype.forEach.call(document.querySelectorAll('#hub [data-f]'), function (b) {   // 2026-10-20: a card picks the skill (outline + the input fills in); send starts the chat
+    b.onclick = function () { if ($('hub').classList.contains('compose') || S.busy) return; selPill(HUB.sel === b.dataset.f ? null : b.dataset.f); }; });
 
   function setHubMode(m) {
     if (HUB.mode === m) return; HUB.mode = m;
     $('hub-sw').classList.toggle('create', m === 'create');
     $('sw-edit').classList.toggle('on', m === 'edit'); $('sw-create').classList.toggle('on', m === 'create');
     $('qs-edit').classList.toggle('off', m !== 'edit'); $('qs-create').classList.toggle('off', m !== 'create');
-    $('hub-gr').textContent = HUB_COPY[m][0]; $('hub-ta').placeholder = HUB_COPY[m][1]; if (typeof drawPills === 'function') { HUB.sel = null; $('hub-card').classList.remove('rc'); drawPills(); drawRecipe(); syncHubSend(); }
+    $('hub-gr').textContent = HUB_COPY[m][0]; $('hub-ta').placeholder = HUB_COPY[m][1]; if (typeof drawPills === 'function') { selPill(null); setHubPhoto(null); }
     scheduleHint();
   }
   $('sw-edit').onclick = function () { HUB.step = 1; setHubMode('edit'); }; $('sw-create').onclick = function () { HUB.step = 1; setHubMode('create'); };   // any tap on the switcher ends the hub guidance
   function openHub() {
     if (S.busy || S.agent || S.sheet || S.hub) return;
-    hideHint(); S.hub = true; HUB.step = 0; setHubMode('edit'); $('qs-create-sc').scrollLeft = 0;
+    hideHint(); S.hub = true; HUB.step = 0; setHubMode('edit'); $('qs-create-sc').scrollLeft = 0; $('qs-edit-sc').scrollLeft = 0;
     var h = $('hub'); h.removeAttribute('aria-hidden'); h.classList.add('in'); scheduleHint();
   }
   function closeHub() {                                       // Explore → the launcher; the guided demo starts over from round 0
@@ -2408,13 +2475,58 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   }
   $('nav-ai').onclick = openHub; $('hnav-ex').onclick = closeHub;
 
+  /* ── All Tools panel (Figma 7380:32957, 2026-10-20): the full list; only AI Shorts is live → AI Agent › AI Shorts ── */
+  var TI = {"video": "<svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\"><path d=\"M13.7 2.1C16.7 2.3 19.0 4.7 19.0 7.7L20.4 6.6C21.8 5.5 24.0 6.5 24.0 8.4V15.8C24.0 17.6 22.0 18.6 20.5 17.6L19.0 16.6C18.8 19.4 16.5 21.6 13.7 21.8L13.4 21.8H5.6L5.3 21.8C2.3 21.6 0 19.1 0 16.1V7.8C0 4.8 2.3 2.3 5.3 2.1L5.6 2.1H13.4L13.7 2.1ZM5.6 3.8C3.4 3.8 1.6 5.6 1.6 7.8V16.1C1.6 18.3 3.4 20.1 5.6 20.1H13.4C15.6 20.1 17.4 18.3 17.4 16.1V7.8C17.4 5.6 15.6 3.8 13.4 3.8H5.6ZM22.4 8.4C22.4 7.9 21.8 7.6 21.4 7.9L19.0 9.8V14.6L21.4 16.3C21.8 16.5 22.4 16.3 22.4 15.8V8.4Z\" fill=\"#15171F\"/><path d=\"M12.7 10.8C13.6 11.3 13.6 12.6 12.7 13.1L8.5 15.5C7.6 16.0 6.5 15.4 6.5 14.4V9.5C6.5 8.5 7.6 7.9 8.5 8.4L12.7 10.8Z\" fill=\"#15171F\"/></svg>", "img2vdo": "<svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\"><path d=\"M17.5 21.8C17.5 21.8 17.2 16.8 17.3 15.8C17.5 14.8 19.5 12.2 20.5 10.0C22.2 6.0 20.0 2.9 17.8 2.5C15.2 1.9 13.4 3.4 12.9 4.7C12.7 5.2 13.3 6.2 14.1 5.6C14.7 5.1 16.4 4.2 17.8 6.0C19.5 8.3 15.5 14.3 12.4 14.1\" stroke=\"#15171F\" stroke-width=\"1.4\" stroke-linecap=\"round\"/><path d=\"M6.8 21.8C6.8 21.8 7.3 16.8 7.1 15.8C6.9 14.8 4.5 12.2 3.5 10.0C1.7 6.0 4.0 2.9 6.2 2.5C8.8 1.9 10.5 3.4 11.1 4.7C11.3 5.2 10.7 6.2 9.9 5.6C9.3 5.1 7.5 4.2 6.2 6.0C4.5 8.3 8.3 14.4 12.5 14.1\" stroke=\"#15171F\" stroke-width=\"1.4\" stroke-linecap=\"round\"/><circle cx=\"12.1\" cy=\"9.8\" r=\"2.2\" stroke=\"#15171F\" stroke-width=\"1.4\"/><path d=\"M2.6 14.6C2.8 14.6 2.9 14.6 3.0 14.8L3.8 16.1L5.3 15.7C5.5 15.7 5.6 15.7 5.7 15.9C5.8 16.0 5.8 16.2 5.7 16.3L4.7 17.5L5.5 18.8C5.5 18.9 5.5 19.1 5.4 19.2C5.3 19.4 5.2 19.4 5.0 19.3L3.6 18.7L2.6 19.9C2.5 20.0 2.3 20.1 2.2 20.0C2.0 19.9 1.9 19.8 1.9 19.6L2.1 18.1L0.7 17.5C0.5 17.4 0.4 17.3 0.4 17.1C0.4 17.0 0.6 16.8 0.7 16.8L2.2 16.5L2.3 14.9L2.3 14.9C2.4 14.7 2.5 14.6 2.6 14.6Z\" fill=\"#15171F\"/><path d=\"M22.1 12.7C22.3 12.7 22.4 12.9 22.4 13.0L22.5 14.1L23.5 14.3C23.7 14.4 23.8 14.5 23.8 14.7C23.8 14.8 23.7 15.0 23.6 15.0L22.6 15.4L22.6 16.5C22.7 16.7 22.6 16.8 22.4 16.9C22.3 16.9 22.1 16.9 22.0 16.8L21.3 15.9L20.3 16.3C20.2 16.4 20.0 16.3 19.9 16.2C19.8 16.1 19.8 15.9 19.9 15.8L20.4 14.9L19.7 14.1C19.6 14.0 19.6 13.8 19.7 13.6C19.8 13.5 20.0 13.4 20.1 13.5L21.2 13.7L21.7 12.8L21.8 12.8C21.9 12.7 22.0 12.6 22.1 12.7Z\" fill=\"#15171F\"/></svg>", "t2v": "<svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\"><path d=\"M16.3 3.0H19.2V9.8H21.1V3.0H24V1.0H16.3V3.0Z\" fill=\"#15171F\"/><path d=\"M13.0 1.0V2.7H7.6C4.9 2.7 2.7 4.9 2.7 7.6V16.3C2.7 19.0 4.9 21.2 7.6 21.2H16.3C19.0 21.2 21.2 19.0 21.2 16.3V14.1H22.9V16.3L22.9 16.7C22.7 20.0 20.0 22.7 16.7 22.9L16.3 22.9H7.6L7.2 22.9C3.8 22.7 1.0 19.8 1.0 16.3V7.6C1.0 4.1 3.8 1.2 7.2 1.0L7.6 1.0H13.0Z\" fill=\"#15171F\"/><path d=\"M15.4 11.4C16.3 11.9 16.3 13.1 15.4 13.6L10.4 16.6C9.5 17.1 8.4 16.4 8.4 15.4V9.6C8.4 8.6 9.5 7.9 10.4 8.4L15.4 11.4Z\" fill=\"#15171F\"/></svg>", "vdotransfer": "<svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\"><path d=\"M13.4 21.4H6.9C3.7 21.4 1.0 18.8 1.0 15.5V14.6H2.6V15.5C2.6 17.9 4.5 19.9 6.9 19.9H13.4C15.8 19.9 17.7 17.9 17.7 15.5V8.0C17.7 5.6 15.8 3.7 13.4 3.7H10.9V2.1H13.4C16.6 2.1 19.3 4.7 19.3 8.0V15.5C19.3 18.8 16.6 21.4 13.4 21.4Z\" fill=\"#15171F\"/><path d=\"M20.3 17.2C19.8 16.9 18.3 15.8 18.3 15.8L19.3 14.5C19.3 14.5 20.8 15.7 21.3 16.0C21.9 16.3 22.3 16.0 22.3 15.4V8.2C22.3 7.8 21.9 7.4 21.3 7.8C20.8 8.2 19.3 9.4 19.3 9.4L18.2 8.2L20.2 6.5C20.9 5.9 21.8 5.7 22.6 6.2C23.4 6.5 23.9 7.3 23.9 8.2V15.4C23.9 16.6 23.2 17.2 22.7 17.4C22.3 17.6 21.2 17.8 20.3 17.2Z\" fill=\"#15171F\"/><path d=\"M8.9 2.9C6.9 2.5 6.7 2.2 6.3 0.3C6.3 -0.1 5.6 -0.1 5.6 0.3C5.2 2.2 5.0 2.5 3.0 2.9C2.6 2.9 2.5 3.4 3.0 3.6C5.0 4.1 5.2 4.2 5.6 6.2C5.6 6.6 6.3 6.6 6.3 6.2C6.7 4.2 6.9 4.0 8.9 3.6C9.4 3.6 9.3 3.0 8.9 2.9Z\" fill=\"#15171F\"/><path d=\"M4.4 9.3C3.0 9.0 2.9 8.9 2.6 7.5C2.6 7.1 2.1 7.1 2.1 7.5C1.8 8.9 1.7 9.0 0.3 9.3C0.0 9.3 0.0 9.7 0.3 9.8C1.7 10.1 1.8 10.2 2.1 11.6C2.1 11.9 2.6 11.9 2.6 11.6C2.9 10.2 3.0 10.1 4.4 9.8C4.8 9.8 4.8 9.4 4.4 9.3Z\" fill=\"#15171F\"/><path d=\"M13.7 10.8C14.6 11.3 14.6 12.6 13.7 13.1L9.4 15.5C8.6 16.0 7.5 15.4 7.5 14.4V9.5C7.5 8.5 8.6 7.9 9.4 8.4L13.7 10.8Z\" fill=\"#15171F\"/></svg>", "business": "<svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\"><path d=\"M8.0 20.9H5.6C4.3 20.9 3.2 19.8 3.2 18.5V16.1C3.2 15.8 2.9 15.4 2.6 15.4C2.2 15.4 1.9 15.8 1.9 16.1V18.5C1.9 20.6 3.6 22.2 5.6 22.2H8.0C8.4 22.2 8.7 21.9 8.7 21.5C8.7 21.2 8.4 20.9 8.0 20.9Z\" fill=\"#15171F\" stroke=\"#15171F\" stroke-width=\"0.4\"/><path d=\"M18.3 1.6H15.9C15.6 1.6 15.2 1.9 15.2 2.2C15.2 2.6 15.6 2.9 15.9 2.9H18.3C19.6 2.9 20.7 4.0 20.7 5.3V7.7C20.7 8.0 21.0 8.3 21.3 8.3C21.7 8.3 22.0 8.0 22.0 7.7V5.3C22.0 3.2 20.4 1.6 18.3 1.6Z\" fill=\"#15171F\" stroke=\"#15171F\" stroke-width=\"0.4\"/><path d=\"M8.0 1.6H5.6C3.6 1.6 1.9 3.2 1.9 5.3V7.7C1.9 8.0 2.2 8.3 2.6 8.3C2.9 8.3 3.2 8.0 3.2 7.7V5.3C3.2 4.0 4.3 2.9 5.6 2.9H8.0C8.4 2.9 8.7 2.6 8.7 2.2C8.7 1.9 8.4 1.6 8.0 1.6Z\" fill=\"#15171F\" stroke=\"#15171F\" stroke-width=\"0.4\"/><path d=\"M6.5 18.1C6.8 14.8 9.3 12.2 12.4 12.2C14.2 12.2 15.8 13.0 16.9 14.4\" stroke=\"#15171F\" stroke-width=\"1.5\" stroke-miterlimit=\"10\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><rect x=\"8.9\" y=\"5.6\" width=\"6.1\" height=\"6.1\" rx=\"3.0\" stroke=\"#15171F\" stroke-width=\"1.5\" stroke-miterlimit=\"10\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M22.5 17.3C22.3 17.2 22.0 17.2 21.8 17.4L20.1 18.5V18.1C20.1 17.3 19.5 16.6 18.7 16.6L15.6 16.6C14.8 16.6 14.1 17.2 14.1 18.0L14.1 21.0C14.1 21.8 14.8 22.4 15.6 22.4L18.7 22.4C19.5 22.4 20.1 21.9 20.1 21.1V20.5L21.7 21.8C21.9 22.0 22.2 22.0 22.5 21.9C22.7 21.8 22.9 21.6 22.9 21.3L22.9 17.9C22.9 17.6 22.7 17.4 22.5 17.3Z\" fill=\"#15171F\"/></svg>", "character": "<svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\"><path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M14.0 8.7C14.8 11.7 15.0 20.3 14.6 21.7C13.8 23.5 12.0 22.6 12.0 20.8C12.0 18.9 12.3 17.3 12.0 14.6C11.4 15.8 10.4 17.6 8.2 17.9C6.1 18.3 3.6 17.9 3.8 16.5C4.0 15.1 5.3 15.8 6.5 15.8C7.7 15.8 9.7 15.3 10.0 12.6C10.3 9.9 9.6 10.0 9.6 10.0C9.6 10.0 8.5 10.9 7.8 11.3C7.2 11.7 5.7 12.3 3.3 11.3C1.5 10.5 2.4 8.9 3.9 9.4C4.4 9.7 5.2 9.8 5.7 9.8C6.6 9.8 7.4 9.0 7.9 8.5C8.5 7.9 9.6 6.7 10.5 6.3C11.5 5.8 12.7 5.7 13.7 6.1C14.7 6.4 15.8 7.5 16.6 7.3C17.5 7.0 17.6 5.0 17.8 4.5C18.4 3.4 19.9 3.8 19.6 5.3C19.3 6.8 18.5 8.9 17.4 9.2C16.3 9.5 14.0 8.6 14.0 8.6V8.7ZM10.9 1.0C12.1 1.0 13.0 2.0 13.0 3.2C13.0 4.4 12.1 5.4 10.9 5.4C9.7 5.4 8.7 4.4 8.7 3.2C8.7 2.0 9.7 1.0 10.9 1.0Z\" fill=\"#15171F\"/><path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M23.3 9.9C23.7 10.7 23.7 12.2 23.0 13.0C22.2 13.9 21.6 13.0 22.2 12.3C22.8 11.6 22.9 10.4 22.2 9.9L20.0 14.7C19.7 15.4 18.8 15.8 18.0 15.4C17.1 15.1 16.5 14.2 16.8 13.5C17.0 12.7 18.3 12.1 19.5 13.1L21.6 8.7C21.8 8.2 22.2 8.7 22.3 8.7C22.6 8.9 23.1 9.4 23.3 9.9Z\" fill=\"#15171F\"/><path d=\"M6.7 3.1C4.5 2.7 4.3 2.4 3.9 0.3C3.9 0.1 3.7 0 3.6 0C3.4 0 3.2 0.1 3.2 0.3C2.8 2.5 2.5 2.7 0.4 3.1C0.2 3.1 0.1 3.3 0.1 3.4C0.1 3.6 0.1 3.8 0.4 3.8C2.6 4.2 2.8 4.5 3.2 6.6C3.2 6.8 3.4 6.9 3.6 6.9C3.7 6.9 3.9 6.9 3.9 6.6C4.3 4.4 4.6 4.2 6.7 3.8C6.9 3.8 7.0 3.6 7.0 3.4C7.0 3.3 7.0 3.1 6.7 3.1Z\" fill=\"#15171F\"/></svg>", "talkvdo": "<svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\"><path d=\"M9.7 2.1C12.2 2.1 14.3 4.2 14.3 6.8C14.3 8.3 13.5 9.7 12.4 10.5C12.9 10.7 13.4 11.0 13.8 11.3C14.2 11.5 14.3 12.0 14.1 12.4C13.8 12.8 13.3 12.9 12.9 12.6C12.0 12.0 10.9 11.7 9.8 11.7C6.6 11.7 4.0 14.2 4.0 17.4V19.9H13.4C13.8 19.9 14.2 20.2 14.2 20.7C14.2 21.1 13.8 21.5 13.4 21.5H3.2C2.8 21.5 2.4 21.1 2.4 20.7V17.4C2.4 14.3 4.3 11.7 7.0 10.6C5.8 9.7 5.0 8.3 5.0 6.8C5.0 4.2 7.1 2.1 9.7 2.1ZM9.7 3.8C8.0 3.8 6.7 5.1 6.7 6.8C6.7 8.4 8.0 9.8 9.7 9.8C11.3 9.8 12.7 8.4 12.7 6.8C12.7 5.1 11.3 3.8 9.7 3.8Z\" fill=\"#15171F\"/><path d=\"M22.9 14.1C23.3 14.1 23.7 14.5 23.7 14.9C23.7 17.5 21.8 19.7 19.3 20.1V20.9C19.3 21.4 18.9 21.8 18.5 21.8C18.0 21.8 17.7 21.4 17.7 20.9V20.1C15.2 19.7 13.3 17.5 13.3 14.9C13.3 14.5 13.7 14.1 14.1 14.1C14.6 14.1 14.9 14.5 15 14.9C15 16.9 16.5 18.5 18.5 18.5C20.5 18.5 22.0 16.9 22.0 14.9C22.0 14.5 22.4 14.1 22.9 14.1ZM18.5 7.6C19.9 7.6 20.9 8.7 20.9 10.0V14.9C20.9 16.3 19.9 17.4 18.5 17.4C17.1 17.4 16.0 16.3 16.0 14.9V10.0C16.0 8.7 17.1 7.6 18.5 7.6Z\" fill=\"#15171F\"/></svg>", "conversation": "<svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\"><path d=\"M7.2 16.8C8.5 16.2 9.0 14.7 8.7 13.3C8.5 11.8 7.3 10.9 6.0 10.9C4.6 10.9 3.4 11.8 3.2 13.3C2.9 14.7 3.4 16.2 4.7 16.8C2.1 17.4 0.5 19.3 0.5 21.8C0.5 21.8 0.5 21.8 0.5 21.9C0.5 22.5 1.0 23.0 1.6 23.0H10.3C10.9 23.0 11.4 22.5 11.4 21.9C11.4 21.8 11.4 21.8 11.4 21.8C11.4 19.3 9.8 17.4 7.2 16.8Z\" fill=\"#15171F\"/><path d=\"M19.2 16.8C20.5 16.2 21.0 14.7 20.7 13.3C20.5 11.8 19.3 10.9 18.0 10.9C16.6 10.9 15.4 11.8 15.2 13.3C14.9 14.7 15.4 16.2 16.7 16.8C14.1 17.4 12.5 19.3 12.5 21.8C12.5 21.8 12.5 21.8 12.5 21.9C12.5 22.5 13.0 23.0 13.6 23.0H22.3C22.9 23.0 23.4 22.5 23.4 21.9C23.4 21.8 23.4 21.8 23.4 21.8C23.4 19.3 21.8 17.4 19.2 16.8Z\" fill=\"#15171F\"/><path d=\"M6.1 2.2C6.5 1.8 7.1 1.6 7.7 1.6L16.2 1.6C16.8 1.6 17.4 1.8 17.8 2.2C18.2 2.7 18.5 3.2 18.5 3.8L18.5 6.6C18.5 7.3 18.3 7.8 17.8 8.3C17.4 8.7 16.8 8.9 16.2 8.9H14.1C13.9 8.9 13.7 9.0 13.6 9.2L12.5 10.9C12.4 11.1 12.2 11.2 12.0 11.2C11.7 11.2 11.5 11.1 11.4 10.9L10.3 9.2C10.2 9.0 10.0 8.9 9.8 8.9H7.7C7.1 8.9 6.5 8.7 6.1 8.3C5.6 7.8 5.4 7.3 5.4 6.7V3.8C5.4 3.2 5.6 2.7 6.1 2.2Z\" stroke=\"#15171F\" stroke-width=\"1.6\"/><circle cx=\"9.2\" cy=\"5.4\" r=\"0.8\" fill=\"#15171F\"/><circle cx=\"12.0\" cy=\"5.4\" r=\"0.8\" fill=\"#15171F\"/><circle cx=\"14.7\" cy=\"5.4\" r=\"0.8\" fill=\"#15171F\"/></svg>", "mv": "<svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\"><rect width=\"24\" height=\"24\" rx=\"6\" fill=\"#09090B\"/><path d=\"M7.1 16.9C7.1 17.6 6.5 18.2 5.8 18.2C5.1 18.2 4.5 17.6 4.5 16.9L4.5 7.0C4.5 6.3 5.1 5.7 5.8 5.7C6.5 5.7 7.1 6.3 7.1 7.0L7.1 16.9Z\" fill=\"url(#mv0)\"/><path d=\"M19.4 16.9C19.4 17.6 18.8 18.2 18.1 18.2C17.3 18.2 16.8 17.6 16.8 16.9L16.8 7.0C16.8 6.3 17.3 5.7 18.1 5.7C18.8 5.7 19.4 6.3 19.4 7.0L19.4 16.9Z\" fill=\"url(#mv1)\"/><path d=\"M13.7 8.7C14.1 8.1 14.9 7.9 15.5 8.3C16.2 8.6 16.4 9.4 16.0 10.0L13.1 15.2C12.7 15.8 11.9 16.0 11.3 15.6C10.6 15.3 10.4 14.5 10.8 13.9L13.7 8.7Z\" fill=\"url(#mv2)\"/><rect x=\"7.2\" y=\"8.9\" width=\"2.6\" height=\"8.5\" rx=\"1.3\" transform=\"rotate(-30 7.2 8.9)\" fill=\"url(#mv3)\"/><defs><linearGradient id=\"mv0\" x1=\"5.8\" y1=\"18.2\" x2=\"5.8\" y2=\"8.9\" gradientUnits=\"userSpaceOnUse\"><stop stop-color=\"#FFB347\"/><stop offset=\"1\" stop-color=\"#FF4E50\"/></linearGradient><linearGradient id=\"mv1\" x1=\"18.1\" y1=\"18.2\" x2=\"18.1\" y2=\"7.1\" gradientUnits=\"userSpaceOnUse\"><stop stop-color=\"#3AF9B9\"/><stop offset=\"1\" stop-color=\"#6154FF\"/></linearGradient><linearGradient id=\"mv2\" x1=\"15.3\" y1=\"8.0\" x2=\"12.4\" y2=\"12.6\" gradientUnits=\"userSpaceOnUse\"><stop stop-color=\"#6154FF\"/><stop offset=\"1\" stop-color=\"#D63AF9\"/></linearGradient><linearGradient id=\"mv3\" x1=\"8.5\" y1=\"8.9\" x2=\"8.5\" y2=\"14.3\" gradientUnits=\"userSpaceOnUse\"><stop stop-color=\"#FF4E50\"/><stop offset=\"1\" stop-color=\"#D63AF9\"/></linearGradient></defs></svg>", "photo": "<svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\"><path d=\"M13.8 9.7C14.2 8.9 15.5 8.9 15.8 9.8L18.4 16.4C18.8 17.4 18.0 18.5 16.9 18.5H7.0C5.8 18.5 5.0 17.1 5.6 16.1L7.6 13.0C8.0 12.4 8.9 12.4 9.4 13.0L10.6 14.6C10.8 14.9 11.4 14.9 11.5 14.5L13.8 9.7ZM8.4 5.4C9.6 5.4 10.6 6.3 10.6 7.5C10.6 8.7 9.6 9.6 8.4 9.6C7.3 9.6 6.3 8.7 6.3 7.5C6.3 6.3 7.3 5.4 8.4 5.4Z\" fill=\"#15171F\"/><rect x=\"1.9\" y=\"1.9\" width=\"20.1\" height=\"20.1\" rx=\"5.7\" stroke=\"#15171F\" stroke-width=\"1.6\"/></svg>", "enhance": "<svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\"><path d=\"M6.9 9.6V11.7H10.1V9.6C10.1 9.3 10.2 9.1 10.3 8.9C10.5 8.8 10.6 8.7 10.9 8.7C11.1 8.7 11.3 8.8 11.4 8.9C11.6 9.0 11.6 9.3 11.6 9.6V15.4C11.6 15.7 11.6 15.9 11.4 16.0C11.3 16.2 11.1 16.3 10.9 16.3C10.6 16.3 10.5 16.2 10.3 16.0C10.2 15.9 10.1 15.7 10.1 15.4V12.9H6.9V15.4C6.9 15.7 6.8 15.9 6.7 16.0C6.5 16.2 6.4 16.3 6.1 16.3C5.9 16.3 5.7 16.2 5.6 16.0C5.5 15.9 5.4 15.7 5.4 15.4V9.6C5.4 9.3 5.5 9.1 5.6 8.9C5.7 8.8 5.9 8.7 6.1 8.7C6.4 8.7 6.6 8.8 6.7 8.9C6.8 9.0 6.9 9.3 6.9 9.6Z\" fill=\"#15171F\"/><path d=\"M14.4 8.8H16.4C16.9 8.8 17.3 8.8 17.7 8.9C18.0 9.0 18.4 9.2 18.7 9.5C19.4 10.1 19.8 11.1 19.8 12.4C19.8 12.9 19.8 13.3 19.7 13.7C19.6 14.0 19.5 14.3 19.3 14.6C19.2 14.9 19.0 15.2 18.7 15.4C18.5 15.6 18.3 15.7 18.1 15.8C17.8 15.9 17.6 16.0 17.3 16.1C17.0 16.1 16.7 16.1 16.4 16.1H14.4C14.2 16.1 14.0 16.1 13.8 16.0C13.7 15.9 13.6 15.8 13.6 15.7C13.5 15.5 13.5 15.3 13.5 15.1V9.7C13.5 9.4 13.6 9.2 13.7 9.0C13.9 8.9 14.1 8.8 14.4 8.8ZM15.0 10.0V15.0H16.1C16.4 15.0 16.6 14.9 16.7 14.9C16.8 14.9 17.0 14.9 17.1 14.8C17.3 14.8 17.4 14.7 17.5 14.6C18.0 14.2 18.3 13.5 18.3 12.4C18.3 11.7 18.2 11.2 18.0 10.8C17.7 10.5 17.5 10.2 17.1 10.1C16.8 10.0 16.4 10.0 16.0 10.0H15.0Z\" fill=\"#15171F\"/><path d=\"M19.7 0C19.7 0 19.7 0.0 19.6 0.0C19.6 0.0 19.6 0.0 19.5 0.1L18.5 2.9L15.7 3.9C15.6 4.0 15.6 4.0 15.6 4.0C15.6 4.1 15.5 4.1 15.5 4.1C15.5 4.2 15.6 4.2 15.6 4.3C15.6 4.3 15.6 4.3 15.7 4.4L18.5 5.4L19.5 8.2C19.6 8.3 19.6 8.3 19.6 8.3C19.7 8.3 19.7 8.4 19.7 8.4C19.8 8.4 19.8 8.3 19.9 8.3C19.9 8.3 19.9 8.3 20.0 8.2L21.0 5.4L23.8 4.4C23.9 4.3 23.9 4.3 23.9 4.3C23.9 4.2 23.9 4.2 23.9 4.1C23.9 4.1 23.9 4.1 23.9 4.0C23.9 4.0 23.9 4.0 23.8 3.9L21.0 2.9L20.0 0.1C19.9 0.0 19.9 0.0 19.9 0.0C19.8 0.0 19.8 0 19.7 0Z\" fill=\"#15171F\"/><path d=\"M14.1 1.0V2.7H7.6C4.9 2.7 2.7 4.9 2.7 7.6V16.3C2.7 19.0 4.9 21.2 7.6 21.2H16.3C19.0 21.2 21.2 19.0 21.2 16.3V15.2H22.9V16.3L22.9 16.7C22.7 20.0 20.0 22.7 16.7 22.9L16.3 22.9H7.6L7.2 22.9C3.8 22.7 1.0 19.8 1.0 16.3V7.6C1.0 4.1 3.8 1.2 7.2 1.0L7.6 1.0H14.1Z\" fill=\"#15171F\"/></svg>", "remove": "<svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\"><path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M0.1 11.4C0.4 11.4 0.6 11.5 0.8 11.5C1.8 11.8 2.4 12.7 2.4 13.7C2.4 13.8 2.5 13.9 2.6 13.9C2.7 13.9 2.8 13.8 2.8 13.7C2.8 12.5 3.8 11.4 5.1 11.4C5.1 11.4 5.2 11.4 5.2 11.3C5.2 11.2 5.1 11.1 5.1 11.1C3.8 11.1 2.8 10.1 2.8 8.9C2.8 8.8 2.7 8.7 2.6 8.7C2.5 8.7 2.4 8.8 2.4 8.9C2.4 10.1 1.4 11.1 0.1 11.1C0.0 11.1 0 11.2 0 11.3C0 11.4 0.0 11.4 0.1 11.4Z\" fill=\"#15171F\"/><path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M3.5 3.7C3.8 3.7 4.1 3.8 4.4 3.9C5.7 4.3 6.6 5.4 6.6 6.8C6.6 6.9 6.7 7.0 6.8 7.0C7.0 7.0 7.1 6.9 7.1 6.8C7.1 5.1 8.5 3.7 10.2 3.7C10.3 3.7 10.4 3.6 10.4 3.5C10.4 3.4 10.3 3.3 10.2 3.3C8.5 3.3 7.1 1.9 7.1 0.2C7.1 0.1 7.0 0 6.8 0C6.7 0 6.6 0.1 6.6 0.2C6.6 1.9 5.2 3.3 3.5 3.3C3.3 3.3 3.2 3.4 3.2 3.5C3.2 3.6 3.3 3.7 3.5 3.7Z\" fill=\"#15171F\"/><path d=\"M22.8 21.5H15.5C15.7 21.3 15.9 21.2 16.0 21.0L22.3 13.2C22.7 12.8 22.8 12.2 22.8 11.6C22.7 11.0 22.4 10.5 22.0 10.1L16.3 5.2C16.1 5.1 15.8 4.9 15.5 4.8C15.3 4.8 15.0 4.7 14.7 4.8C14.4 4.8 14.2 4.9 13.9 5.0C13.7 5.1 13.5 5.3 13.3 5.5L6.3 13.8C5.7 14.5 5.3 15.5 5.4 16.5C5.5 17.5 5.9 18.4 6.7 19.1L9.2 21.5C10.1 22.3 11.2 22.7 12.4 22.7H22.8C22.9 22.7 23.1 22.7 23.2 22.6C23.3 22.5 23.4 22.3 23.4 22.1C23.4 22.0 23.3 21.8 23.2 21.7C23.1 21.6 22.9 21.5 22.8 21.5ZM14.2 6.3C14.3 6.2 14.4 6.1 14.5 6.1C14.6 6.0 14.7 6.0 14.8 6.0H14.9C15.1 6.0 15.3 6.1 15.5 6.2L21.2 11.0C21.4 11.2 21.5 11.4 21.5 11.7C21.6 12.0 21.5 12.2 21.3 12.5L16.6 18.3L9.3 12.1L14.2 6.3ZM7.5 18.2C7.0 17.7 6.7 17.1 6.6 16.4C6.6 15.8 6.8 15.1 7.2 14.6L8.5 13.0L15.8 19.2L15.0 20.2C14.7 20.6 14.4 20.9 14.0 21.1C13.6 21.3 13.1 21.5 12.6 21.5C12.2 21.5 11.7 21.5 11.3 21.3C10.8 21.2 10.4 20.9 10.1 20.6L7.5 18.2Z\" fill=\"#15171F\" stroke=\"#15171F\" stroke-width=\"0.4\" stroke-linejoin=\"round\"/></svg>", "expand": "<svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\"><path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M19.2 3.5C19.8 3.5 20.4 4.1 20.4 4.7V6.5C20.4 6.9 20.7 7.2 21.1 7.2C21.5 7.2 21.8 6.9 21.8 6.5V4.7C21.8 3.2 20.7 2.1 19.2 2.1H17.4C17.0 2.1 16.7 2.4 16.7 2.8C16.7 3.2 17.0 3.5 17.4 3.5H19.2ZM14.5 2.8C14.5 2.4 14.2 2.1 13.8 2.1H10.1C9.7 2.1 9.4 2.4 9.4 2.8C9.4 3.2 9.7 3.5 10.1 3.5H13.8C14.2 3.5 14.5 3.2 14.5 2.8ZM7.2 2.8C7.2 2.4 6.9 2.1 6.5 2.1H4.7C3.2 2.1 2.1 3.2 2.1 4.7V6.5C2.1 6.9 2.4 7.2 2.8 7.2C3.2 7.2 3.5 6.9 3.5 6.5V4.7C3.5 4.1 4.1 3.5 4.7 3.5H6.5C6.9 3.5 7.2 3.2 7.2 2.8ZM21.1 9.4C20.7 9.4 20.4 9.7 20.4 10.1V13.8C20.4 14.2 20.7 14.5 21.1 14.5C21.5 14.5 21.8 14.2 21.8 13.8V10.1C21.8 9.7 21.5 9.4 21.1 9.4ZM2.8 9.4C2.4 9.4 2.1 9.7 2.1 10.1V13.8C2.1 14.2 2.4 14.5 2.8 14.5C3.2 14.5 3.5 14.2 3.5 13.8V10.1C3.5 9.7 3.2 9.4 2.8 9.4ZM21.1 16.7C20.7 16.7 20.4 17.0 20.4 17.4V19.2C20.4 19.8 19.8 20.4 19.2 20.4H17.4C17.0 20.4 16.7 20.7 16.7 21.1C16.7 21.5 17.0 21.8 17.4 21.8H19.2C20.7 21.8 21.8 20.7 21.8 19.2V17.4C21.8 17.0 21.5 16.7 21.1 16.7ZM2.8 16.7C2.4 16.7 2.1 17.0 2.1 17.4V19.2C2.1 20.7 3.2 21.8 4.7 21.8H6.5C6.9 21.8 7.2 21.5 7.2 21.1C7.2 20.7 6.9 20.4 6.5 20.4H4.7C4.1 20.4 3.5 19.8 3.5 19.2V17.4C3.5 17.0 3.2 16.7 2.8 16.7ZM14.5 21.1C14.5 20.7 14.2 20.4 13.8 20.4H10.1C9.7 20.4 9.4 20.7 9.4 21.1C9.4 21.5 9.7 21.8 10.1 21.8H13.8C14.2 21.8 14.5 21.5 14.5 21.1Z\" fill=\"#15171F\" stroke=\"#15171F\" stroke-width=\"0.3\"/><path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M10.9 9.8C11.2 10.1 11.1 10.5 10.9 10.7C10.6 11.0 10.2 11.1 9.9 10.7L7.9 9.0V11.5C7.9 11.8 7.6 12.2 7.3 12.2C6.8 12.2 6.6 11.8 6.6 11.5V7.4C6.6 7.0 6.9 6.7 7.3 6.7C7.3 6.7 10.3 6.7 11.3 6.7C12.3 6.7 12.1 7.3 12.1 7.4C12.1 7.7 11.7 8.0 11.4 8.0H9.0\" fill=\"#15171F\"/><path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M13.0 14.1C12.7 13.8 12.8 13.4 13.0 13.1C13.3 12.9 13.7 12.8 14.0 13.1L16.0 14.9V12.4C16.0 12.1 16.3 11.7 16.6 11.7C17.1 11.7 17.3 12.1 17.3 12.4V16.5C17.3 16.9 17.0 17.2 16.6 17.2H12.7C12.5 17.2 12.2 17.2 12.1 17.0C11.9 16.9 11.8 16.6 11.8 16.4C11.8 16.1 12.2 15.8 12.5 15.8C13.0 15.8 14.9 15.8 14.9 15.8\" fill=\"#15171F\"/></svg>", "removebg": "<svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\"><g opacity=\"0.5\"><g clip-path=\"url(#rbg0)\"><line x1=\"65.8\" y1=\"-22.7\" x2=\"-1.9\" y2=\"45.1\" stroke=\"#15171F\" stroke-width=\"0.8\"/><line x1=\"64.1\" y1=\"-24.4\" x2=\"-3.7\" y2=\"43.3\" stroke=\"#15171F\" stroke-width=\"0.8\"/><line x1=\"62.3\" y1=\"-26.2\" x2=\"-5.5\" y2=\"41.6\" stroke=\"#15171F\" stroke-width=\"0.8\"/><line x1=\"60.5\" y1=\"-28.0\" x2=\"-7.3\" y2=\"39.8\" stroke=\"#15171F\" stroke-width=\"0.8\"/><line x1=\"58.7\" y1=\"-29.8\" x2=\"-9.0\" y2=\"38.0\" stroke=\"#15171F\" stroke-width=\"0.8\"/><line x1=\"57.0\" y1=\"-31.5\" x2=\"-10.8\" y2=\"36.2\" stroke=\"#15171F\" stroke-width=\"0.8\"/><line x1=\"55.2\" y1=\"-33.3\" x2=\"-12.6\" y2=\"34.5\" stroke=\"#15171F\" stroke-width=\"0.8\"/><line x1=\"53.4\" y1=\"-35.1\" x2=\"-14.4\" y2=\"32.7\" stroke=\"#15171F\" stroke-width=\"0.8\"/><line x1=\"51.6\" y1=\"-36.9\" x2=\"-16.1\" y2=\"30.9\" stroke=\"#15171F\" stroke-width=\"0.8\"/><line x1=\"49.9\" y1=\"-38.6\" x2=\"-17.9\" y2=\"29.1\" stroke=\"#15171F\" stroke-width=\"0.8\"/><line x1=\"48.1\" y1=\"-40.4\" x2=\"-19.7\" y2=\"27.4\" stroke=\"#15171F\" stroke-width=\"0.8\"/><line x1=\"46.3\" y1=\"-42.2\" x2=\"-21.5\" y2=\"25.6\" stroke=\"#15171F\" stroke-width=\"0.8\"/></g></g><path d=\"M13.3 14.9C14.9 14.0 15.6 11.9 15.3 9.9C14.9 7.8 13.4 6.5 11.6 6.5C9.8 6.5 8.3 7.8 7.9 9.9C7.5 11.9 8.2 14.0 9.9 14.9C6.5 15.7 4.4 18.9 4.4 22.9H18.8C18.8 18.9 16.6 15.7 13.3 14.9Z\" fill=\"#15171F\"/><defs><clipPath id=\"rbg0\"><rect x=\"1.0\" y=\"1.0\" width=\"21.8\" height=\"21.8\" rx=\"2.1\" fill=\"white\"/></clipPath></defs></svg>", "hot": "<svg width=\"21\" height=\"9\" viewBox=\"0 0 21 9\" fill=\"none\"><path d=\"M0 4.5C0 2.0 2.0 0 4.5 0H16.5C18.9 0 21 2.0 21 4.5C21 6.9 18.9 9 16.5 9H4.5C2.0 9 0 6.9 0 4.5Z\" fill=\"#EA4335\"/><path d=\"M7.6 7H6.3L6.8 5.0H4.8L4.4 7H3.1L4.2 2.0H5.4L5.0 4.0H7.0L7.4 2.0H8.7L7.6 7ZM11.0 7.1C9.6 7.1 8.8 6.2 8.8 5.0C8.8 3.1 10.0 1.9 11.5 1.9C12.9 1.9 13.7 2.8 13.7 4.0C13.7 5.8 12.5 7.1 11.0 7.1ZM11.5 3.0C10.7 3.0 10.1 3.8 10.1 4.9C10.1 5.6 10.5 6.0 11.0 6.0C11.8 6.0 12.4 5.2 12.4 4.1C12.4 3.4 12.1 3.0 11.5 3.0ZM16.0 7H14.7L15.5 3.0H14.1L14.3 2.0H18.4L18.2 3.0H16.8L16.0 7Z\" fill=\"white\"/></svg>", "new": "<svg width=\"21\" height=\"9\" viewBox=\"0 0 21 9\" fill=\"none\"><path d=\"M0 4.5C0 2.0 2.0 0 4.5 0H16.5C18.9 0 21 2.0 21 4.5C21 6.9 18.9 9 16.5 9H4.5C2.0 9 0 6.9 0 4.5Z\" fill=\"#34A853\"/><path d=\"M15.2 4.2L13.7 7.3H12.6L12.3 2.3H13.6L13.6 5.6H13.7L15.2 2.3H16.2L16.3 5.6H16.4L17.7 2.3H19.0L16.7 7.3H15.5L15.3 4.2H15.2Z\" fill=\"white\"/><path d=\"M10.9 6.3L10.7 7.3H7.3L8.3 2.3H11.7L11.5 3.3H9.4L9.2 4.3H11.2L11.0 5.2H9.0L8.8 6.3H10.9Z\" fill=\"white\"/><path d=\"M3.2 7.3H1.9L3.0 2.3H3.9L5.5 5.2H5.5L6.2 2.3H7.4L6.3 7.3H5.4L3.8 4.4H3.8L3.2 7.3Z\" fill=\"white\"/></svg>", "topx": "<svg width=\"30\" height=\"30\" viewBox=\"0 0 30 30\" fill=\"none\"><path d=\"M21.6 8.5C21.8 8.2 22.3 8.2 22.5 8.5C22.8 8.7 22.8 9.2 22.5 9.4L15.9 15.9L22.4 22.4C22.7 22.6 22.7 23.1 22.4 23.3C22.2 23.6 21.8 23.6 21.5 23.3L14.9 16.9L8.4 23.3C8.1 23.6 7.7 23.6 7.5 23.3C7.2 23.1 7.2 22.6 7.5 22.4L14.0 15.9L7.4 9.4C7.1 9.2 7.1 8.7 7.4 8.5C7.6 8.2 8.1 8.2 8.3 8.5L14.9 15.0L21.6 8.5Z\" fill=\"#15171F\"/></svg>", "hair": "<svg width=\"22\" height=\"22\" viewBox=\"0 0 22 22\" fill=\"none\"><path d=\"M15.4 1.9C15.4 1.9 9.6 -0.9 6.3 3.3C4.3 2.9 2.7 5.4 2.4 6.2C1.6 8.6 1.8 12.4 3.7 14.8C4.4 15.8 5.7 18.8 3.5 19.7C3.5 19.9 3.6 20.0 3.7 20.0C4.4 20.0 8.2 19.4 8.7 18.7C9.0 18.3 8.9 17.1 8.4 16.9C8.0 16.7 7.1 16.8 6.8 16.7C6.1 16.4 5.8 16.0 5.8 15.5C5.9 15.0 6.1 14.0 5.7 13.7C5.3 13.6 4.9 13.6 4.4 13.3C4.3 13.2 4.3 13.0 4.4 12.9C4.7 12.2 5.7 11.1 5.3 10.0C4.8 8.8 5.6 6.2 6.7 5.7C6.7 5.7 7.1 5.5 7.2 5.7C7.6 6.3 8.4 8.2 10.4 9.0C13.7 10.3 13.0 12.4 13.5 12.2C13.7 12.1 13.9 11.4 14.0 11.2C14.7 8.8 16.0 9.1 15.9 10.7C16.0 12.2 14.1 15.1 13.5 13.7C12.6 16.2 12.4 16.9 12.8 18.4C13.4 20.1 16.5 20.2 17.3 19.9C17.4 19.9 17.4 19.7 17.3 19.6C17.3 19.6 16.6 19.5 16.3 18.7C16.0 17.3 17.7 16.2 18.8 14.4C21.1 10.4 19.8 4.3 15.4 1.9L15.4 1.9ZM16.1 15.9C20.3 10.1 17.4 6.4 16.3 4.8C18.3 5.9 19.1 8.1 19.0 10.7C18.8 12.6 17.6 15.0 16.0 15.9H16.1Z\" fill=\"#15171F\"/></svg>", "selfie": "<svg width=\"22\" height=\"22\" viewBox=\"0 0 22 22\" fill=\"none\"><path d=\"M12 1V2.5H7C4.5 2.5 2.5 4.5 2.5 7V15C2.5 17.4 4.5 19.5 7 19.5H15C17.4 19.5 19.5 17.4 19.5 15V12H21V15L20.9 15.3C20.8 18.3 18.3 20.8 15.3 20.9L15 21H7C3.7 21 1.1 18.4 1.0 15.3L1 15V7C1 3.6 3.6 1 7 1H12Z\" fill=\"#15171F\"/><path d=\"M17 14.8C16.4 14.7 16.1 14.0 15.9 13.2C15.7 12.4 15.6 11.5 15.6 11.3C15.6 8.8 14.9 7.2 13.9 6.2C12.9 5.2 11.7 5.0 10.7 5.0C8.6 5.0 7.4 6.7 7.0 8.7C7.0 8.8 6.9 9.2 6.9 9.4C6.8 10.5 7.1 11.5 8.1 12.2C6.1 13.0 5 14.6 5 16.4C5 16.7 5.2 17 5.5 17C5.7 17 5.9 17 6.0 16.9C6.0 16.8 6.1 16.7 6.1 16.5V16.0C6.3 15.2 6.6 14.8 7.1 14.4L7.1 14.3C8.0 13.5 8.9 13.0 10.0 13.0C10.3 13.0 10.6 13.0 10.9 13.1C11.3 13.2 11.7 13.3 12.1 13.6C12.3 13.7 12.4 13.8 12.6 13.9C12.7 14.1 12.8 14.2 12.9 14.2H13.0C13.2 14.1 13.4 14.0 13.4 13.7C13.4 13.5 13.3 13.4 13.1 13.2C12.7 12.8 12.1 12.5 11.7 12.3C12.5 11.7 12.8 11.0 12.9 10.2C13.0 9.3 12.7 8.4 12.2 7.8C11.6 7.1 10.8 6.7 9.9 6.7C9.5 6.7 9.1 6.8 8.7 6.9C8.8 6.7 9.0 6.5 9.3 6.4C9.6 6.1 10.1 5.9 10.7 5.9C11.5 5.9 12.5 6.1 13.2 6.9C13.9 7.6 14.6 8.9 14.6 11.2C14.6 11.5 14.6 12.5 14.8 13.4C15.1 14.3 15.6 15.4 16.6 15.8C16.9 15.8 17.1 15.8 17.2 15.5C17.3 15.2 17.2 14.9 17 14.8V14.8ZM10.0 7.7C11.1 7.7 12.0 8.6 12.0 9.8C12.0 10.3 11.8 10.8 11.5 11.2C11.0 11.5 10.5 11.7 10.0 11.7C8.8 11.7 8.0 10.8 8.0 9.7C8.0 9.5 8.0 9.4 8.1 9.2C8.3 8.3 9.1 7.7 10.0 7.7H10.0Z\" fill=\"#15171F\"/><path d=\"M21.6 4.2C21.9 4.3 22.0 4.7 21.7 4.8L20.5 5.4C19.9 5.7 19.4 6.2 19.1 6.8L18.8 7.6C18.7 7.9 18.3 7.9 18.2 7.6L17.8 6.8C17.6 6.2 17.1 5.7 16.5 5.4L15.3 4.8C15.0 4.7 15.0 4.3 15.3 4.2L16.2 3.8C17.0 3.6 17.6 2.9 17.9 2.2L18.2 1.4C18.3 1.1 18.7 1.1 18.8 1.4L19.1 2.2C19.4 2.9 20.0 3.6 20.8 3.8L21.6 4.2Z\" fill=\"#15171F\"/></svg>", "shorts": "<svg class=\"sh-ic\" width=\"22\" height=\"22\" viewBox=\"0 0 22 22\" fill=\"none\"><path d=\"M1.0 19.3L0.2 19.3C0.2 19.7 0.5 20.1 1.0 20.1C1.4 20.1 1.7 19.7 1.7 19.3H1.0ZM2.4 19.9L3.0 20.5L3.0 20.5L2.4 19.9ZM3.9 18.5L4.4 19.1H4.4L3.9 18.5ZM21.7 10C21.7 9.5 21.4 9.2 21 9.2C20.5 9.2 20.2 9.5 20.2 10H21H21.7ZM12.0 3.7C12.4 3.7 12.7 3.4 12.7 3C12.7 2.5 12.4 2.2 12.0 2.2V3V3.7ZM1.0 19.3H1.7V6.7H1.0H0.2V19.3H1.0ZM17.2 17.9V17.1H12.4V17.9V18.7H17.2V17.9ZM2.4 19.9L1.9 19.4C1.5 19.8 1.4 19.8 1.5 19.8C1.7 19.8 1.8 20.0 1.8 19.9C1.7 19.8 1.7 19.7 1.7 19.5C1.7 19.5 1.7 19.4 1.7 19.4C1.7 19.4 1.7 19.4 1.7 19.4C1.7 19.4 1.7 19.4 1.7 19.4C1.7 19.4 1.7 19.5 1.7 19.5C1.7 19.5 1.7 19.5 1.7 19.6C1.7 19.6 1.6 19.7 1.5 19.8C1.5 19.9 1.3 20.0 1.2 20.0C1.1 20.0 0.8 20.0 0.6 20.0C0.5 19.9 0.4 19.8 0.3 19.7C0.3 19.7 0.3 19.6 0.3 19.6C0.2 19.5 0.2 19.4 0.2 19.4C0.2 19.4 0.2 19.4 0.2 19.3C0.2 19.3 0.2 19.3 0.2 19.3L1.0 19.3L1.7 19.3C1.7 19.3 1.7 19.3 1.7 19.3C1.7 19.3 1.7 19.2 1.7 19.2C1.7 19.2 1.7 19.1 1.7 19.0C1.6 19.0 1.6 18.9 1.6 18.9C1.5 18.8 1.4 18.7 1.3 18.6C1.1 18.6 0.8 18.6 0.7 18.6C0.6 18.6 0.4 18.7 0.4 18.8C0.3 18.9 0.3 19.0 0.3 19.0C0.2 19.1 0.2 19.1 0.2 19.1C0.2 19.2 0.2 19.2 0.2 19.2C0.2 19.2 0.2 19.3 0.2 19.3C0.2 19.4 0.2 19.5 0.2 19.6C0.2 19.8 0.2 20.2 0.4 20.5C0.5 20.8 0.8 21.3 1.5 21.3C2.0 21.3 2.5 20.9 3.0 20.5L2.4 19.9ZM3.9 18.5L3.4 18.0C2.7 18.5 2.1 19.2 1.9 19.4L2.4 19.9L3.0 20.5C3.2 20.2 3.8 19.6 4.4 19.1L3.9 18.5ZM5.8 17.9V18.7H12.4V17.9V17.1H5.8V17.9ZM21 10H20.2V14.1H21H21.7V10H21ZM4.8 3V3.7H12.0V3V2.2H4.8V3ZM3.9 18.5L4.4 19.1C4.7 18.8 5.3 18.7 5.8 18.7V17.9V17.1C5.0 17.1 4.1 17.4 3.4 18.0L3.9 18.5ZM17.2 17.9V18.7C19.7 18.7 21.7 16.6 21.7 14.1H21H20.2C20.2 15.8 18.8 17.1 17.2 17.1V17.9ZM1.0 6.7H1.7C1.7 5.1 3.1 3.7 4.8 3.7V3V2.2C2.2 2.2 0.2 4.2 0.2 6.7H1.0Z\" fill=\"#15171F\"/><path class=\"sh-st\" d=\"M18.8 0.2C18.7 -0.0 18.2 -0.0 18.1 0.2L17.5 1.8C17.4 2.1 17.1 2.4 16.8 2.5L15.2 3.1C14.9 3.2 14.9 3.7 15.2 3.8L16.8 4.4C17.1 4.5 17.4 4.8 17.5 5.1L18.1 6.7C18.2 7.0 18.7 7.0 18.8 6.7L19.4 5.1C19.5 4.8 19.8 4.5 20.1 4.4L21.7 3.8C22.0 3.7 22.0 3.2 21.7 3.1L20.1 2.5C19.8 2.4 19.5 2.1 19.4 1.8L18.8 0.2Z\" fill=\"url(#shg)\"/><g class=\"sh-d sh-d1\"><circle cx=\"6.3\" cy=\"11.3\" r=\"1.3\" fill=\"#15171F\"/></g><g class=\"sh-d sh-d2\"><circle opacity=\"0.7\" cx=\"10.8\" cy=\"11.3\" r=\"1.3\" fill=\"#15171F\"/></g><g class=\"sh-d sh-d3\"><circle opacity=\"0.4\" cx=\"15.5\" cy=\"11.3\" r=\"1.3\" fill=\"#15171F\"/></g><path class=\"sh-pl\" d=\"M9.3 8.1L14.3 11.1L9.3 14.1Z\" fill=\"#15171F\" stroke=\"#15171F\" stroke-width=\"1.3\" stroke-linejoin=\"round\"/><defs><linearGradient id=\"shg\" x1=\"16\" y1=\"3\" x2=\"22\" y2=\"3.5\" gradientUnits=\"userSpaceOnUse\"><stop stop-color=\"#D027FF\"/><stop offset=\"1\" stop-color=\"#008CFF\"/></linearGradient></defs></svg>", "replace": "<img src=\"media/tool-replace.png\" alt=\"\" width=\"22\" height=\"22\">", "swap": "<img src=\"media/tool-swap.png\" alt=\"\" width=\"22\" height=\"22\">", "avatar": "<img src=\"media/tool-avatar.png\" alt=\"\" width=\"22\" height=\"22\">", "fashion": "<img src=\"media/tool-fashion.png\" alt=\"\" width=\"22\" height=\"22\">", "studio": "<img src=\"media/tool-studio.png\" alt=\"\" width=\"22\" height=\"22\">", "headshot": "<img src=\"media/tool-headshot.png\" alt=\"\" width=\"22\" height=\"22\">"};
+  var TOOLS = [['AI Video', [['video', 'AI Video', 'hot'], ['shorts', 'AI Shorts', 0, 1], ['img2vdo', 'Image to Video'], ['t2v', 'Text to Video'], ['vdotransfer', 'Video Change'],
+                             ['business', 'AI Influencer'], ['character', 'Character Animator'], ['talkvdo', 'Talking Video'], ['conversation', 'Conversation'], ['mv', 'AI MV']]],
+               ['AI Image', [['photo', 'AI Image', 'hot'], ['enhance', 'Enhance'], ['replace', 'Replace'], ['remove', 'Remove'], ['expand', 'Expand'], ['removebg', 'Background']]],
+               ['AI Portrait', [['avatar', 'Human Avatar', 'hot'], ['fashion', 'Fashion'], ['studio', 'Studio', 'new'], ['headshot', 'Headshot'], ['swap', 'Face Swap'], ['hair', 'Hairstyle'], ['selfie', 'Selfie']]]];
+  $('tl-x').innerHTML = TI.topx;
+  $('tl-bd').innerHTML = '<h5>Recently Used</h5><div class="tl-rec"><span>Image to Image</span><span>Image to Video</span><span>Remove</span><span>Video Change</span></div>' +
+    TOOLS.map(function (sec, i) {
+      return '<div class="tl-sec" data-i="' + i + '"><h5>' + sec[0] + '</h5><div class="tl-grid">' + sec[1].map(function (t) {
+        return '<div class="tl-t' + (t[3] ? ' live" id="tl-shorts" role="button' : '') + '"><div class="i">' + TI[t[0]] + '</div><div class="l">' + t[1] + '</div>' + (t[2] ? '<div class="tg">' + TI[t[2]] + '</div>' : '') + '</div>';
+      }).join('') + '</div></div>';
+    }).join('');
+  function tlTab(i) { Array.prototype.forEach.call($('tl-tabs').children, function (b, k) { b.classList.toggle('on', k === i); }); }
+  function openTools() {
+    if (S.busy || S.agent || S.sheet || S.tools) return;
+    if (S.hub) { closeCompose(); closeDrawer(); }
+    hideHint(); S.tools = true; $('tl-bd').scrollTop = 0; tlTab(0);
+    var t = $('tools'); t.removeAttribute('aria-hidden'); t.classList.add('open');
+  }
+  function closeTools(cb) {
+    if (!S.tools) return; var t = $('tools'); t.classList.remove('open'); t.setAttribute('aria-hidden', 'true');
+    setTimeout(function () { S.tools = false; if (typeof cb === 'function') cb(); scheduleHint(); }, 300);
+  }
+  Array.prototype.forEach.call($('tl-tabs').children, function (b, i) {   // tab → scroll to its section
+    b.onclick = function () { tlTab(i); S.tlLock = Date.now(); var sec = document.querySelector('.tl-sec[data-i="' + i + '"]'); $('tl-bd').scrollTo({ top: i ? sec.offsetTop - 8 : 0, behavior: 'smooth' }); };
+  });
+  $('tl-bd').addEventListener('scroll', function () {        // scrolling by hand → the tab follows the section in view
+    if (Date.now() - (S.tlLock || 0) < 700) return;
+    var bd = $('tl-bd'), y = bd.scrollTop + 40, k = 0;
+    if (bd.scrollTop + bd.clientHeight >= bd.scrollHeight - 2) k = 2;
+    else Array.prototype.forEach.call(document.querySelectorAll('.tl-sec'), function (sec, i) { if (sec.offsetTop - 8 <= y) k = i; });
+    tlTab(k);
+  }, { passive: true });
+  $('tl-x').onclick = function () { closeTools(); }; $('tl-dim').onclick = function () { closeTools(); };
+  $('tl-shorts').onclick = function () {
+    closeTools(function () {
+      if (!S.hub) openHub();
+      HUB.step = 1; setHubMode('create'); $('qs-create-sc').scrollLeft = 0;
+    });
+  };
+  $('nav').querySelectorAll('.it')[2].id = 'nav-tools';
+  $('nav-tools').onclick = openTools; $('hnav-tools').onclick = openTools;
+
+
   /* B-3: tap the input → the page dims and the card rises above the keyboard (a real text field, so the phone shows its own keyboard) */
   function openCompose() {
     var h = $('hub'); if (h.classList.contains('compose')) return;
     h.classList.add('compose'); HUB.top = null; placeCompose();
     hideHint(); $('hub-ta').focus({ preventScroll: true });
   }
-  function closeCompose() { var h = $('hub'); if (!h.classList.contains('compose')) return; h.classList.remove('compose'); selPill(null); $('hub-in').style.transform = ''; HUB.top = null; $('hub-ta').blur(); scheduleHint(); }
+  function closeCompose() { var h = $('hub'); if (!h.classList.contains('compose')) return; h.classList.remove('compose'); $('hub-in').style.transform = ''; HUB.top = null; $('hub-ta').blur(); scheduleHint(); }
 
   /* Keyboard (2026-10-16): the pills + card sit at one fixed spot above the keyboard and never jump.
      Spot = Figma B-3 (pills at safe-top + 208), raised only if the keyboard would cover the card; it never moves back down while typing.
@@ -2450,10 +2562,12 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   if (window.visualViewport) ['resize', 'scroll'].forEach(function (ev) { window.visualViewport.addEventListener(ev, function () { unscroll(); placeCompose(); placeAgentCompose(); }); });
   $('hub-ta').addEventListener('focus', function () { setTimeout(function () { unscroll(); placeCompose(); }, 60); });
   $('hub-card').addEventListener('click', function (e) {
-    if (!$('hub').classList.contains('compose')) { openCompose(); return; }
-    if (e.target.closest('#hub-snd')) { if (HUB.sel) sendRecipe(); else sendTyped(); }
+    if (e.target.closest('#hub-snd')) { if (HUB.sel) return sendRecipe(); if ($('hub-ta').value.trim()) return sendTyped(); }
+    if (e.target.closest('#hub-add')) { e.stopPropagation(); return hubAdd(); }
+    if (e.target.closest('#hub-att')) { e.stopPropagation(); return setHubPhoto(null); }
+    if (!$('hub').classList.contains('compose')) openCompose();
   });
-  $('hub-ta').addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendTyped(); } });
+  $('hub-ta').addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); if (HUB.sel) sendRecipe(); else sendTyped(); } });
   $('hub-dim').onclick = closeCompose;
   function sendTyped() {
     var v = $('hub-ta').value.trim(); if (!v) return;
@@ -2462,20 +2576,27 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
 
   /* B-3 skill pills → requirement recipe (same chips as the launcher input: tap a chip → picker / link sheet; send never blocks) */
   var RCP = {                                                 // slot: what the chip asks for; src: the photo it resolves to (matches that skill's chat)
-    F7: { lead: 'Create a UGC before-and-after video for', url: true, tail: ['featuring', 'model'], prod: IMG.product, model: IMG.picked },
+    F7: { lead: 'Create a UGC review video for', url: true, tail: ['featuring', 'model'], prod: IMG.product, model: IMG.picked },
     C2: { lead: 'Create a step-by-step tutorial video for', url: true, prod: IMG.product },
     F9: { lead: 'Create a product showcase ad for', url: true, prod: 'media/agent-f9-bag.png' },
     C4: { lead: 'Create a demo video showing the problem', after: 'solves.', prod: 'media/product-demo-watch.jpg' },
     C5: { lead: 'Create a cinematic brand ad for', prod: 'media/luxe-product-reveal.jpg' },
     C6: { lead: 'Create an unboxing and first-use video for', prod: 'media/themed-sale-unbox.jpg' },
     C7: { lead: 'Remix', one: ['person', 'Person image', 'media/fashion-ava.jpg'], after: 'into a short action clip.' },
-    E1: { lead: 'Turn', one: ['photo', 'Photo', 'media/bonjour-selfie.jpg'], after: 'into a video.' },
-    E2: { lead: 'Enhance the quality of', one: ['photo', 'Photo', 'media/model-picked.jpg'], lofi: true },
-    E3: { lead: 'Enhance the quality of', one: ['video', 'Video', 'media/teatime-date.jpg'], lofi: true },
-    E4: { lead: 'Remove unwanted objects or people from', one: ['photo', 'Photo', 'media/ugc-hand-gesture.jpg'] }
+    E1: { photo: 'media/bonjour-selfie.jpg' }, E2: { photo: 'media/model-picked.jpg', lofi: true }, E3: { photo: 'media/teatime-date.jpg', lofi: true },   // Image/Video: the photo a pick resolves to
+    E4: { photo: 'media/ugc-hand-gesture.jpg' }, E5: { photo: 'media/fashion-erica.jpg' }, E6: { photo: 'media/model-picked.jpg' }, E7: { photo: 'media/bonjour-selfie.jpg' }
+  };
+  var PROMPT = {                                              // Image/Video skills fill the input with an editable prompt (E1 = Figma AURA prompt; the rest drafted 2026-10-20)
+    E1: "High resolution, high quality, Preserve the uploaded face identity and exact hairstyle, but regenerate head ratio to make the size moderate. Apply subtle professional beauty retouching: gently refine the complexion, slightly soften uneven skin texture, brighten underexposed facial areas, reduce dull or yellow undertones, and add a natural healthy glow, pearl stud earrings. Hair with a single delicate rose-gold crystal flower hairpin, catching soft warm highlights. Ensure the person always at the center of magazine cover.\nConcept: viral 3D dreamland art installation — a luxury fashion magazine cover — not a thick book or box, not tilted — with a slim visible edge along its top and side, titled \"AURA\" in embossed 3D rose-gold typography, breaking out of its own 2D frame into physical space.\nFraming & 3D Object Presence: The magazine cover is rendered visible page-edge depth along its top and side, viewed at a slight three-quarter angle so both the printed front face and the dimensional edge are visible, establishing it as a freestanding object in the scene. A grounded contact shadow falls from the ledge and arm onto the floor of roses below, anchoring the object's weight in the scene.\nFX: translucent glass-prism butterflies with rainbow refractions hover near fingertips. The front plane displays a short two-to-three-word editorial coverline match the person's vibe, in fine rose-gold serif type consistent with the masthead style, plus two brief coverline captions tucked near the corners — a kicker line above the masthead and a teaser line near the base — and a subtle vertical barcode motif in the lower corner, fashion-magazine front-cover layout, no date.\nPalette: lavender, baby pink, champagne cream, sky blue. Setting: neoclassical white marble terrace under a bright azure sky, soft top-corner sunlight, a distant minimalist stone archway veiled in pastel-pink clouds. The frame's base emerges from a bed of blush-pink roses, with cascading petals, soap bubbles, and diamond light-dust spilling into the foreground.\nLighting: volumetric god rays casting a golden rim light on her hair and sweater; diamond sparkle dust, rainbow-caustic bubbles, crisp horizontal lens flares on jewelry and the glossy cover edge.\nShot with an 85mm portrait telephoto lens perspective to eliminate wide-angle distortion (moderate natural head size, perfect head-to-shoulder ratio, slender neck). Poised, upright, and centered posture with leveled shoulders. Wearing a soft asymmetric mohair-knit cardigan in dusty lavender draped off one shoulder, with the other shoulder fully covered by the knit, finely spun fluffy fibers catching the light, for a romantic goddess silhouette; a delicate lace-trim camisole underneath; a layered pearl necklace. Both arms rest gracefully and horizontally across the lower marble frame ledge.\nFinish: high resolution, sleek fitted silhouette, slim cover edge with clean minimal typography, natural skin retouching — brighten shadows, neutralize yellow undertones, healthy glow, no wrinkles, camera level and unrotated. Ensure the head must regenerate into a moderate size, no big head. Perfect head-to-body ratio. No date. No cleavage. Retain the input face features and hairstyle. Remove eye bags and dark circles. No under-eye circles",
+    E2: 'Enhance this photo to high resolution: sharpen fine details and textures, remove noise and compression artifacts, correct exposure and white balance, and restore natural skin tones. Keep the face, expression and composition exactly the same.',
+    E5: 'Place the person from my photo in a sunny Parisian street café: cream stone buildings with wrought-iron balconies, golden-hour light, a small round table with macarons and flowers. Restyle the outfit to a cream blazer with a silk neck scarf. Keep the face, hairstyle and body proportions the same. Photorealistic, 3:4.',
+    E6: 'Create a 3×3 grid of nine portraits of the person in my photo, each with a different look: change the sunglasses, headscarf, hat, outfit color and a solid pastel background in every tile. Keep the same face, hairstyle and camera framing throughout. Bright, playful editorial style.',
+    E3: 'Upscale this video to 1080p: sharpen details frame by frame, reduce noise and flicker, keep color and exposure consistent across shots, and keep motion smooth and natural. Do not change the people, timing or framing.',
+    E4: 'Remove the unwanted objects and people from this photo. Fill the removed areas with background that matches the surrounding texture, lighting and perspective, with no blur, smudges or leftover edges. Keep the main subject untouched.',
+    E7: 'Combine the people and pets from my photos into one natural group photo: same location, consistent lighting, shadows and color, everyone standing together at the right scale. Keep each face, outfit and pose recognizable. Photorealistic, with no visible seams.'
   };
   var PILLS = { create: [['F7', 'UGC Review'], ['C2', 'UGC Tutorial'], ['F9', 'Product Showcase Ad'], ['C4', 'Product Demo & Solution'], ['C5', 'Cinematic Brand Ad'], ['C6', 'Unboxing & First-Use'], ['C7', 'Person Action Remix']],
-                edit: [['E1', 'Turn my photo into a video'], ['E2', 'Enhance photo quality'], ['E3', 'Enhance video quality'], ['E4', 'Remove unwanted objects or people']] };
+                edit: [['E1', 'Turn my photo into a video'], ['E2', 'Enhance photo quality'], ['E5', 'Restyle the scene'], ['E6', 'Make a 9-look grid'], ['E3', 'Enhance video quality'], ['E4', 'Remove unwanted objects'], ['E7', 'Combine photos into one']] };
   HUB.sel = null; HUB.rc = {};
   function drawPills() {
     $('hub-pills').innerHTML = PILLS[HUB.mode].map(function (p) { return '<button class="hpill' + (HUB.sel === p[0] ? ' on' : '') + '" data-p="' + p[0] + '">' + esc(p[1]) + '</button>'; }).join('');
@@ -2483,13 +2604,27 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
       b.onmousedown = function (e) { e.preventDefault(); };   // keep the text field focused → keyboard stays up
       b.onclick = function (e) { e.stopPropagation(); selPill(HUB.sel === b.dataset.p ? null : b.dataset.p); $('hub-ta').focus({ preventScroll: true }); }; });
   }
-  function selPill(id) {                                      // pick → typed text is cleared and the skill's requirements fill the card; tap again / another pill → released
+  function selPill(id) {                                      // pick (card or pill) → typed text is cleared and the skill fills the card; tap again / another one → released
     HUB.sel = id; HUB.rc = {};
-    $('hub-ta').value = ''; $('hub-card').classList.toggle('rc', !!id);
-    drawPills(); drawRecipe(); syncHubSend();
+    var edit = !!id && /^E/.test(id);
+    $('hub-ta').value = edit ? PROMPT[id] : ''; $('hub-ta').scrollTop = 0;   // Image/Video: an editable prompt · AI Shorts: the requirement chips
+    $('hub-card').classList.toggle('rc', !!id && !edit); $('hub-card').classList.toggle('sel', !!id);
+    Array.prototype.forEach.call(document.querySelectorAll('#hub .qs-c'), function (c) { c.classList.toggle('on', c.dataset.f === id); });
+    if (id) { var cd = document.querySelector('#hub .qs-c[data-f="' + id + '"]'), sc = cd && cd.closest('.qs-sc');   // keep the picked card in view
+      if (sc) { var x = cd.offsetLeft - sc.offsetLeft, to = x + 136 > sc.scrollLeft + sc.clientWidth ? x + 136 - sc.clientWidth : (x - 16 < sc.scrollLeft ? x - 16 : null);
+        if (to !== null) sc.scrollTo({ left: Math.max(0, to), behavior: 'smooth' }); } }
+    drawPills(); drawRecipe(); syncHubSend(); placeCompose();
+  }
+  function hubAdd() {                                         // ⊕: Image/Video attaches a photo (picker) · AI Shorts opens the add sheet, as on the launcher
+    if (S.busy || S.sheet) return;
+    if (HUB.mode === 'edit') hubPick('photo'); else { $('hub-ta').blur(); openSheet('ov-add'); }
+  }
+  function setHubPhoto(src) {
+    HUB.photo = src || null; var a = $('hub-att');
+    a.innerHTML = src ? '<img src="' + src + '" alt="">' : ''; a.classList.toggle('on', !!src);
   }
   function drawRecipe() {
-    var box = $('hub-rc'); box.innerHTML = ''; if (!HUB.sel) return;
+    var box = $('hub-rc'); box.innerHTML = ''; if (!HUB.sel || /^E/.test(HUB.sel)) return;
     var c = RCP[HUB.sel], R = HUB.rc, tx = el('div', 'ic-text');
     function chip(label, slot) { var b = el('button', 'chip', label); b.dataset.slot = slot; b.onclick = function (e) { e.stopPropagation(); hubPick(slot); }; return b; }
     function tok(label, fn) { var b = el('button', 'tok', label); b.onclick = function (e) { e.stopPropagation(); fn(); }; return b; }
@@ -2511,21 +2646,24 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   $('hub-snd').classList.add('ic-send');
   $('hub-ta').addEventListener('input', function () {           // typing while a pill is picked → the pill lets go and the typed text shows
     var ta = $('hub-ta');
-    if (HUB.sel && ta.value) { var v = ta.value; selPill(null); ta.value = v; }
+    if (HUB.sel && !/^E/.test(HUB.sel) && ta.value) { var v = ta.value; selPill(null); ta.value = v; }   // AI Shorts only: an Image/Video prompt is edited in place
     syncHubSend();
   });
   function hubPick(slot) { if (S.busy || S.sheet) return; $('hub-ta').blur(); S.pickFor = 'hub:' + slot; openSheet(slot === 'product' ? 'ov-product' : 'ov-recents'); }
   function hubLink() { if (S.busy || S.sheet) return; $('hub-ta').blur(); S.linkFor = 'hub'; LINK.text = HUB.rc.url || DEMO_URL; drawLink(); openSheet('ov-link'); }
-  function hubPicked(slot) { HUB.rc[slot] = true; if (slot === 'product') HUB.rc.url = null; drawRecipe(); }
+  function hubPicked(slot) {
+    if (slot === 'photo') return setHubPhoto(HUB.sel ? RCP[HUB.sel].photo : 'media/model-picked.jpg');
+    HUB.rc[slot] = true; if (slot === 'product') HUB.rc.url = null; drawRecipe(); }
   function sendRecipe() {                                     // nothing uploaded → the chat asks for it, as when the skill card is tapped
     var c = RCP[HUB.sel], R = HUB.rc, pre = { id: HUB.sel };
+    if (/^E/.test(HUB.sel) && HUB.photo) pre.photo = c.photo;
     if (c.one && R[c.one[0]]) pre.photo = c.one[2];
     if (R.product) pre.photo = c.prod;
     if (R.url) pre.url = R.url;
     if (R.model) pre.model = c.model;
     S.hubPre = pre;                                           // the chat runs the pill demo (first step only)
     if (/^E/.test(pre.id) && !pre.photo) kbUp();               // AI Edit without a photo opens on the compose: keep the keyboard up
-    var id = HUB.sel; closeCompose(); setTimeout(function () { openAgent(id); }, 120);
+    var id = HUB.sel; closeCompose(); selPill(null); setHubPhoto(null); setTimeout(function () { openAgent(id); }, 120);
   }
   drawPills(); syncHubSend();
 
@@ -2534,7 +2672,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
               ['Yesterday', [['H3', 'Creative: Pet Diary', 'v', 'media/hist-pet.jpg'], ['H4', 'turn my photo into a video', 'b'], ['H5', 'crop the photo and keep the girl in my photo', 'b']]]];
   $('drw-ls').innerHTML = HIST.map(function (g, gi) {
     return '<div class="grp' + (gi === 0 ? ' new' : '') + '"><div class="g">' + g[0] + '</div>' + g[1].map(function (it) {
-      return '<button class="it" data-h="' + it[0] + '">' + (it[3] ? '<img src="' + it[3] + '" alt="">' : '') + '<span class="t"><b>' + esc(it[1]) + '</b><span class="tag ' + it[2] + '">' + (it[2] === 'v' ? 'AI Create' : 'AI Edit') + '</span></span></button>'; }).join('') + '</div>'; }).join('');
+      return '<button class="it" data-h="' + it[0] + '">' + (it[3] ? '<img src="' + it[3] + '" alt="">' : '') + '<span class="t"><b>' + esc(it[1]) + '</b><span class="tag ' + it[2] + '">' + (it[2] === 'v' ? 'AI Shorts' : 'Image/Video') + '</span></span></button>'; }).join('') + '</div>'; }).join('');
   function openDrawer() { if (S.busy || S.agent) return; closeCompose(); $('hub-drw').classList.add('in'); hideHint(); scheduleHint(); }
   function closeDrawer() { var d = $('hub-drw'); if (!d.classList.contains('in')) return; d.classList.remove('in'); hideHint(); scheduleHint(); }
   $('hub-menu').onclick = openDrawer; $('drw-scr').onclick = closeDrawer; $('drw-new').onclick = closeDrawer;
@@ -2760,6 +2898,9 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
         E1: ['What a cute photo! Let’s bring it to life. How should it move?', { label: 'Motion', q: 'Which motion style?', o: [['Gentle breeze', 'Hair and clothes sway softly'], ['Slow push-in', 'The camera glides in closer'], ['Playful wave', 'A natural wave and a smile']] }],
         E2: ['Here’s my plan: boost clarity and sharpness so details pop, clean up the noise, and bring back natural color.'],
         E3: ['Got your video. How far should I take the quality?', { label: 'Quality', q: 'Which quality boost?', o: [['Upscale to 1080p', 'Sharper detail, smoother motion'], ['Upscale to 4K', 'Maximum detail, takes a little longer']] }],
+        E5: ['Love this photo! Which scene should I place you in?', { label: 'Scene', q: 'Which scene?', o: [['Parisian café', 'Cream stone street, golden hour'], ['Seaside terrace', 'Blue sea and white walls'], ['Tokyo at night', 'Neon signs and city glow']] }],
+        E6: ['Great shot! Which theme should the 9 looks follow?', { label: 'Theme', q: 'Which theme?', o: [['Summer accessories', 'Sunglasses, scarves and hats'], ['Color pop', 'A different pastel outfit in each tile'], ['Through the decades', 'From 60s glam to Y2K']] }],
+        E7: ['Got it. Where should everyone be in the combined photo?', { label: 'Setting', q: 'Which setting?', o: [['City street', 'Sunny sidewalk, natural light'], ['Park', 'Green lawn and trees'], ['Studio', 'Clean backdrop, soft light']] }],
         E4: ['I can see a text label across the top of your photo. What should I remove?', { label: 'Remove', q: 'What should I remove?', live: 'Describe what to remove…', o: [['The text label', '“Ampoule Sheet Mask” at the top']] }]
       }[id];
       await say(M.text(Q[0]), token);
@@ -2838,7 +2979,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     var fb = q === 'auto' && envType === 'webview' && insetTop === 0 && screen.height >= 812;
     if (fb) topPad = 44;
     var VIEWER_TOP = 0;   // build.py sets this for the claude.ai Artifact build: its floating toolbar covers the top of the page on phones
-    if (VIEWER_TOP) topPad = Math.max(topPad, VIEWER_TOP);   // the claude.ai app may show the page top-level (not in an iframe), so don't rely on window.top
+    if (VIEWER_TOP && window.matchMedia && matchMedia("(pointer: coarse)").matches) topPad = Math.max(topPad, VIEWER_TOP);   // the claude.ai app may show the page top-level (not in an iframe), so don't rely on window.top
     frame.style.transform = 'scale(' + scale + ')';
     root.style.setProperty('--mob-scale', scale);
     root.style.setProperty('--safe-top', (topPad / scale) + 'px');
