@@ -751,7 +751,7 @@ html.no-set .ic-set { display: none !important; }   /* boss 2026-10-07: v1 has n
 .hub-card textarea { scrollbar-width: none; }   /* scrolls, but no visible bar (Monic 2026-10-20) */
 .hub-card textarea::-webkit-scrollbar { display: none; }
 #hub.compose .hub-card textarea { pointer-events: auto; height: 87px; }
-.hub-card.sel textarea { height: 87px; color: var(--ink); font-weight: 510; }   /* a picked skill fills the card (Figma Agent_landing_3img / 3shorts) */
+.hub-card.sel textarea { height: 87px; color: var(--ink); }   /* a picked skill fills the card (Figma Agent_landing_3img / 3shorts) */
 .hub-card .btm { display: flex; justify-content: space-between; align-items: center; padding: 0 8px; }
 .hub-card .btm .rr { display: flex; gap: 8px; }
 .hub-card .btm .ll { display: flex; gap: 6px; align-items: center; }
@@ -772,6 +772,7 @@ html.no-set .ic-set { display: none !important; }   /* boss 2026-10-07: v1 has n
   font: 510 12px/14px var(--sf); white-space: nowrap; transition: background .18s var(--ease-io), color .18s var(--ease-io), border-color .18s var(--ease-io); }
 .hpill.on { background: var(--brand); border-color: var(--brand); color: #fff; }
 #hub-rc { display: none; height: 87px; padding: 0 12px; overflow: hidden; }
+#hub-rc, #hub-rc * { font-weight: 400 !important; }   /* everything in the input is Regular (Monic 2026-10-20) */
 #hub-rc .ic-text .lead { width: auto; }
 .hub-card.rc textarea { position: absolute; left: 12px; top: 12px; width: 1px; height: 1px; opacity: 0; pointer-events: none; }   /* stays focused → keyboard stays up */
 #hub.compose .hub-card.rc #hub-rc, .hub-card.rc #hub-rc { display: block; }
