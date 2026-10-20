@@ -279,6 +279,10 @@ html.no-set .ic-set { display: none !important; }   /* boss 2026-10-07: v1 has n
 .bub .ln2.right { justify-content: flex-end; }
 .bub .tgi { display: inline-flex; align-items: center; height: 17px; padding: 3px; border-radius: 4px; background: #fff; border: .4px solid var(--line-brand); font: 700 9px var(--sf); color: var(--ink); }
 .bub .t12 { font-size: 12px; }
+.bub.clamp { cursor: pointer; }
+.bub.clamp .clp { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 6; overflow: hidden; white-space: pre-line; }
+.bub.clamp.open .clp { display: block; -webkit-line-clamp: unset; }
+#cmp-tx { scrollbar-width: none; } #cmp-tx::-webkit-scrollbar { display: none; }
 .msg.user { padding-bottom: 20px; }
 /* agent message */
 .msg.agent, .msg.agent-done, .msg.thinking { padding: 0 32px 20px 16px; }
@@ -682,25 +686,27 @@ html.no-set .ic-set { display: none !important; }   /* boss 2026-10-07: v1 has n
 .tl-t .tg { position: absolute; right: 2px; top: 0; }
 .tl-t .tg svg { display: block; }
 .tl-t.live { cursor: pointer; }
-/* AI Shorts icon: the chat dots type (Figma motion, 2s) → fold into a play button → the star blinks · 4s loop */
-.sh-ic .sh-d, .sh-ic .sh-pl, .sh-ic .sh-st { transform-box: fill-box; transform-origin: 50% 50%; animation-duration: 4s; animation-iteration-count: infinite; animation-fill-mode: both; }
-.sh-ic .sh-d1 { animation-name: shD1; } .sh-ic .sh-d2 { animation-name: shD2; } .sh-ic .sh-d3 { animation-name: shD3; }
-.sh-ic .sh-pl { animation-name: shPl; } .sh-ic .sh-st { animation-name: shSt; }
-@keyframes shD1 { 0% { transform: none; animation-timing-function: cubic-bezier(.5,0,.5,1); } 7.65% { transform: translateY(-3px) scale(1.3); animation-timing-function: cubic-bezier(.5,0,.5,1); }
-  14.8%, 35.2% { transform: none; animation-timing-function: cubic-bezier(.5,0,.5,1); } 42.9% { transform: translateY(-3px) scale(1.3); animation-timing-function: cubic-bezier(.5,0,.5,1); }
-  50% { transform: none; opacity: 1; animation-timing-function: cubic-bezier(.5,0,.5,1); } 58.75%, 90% { transform: translateX(4.5px) scale(0); opacity: 0; animation-timing-function: cubic-bezier(.5,0,.5,1); } 100% { transform: none; opacity: 1; } }
-@keyframes shD2 { 0%, 12% { transform: none; animation-timing-function: cubic-bezier(.5,0,.5,1); } 19.75% { transform: translateY(-3px) scale(1.3); animation-timing-function: cubic-bezier(.5,0,.5,1); }
-  27.5%, 50% { transform: none; opacity: 1; animation-timing-function: cubic-bezier(.5,0,.5,1); } 58.75%, 90% { transform: scale(0); opacity: 0; animation-timing-function: cubic-bezier(.5,0,.5,1); } 100% { transform: none; opacity: 1; } }
-@keyframes shD3 { 0%, 24.8% { transform: none; animation-timing-function: cubic-bezier(.5,0,.5,1); } 32.65% { transform: translateY(-3px) scale(1.3); animation-timing-function: cubic-bezier(.5,0,.5,1); }
-  40.5%, 50% { transform: none; opacity: 1; animation-timing-function: cubic-bezier(.5,0,.5,1); } 58.75%, 90% { transform: translateX(-4.5px) scale(0); opacity: 0; animation-timing-function: cubic-bezier(.5,0,.5,1); } 100% { transform: none; opacity: 1; } }
-@keyframes shPl { 0%, 52.5% { transform: scale(.3); opacity: 0; animation-timing-function: cubic-bezier(.3,1.4,.5,1); } 61% { transform: none; opacity: 1; } 90% { transform: none; opacity: 1; animation-timing-function: cubic-bezier(.5,0,.5,1); } 97.5%, 100% { transform: scale(.3); opacity: 0; } }
-@keyframes shSt { 0%, 58% { transform: none; opacity: 1; animation-timing-function: ease-in-out; } 62% { transform: scale(1.35); opacity: .35; animation-timing-function: ease-in-out; } 66% { transform: none; opacity: 1; animation-timing-function: ease-in-out; }
-  70% { transform: scale(1.3); opacity: .4; animation-timing-function: ease-in-out; } 74%, 100% { transform: none; opacity: 1; } }
-@media (prefers-reduced-motion: reduce) { .sh-ic .sh-d, .sh-ic .sh-pl, .sh-ic .sh-st { animation: none !important; } .sh-ic .sh-pl { opacity: 0; } }
+/* AI Shorts icon (2026-10-20 r2): dots 1→2→3 type (Figma motion) → fold into a play button, the star blinks bigger as it lands · 4s loop, restarts on open */
+.sh-ic .sh-d, .sh-ic .sh-pl, .sh-ic .sh-st { transform-box: fill-box; transform-origin: 50% 50%; }
+.sh-ic .sh-pl { opacity: 0; }
+.sh-ic.run .sh-d, .sh-ic.run .sh-pl, .sh-ic.run .sh-st { animation-duration: 4s; animation-iteration-count: infinite; animation-fill-mode: both; animation-timing-function: cubic-bezier(.5,0,.5,1); }
+.sh-ic.run .sh-d1 { animation-name: shD1; } .sh-ic.run .sh-d2 { animation-name: shD2; } .sh-ic.run .sh-d3 { animation-name: shD3; }
+.sh-ic.run .sh-pl { animation-name: shPl; } .sh-ic.run .sh-st { animation-name: shSt; }
+@keyframes shD1 { 0%, 3% { transform: none; } 10.5% { transform: translateY(-3px) scale(1.3); } 18%, 50% { transform: none; opacity: 1; } 56%, 88% { transform: translateX(4.5px) scale(0); opacity: 0; } 100% { transform: none; opacity: 1; } }
+@keyframes shD2 { 0%, 12% { transform: none; } 19.5% { transform: translateY(-3px) scale(1.3); } 27%, 50% { transform: none; opacity: 1; } 56%, 88% { transform: scale(0); opacity: 0; } 100% { transform: none; opacity: 1; } }
+@keyframes shD3 { 0%, 21% { transform: none; } 28.5% { transform: translateY(-3px) scale(1.3); } 36%, 50% { transform: none; opacity: 1; } 56%, 88% { transform: translateX(-4.5px) scale(0); opacity: 0; } 100% { transform: none; opacity: 1; } }
+@keyframes shPl { 0%, 55% { transform: scale(.3); opacity: 0; animation-timing-function: cubic-bezier(.3,1.5,.5,1); } 63%, 86% { transform: none; opacity: 1; } 93%, 100% { transform: scale(.3); opacity: 0; } }
+@keyframes shSt { 0%, 55% { transform: none; opacity: 1; animation-timing-function: ease-in-out; } 59.5% { transform: scale(1.75); opacity: .3; animation-timing-function: ease-in-out; } 64% { transform: none; opacity: 1; animation-timing-function: ease-in-out; }
+  68.5% { transform: scale(1.65); opacity: .35; animation-timing-function: ease-in-out; } 73%, 100% { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .sh-ic.run .sh-d, .sh-ic.run .sh-pl, .sh-ic.run .sh-st { animation: none !important; } }
 
 /* ══ AI Agent hub (Figma YCA_APP_UI 7350:40537 · B-1 AI Edit / B-2 AI Create / B-3 typing / B-4 history) — 2026-10-16 ══ */
-#hub { z-index: 3; opacity: 0; pointer-events: none; transition: opacity .22s var(--ease-io), transform .38s var(--ease-out), filter .38s var(--ease-out); }
-#hub.in { opacity: 1; pointer-events: auto; }
+#hub { z-index: 3; transform: translateX(100%); pointer-events: none; transition: transform .38s var(--ease-out), filter .38s var(--ease-out); }   /* Explore ↔ AI Agent: the pages slide sideways (2026-10-20) */
+#hub.in { transform: none; pointer-events: auto; }
+#launcher.away { transform: translateX(-100%); }
+#launcher .nav, #hub .nav { transition: transform .38s var(--ease-out); }
+#hub:not(.in) .nav { transform: translateX(-100%); }          /* each nav counter-moves, so the bar stays put while the pages slide */
+#launcher.away .nav { transform: translateX(100%); }
 #hub.pushed { transform: translateX(-28%); filter: brightness(.92); }
 .hbar .menu { position: relative; width: 30px; height: 30px; }
 .hbar .menu i { position: absolute; right: 5.4px; height: 1.5px; border-radius: 10px; background: var(--ink); }
@@ -1920,7 +1926,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     FB = null; LASTA = null;
     if (S.busy || S.agent) return; S.busy = true; hideHint();
     var pill = S.hubPre && S.hubPre.id === which;
-    if (/^E[1-4]$/.test(which) && !(pill && S.hubPre.photo)) kbUp();   // AI Edit chats open on the compose with the keyboard up
+    if (/^E\d$/.test(which) && !(pill && S.hubPre.photo)) kbUp();   // AI Edit chats open on the compose with the keyboard up
     var list = $('ag-list'); list.innerHTML = ''; $('ag-scroll').scrollTop = 0;
     S.fromHub = !!S.hub; $(S.fromHub ? 'hub' : 'launcher').classList.add('pushed'); $('agent').classList.add('in');
     agBtm().classList.toggle('free', /^E|^H[245]$/.test(which) || (which === 'T' && S.typedMode === 'edit'));   // AI Edit = old Agent: free daily allowance
@@ -1982,6 +1988,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     requestAnimationFrame(function () { requestAnimationFrame(function () { w.classList.add('show'); }); });
   }
   $('ag-list').addEventListener('click', function (e) {
+    var cl = e.target.closest('.bub.clamp'); if (cl) { cl.classList.toggle('open'); return; }
     var b = e.target.closest('[data-fb]'); if (!b) return;
     var k = b.dataset.fb, bar = b.parentNode;
     if (k === 'edit') { if (b._onEdit) b._onEdit(); return; }
@@ -2467,11 +2474,11 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   function openHub() {
     if (S.busy || S.agent || S.sheet || S.hub) return;
     hideHint(); S.hub = true; HUB.step = 0; setHubMode('edit'); $('qs-create-sc').scrollLeft = 0; $('qs-edit-sc').scrollLeft = 0;
-    var h = $('hub'); h.removeAttribute('aria-hidden'); h.classList.add('in'); scheduleHint();
+    var h = $('hub'); h.removeAttribute('aria-hidden'); h.classList.add('in'); $('launcher').classList.add('away'); scheduleHint();
   }
   function closeHub() {                                       // Explore → the launcher; the guided demo starts over from round 0
     closeCompose(); closeDrawer(); hideHint();
-    var h = $('hub'); h.classList.remove('in'); h.setAttribute('aria-hidden', 'true'); S.hub = false;
+    var h = $('hub'); h.classList.remove('in'); h.setAttribute('aria-hidden', 'true'); $('launcher').classList.remove('away'); S.hub = false;
     if (S.round === 3) { S.round = 0; setCredit(CREDIT0); PENDING = 0; }
     setTimeout(scheduleHint, 250);
   }
@@ -2495,6 +2502,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     if (S.busy || S.agent || S.sheet || S.tools) return;
     if (S.hub) { closeCompose(); closeDrawer(); }
     hideHint(); S.tools = true; $('tl-bd').scrollTop = 0; tlTab(0);
+    var ic = document.querySelector('#tl-shorts .sh-ic'); ic.classList.remove('run'); void ic.getBoundingClientRect(); ic.classList.add('run');   // the AI Shorts icon starts from the dots each time
     var t = $('tools'); t.removeAttribute('aria-hidden'); t.classList.add('open');
   }
   function closeTools(cb) {
@@ -2512,11 +2520,9 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     tlTab(k);
   }, { passive: true });
   $('tl-x').onclick = function () { closeTools(); }; $('tl-dim').onclick = function () { closeTools(); };
-  $('tl-shorts').onclick = function () {
-    closeTools(function () {
-      if (!S.hub) openHub();
-      HUB.step = 1; setHubMode('create'); $('qs-create-sc').scrollLeft = 0;
-    });
+  $('tl-shorts').onclick = function () {                      // the panel drops while AI Agent slides in from the right, on the AI Shorts tab
+    closeTools(); if (!S.hub) openHub();
+    HUB.step = 1; setHubMode('create'); $('qs-create-sc').scrollLeft = 0;
   };
   $('nav').querySelectorAll('.it')[2].id = 'nav-tools';
   $('nav-tools').onclick = openTools; $('hnav-tools').onclick = openTools;
@@ -2563,6 +2569,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   document.addEventListener('scroll', function (e) { if (e.target === document || /^(hub|agent|frame)$/.test(e.target.id || '') || (e.target.contains && (e.target.contains($('hub')) || e.target.contains($('agent'))))) unscroll(); }, true);
   if (window.visualViewport) ['resize', 'scroll'].forEach(function (ev) { window.visualViewport.addEventListener(ev, function () { unscroll(); placeCompose(); placeAgentCompose(); }); });
   $('hub-ta').addEventListener('focus', function () { setTimeout(function () { unscroll(); placeCompose(); }, 60); });
+  if (window.ResizeObserver) new ResizeObserver(function () { placeCompose(); }).observe($('hub-in'));   // re-measure when pills / chips change its height, so the card never jumps
   $('hub-card').addEventListener('click', function (e) {
     if (e.target.closest('#hub-snd')) { if (HUB.sel) return sendRecipe(); if ($('hub-ta').value.trim()) return sendTyped(); }
     if (e.target.closest('#hub-add')) { e.stopPropagation(); return hubAdd(); }
@@ -2663,9 +2670,11 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     if (R.product) pre.photo = c.prod;
     if (R.url) pre.url = R.url;
     if (R.model) pre.model = c.model;
+    if (/^E/.test(HUB.sel)) pre.text = $('hub-ta').value.trim();   // Image/Video: the (edited) prompt goes into the chat
     S.hubPre = pre;                                           // the chat runs the pill demo (first step only)
-    if (/^E/.test(pre.id) && !pre.photo) kbUp();               // AI Edit without a photo opens on the compose: keep the keyboard up
-    var id = HUB.sel; closeCompose(); selPill(null); setHubPhoto(null); setTimeout(function () { openAgent(id); }, 120);
+    if (/^E/.test(pre.id) && !pre.photo) kbUp(); else $('hub-ta').blur();   // Image/Video without a photo opens on the compose: keep the keyboard up
+    var id = HUB.sel; openAgent(id);
+    setTimeout(function () { closeCompose(); selPill(null); setHubPhoto(null); }, 460);   // reset only once the chat covers the hub
   }
   drawPills(); syncHubSend();
 
@@ -2700,9 +2709,9 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   function agBtm() { return document.querySelector('#agent .ag-btm'); }
 
   /* ── Shared bits for the new chats ── */
-  M.userPhotoText = function (src, text, lofi, tag) {
+  M.userPhotoText = function (src, text, lofi, tag, clamp) {   // clamp: a long prompt shows 6 lines, tap to read it all
     return '<div class="u-imgs"><div class="u-ph"><img src="' + src + '" alt=""' + (lofi ? ' class="lofi"' : '') + '><span class="tg">' + (tag || '@photo') + '</span></div></div>' +
-      '<div class="u-bub ans" style="padding-top:8px"><div class="bub">' + esc(text) + '</div></div>';
+      '<div class="u-bub ans" style="padding-top:8px"><div class="bub' + (clamp ? ' clamp' : '') + '">' + (clamp ? '<span class="clp">' + esc(text) + '</span>' : esc(text)) + '</div></div>';
   };
   M.procLite = function (s, left) {
     return '<div class="a-proc"><div class="a-in" style="padding:0">' + head() + '<div class="a-tx">' + esc(s) + '</div></div>' +
@@ -2893,8 +2902,9 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     var id = p.id, c = RCP[id], label = PILLS.edit.concat(PILLS.create).filter(function (x) { return x[0] === id; })[0][1];
     await wait(250);
     if (/^E/.test(id)) {
-      if (!p.photo) { showCompose(label); placeAgentCompose(); finish(token); return; }   // Add Photo + keyboard; the guide points at Back
-      await user(M.userPhotoText(p.photo, label, c.lofi), token);
+      var said = p.text || label;
+      if (!p.photo) { showCompose(said); $('cmp-tx').scrollTop = 0; placeAgentCompose(); finish(token); return; }   // Add Photo + the prompt + keyboard; the guide points at Back
+      await user(M.userPhotoText(p.photo, said, c.lofi, null, said.length > 180), token);
       await think(token, 1600);
       var Q = {
         E1: ['What a cute photo! Let’s bring it to life. How should it move?', { label: 'Motion', q: 'Which motion style?', o: [['Gentle breeze', 'Hair and clothes sway softly'], ['Slow push-in', 'The camera glides in closer'], ['Playful wave', 'A natural wave and a smile']] }],
