@@ -2159,10 +2159,10 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   }
   async function greetAndUpload(text, sheet, cell, token) {  // template routes: greet → photo button → picker (Recents / Sample Photos) → the route's photo
     var gn = await say(M.text(text), token);
-    var pk = gn && gn.querySelector('.pick'); if (pk) pk.onclick = function () { $('ag-pic').onclick(); };   // boss 2026-10-13: the underlined words open the photo picker too
+    Array.prototype.forEach.call(gn ? gn.querySelectorAll('.pick') : [], function (k) { k.onclick = function () { $('ag-pic').onclick(); }; });   // boss 2026-10-13: the underlined words open the photo picker too
     S.agentSheet = sheet; S.pickCell = cell;
     await new Promise(function (res) { S.onAgentPick = res; S.agentHint = $('ag-pic'); S.agentDone = true; scheduleHint(); });
-    alive(token); S.agentSheet = null; S.pickCell = null; S.agentHint = null; S.agentDone = false;
+    alive(token); S.agentSheet = null; S.pickCell = null; S.agentHint = null; S.agentDone = false; unpick(gn);
   }
   async function confirmYes(photos, rows, sc, token) {
     var plan = await say(M.summary(photos, rows, sc), token); plan.dataset.review = '1';
@@ -2764,6 +2764,9 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     var n = await say(M.procLite(text, left), token); await wait(ms || 2600); alive(token); setTimeout(function () { fadeOut(n); }, 300); return n;
   }
   function useFree() { FREE = Math.max(0, FREE - 1); $('ag-free').textContent = FREE; }
+  function unpick(gn) {                                       // photo is in → the underlined words go back to plain text
+    Array.prototype.forEach.call(gn ? gn.querySelectorAll('.pick') : [], function (k) { k.replaceWith(document.createTextNode(k.textContent)); });
+  }
   function finish(token) { if (token !== RUN) return; S.agentDone = true; S.agentHint = null; scheduleHint(); }   // guide → back
 
   /* AI Edit chats (Figma inchat_edit): the skill text is already typed; add a photo, send, get the result. Free daily allowance, no credits. */
@@ -2911,7 +2914,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     Array.prototype.forEach.call(gn ? gn.querySelectorAll('.pick') : [], function (k) { k.onclick = function () { $('ag-pic').onclick(); }; });
     S.agentSheet = 'ov-recents'; S.pickCell = [1, 1];
     await new Promise(function (res) { S.onAgentPick = res; S.agentHint = null; S.agentDone = true; scheduleHint(); });
-    alive(token); S.agentSheet = null; S.pickCell = null; S.agentDone = false; hideHint();
+    alive(token); S.agentSheet = null; S.pickCell = null; S.agentDone = false; hideHint(); unpick(gn);
   }
   async function pillFlow(token) {
     var p = S.hubPre; S.hubPre = null;
