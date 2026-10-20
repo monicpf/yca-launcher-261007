@@ -313,6 +313,9 @@ html.no-set .ic-set { display: none !important; }   /* boss 2026-10-07: v1 has n
 .chips { display: flex; flex-wrap: wrap; gap: 6px; width: 288px; }
 .chips .btn-xs { font-weight: 400; background: var(--chip); color: var(--ink); transition: background-color .2s, color .2s; }
 .chips .btn-xs.on { background: var(--brand); color: #fff; }
+.a-div { width: 288px; height: 36px; position: relative; }
+.a-div::after { content: ''; position: absolute; left: 0; right: 0; top: 18px; height: 1px; background: var(--line); }
+.chips.dq { flex-direction: column; align-items: flex-start; }
 .a-proc { display: flex; flex-direction: column; gap: 6px; padding-top: 6px; }
 .a-proc .card { width: 202px; height: 94px; border-radius: 10px; background: #eff0f3; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 9px;
   font: 510 13px var(--sf); color: var(--ink); }
@@ -1853,6 +1856,11 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
 
   /* Extra message parts for the Claude-style flow */
   M.text = function (s) { return '<div class="a-in">' + head() + '<div class="a-tx long">' + s + '</div></div>'; };
+  M.editGreet = function () {                                 // Figma Agent_landing_7 (7394:64559): greeting + divider + default asks
+    return '<div class="a-in">' + head() + '<div class="a-tx long">Hey there! 👋 I’m your AI agent ✨ I can enhance your photos and videos, restore old memories, remove anything unwanted, and even turn your ideas into stunning AI images or videos——just tell me what you’d like!</div>' +
+      '<div class="a-div"></div><div class="chips dq">' + ['Turn photo into a moving video', 'Combine photos into one composition naturally', 'Enhance photo quality', 'Remove unwanted objects or people', 'Enhance video quality']
+      .map(function (t) { return '<span class="btn-xs">' + t + '</span>'; }).join('') + '</div></div>';
+  };
   M.assets = function (intro, imgs, outro) {
     return '<div class="a-in">' + head() + '<div class="a-tx long">' + esc(intro) + '</div><div class="a-assets">' +
       imgs.map(function (p) { return '<div class="ph' + (p.fit ? ' fit' : '') + '"><img src="' + p.src + '" alt=""><span class="tg">' + p.tag + '</span></div>'; }).join('') +
@@ -2908,7 +2916,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     await wait(250);
     if (/^E/.test(id)) {
       var said = p.text || label;
-      if (!p.photo) { showCompose(said); $('cmp-tx').scrollTop = 0; placeAgentCompose(); finish(token); return; }   // Add Photo + the prompt + keyboard; the guide points at Back
+      if (!p.photo) { showCompose(said); $('cmp-tx').scrollTop = 0; placeAgentCompose(); await say(M.editGreet(), token); var sc = $('ag-scroll'); sc.scrollTo({ top: sc.scrollHeight, behavior: 'smooth' }); finish(token); return; }   // compose + keyboard right away; the greeting types in above   // Add Photo + the prompt + keyboard; the guide points at Back
       await user(M.userPhotoText(p.photo, said, c.lofi, null, said.length > 180), token);
       await think(token, 1600);
       var Q = {
