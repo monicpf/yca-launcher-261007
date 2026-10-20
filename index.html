@@ -1917,7 +1917,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
       (-(p.panel[0] * cw) - (cw - W) / 2) + 'px;top:' + (-(p.panel[1] * ch) - (ch - H) / 2) + 'px">';
   }
   M.result = function (poster, dur, intro, outro, video) {   // video: the generated clip (tap to play / pause); else a still placeholder
-    var media = video ? '<video src="' + video + '#t=0.1" preload="metadata" playsinline webkit-playsinline data-vid></video>'
+    var media = video ? '<video src="' + video + '#t=0.1" poster="' + video.replace(/\.mp4$/, '.jpg') + '" preload="metadata" playsinline webkit-playsinline data-vid></video>'   // poster = the clip's first frame (iOS doesn't paint a frame from metadata alone)
       : poster.panel ? panelImg(poster) : '<img src="' + poster + '" alt="">';
     return '<div class="a-in">' + head() + '<div class="a-tx long">' + esc(intro) + '</div><div class="a-res' + (video ? ' vid' : '') + '">' + media +
       '<span class="play">' + ICONS.play + '</span><span class="du">' + dur + '</span></div><div class="a-tx long">' + esc(outro) + '</div>' +
