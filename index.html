@@ -644,6 +644,18 @@ html.no-set .ic-set { display: none !important; }   /* boss 2026-10-07: v1 has n
 .pk-alb.img { left: 0; width: 320px; height: 74.5px; background: url(media/picker-video-albums.jpg) no-repeat 0 0 / 320px 74.5px; }   /* video picker: Videos album selected */
 #ov-video .pk-grid { top: 149px; height: 509px; background-size: 320px 509px; }
 #ov-video .pk-cell { height: 105px; }
+/* multi-select picker (Combine photos into one) — Figma 7407:34602 */
+#ov-multi .pk-grid { height: 523px; background-size: 320px 523px; }
+.pk-cell .no { position: absolute; right: 4px; top: 4px; width: 20px; height: 20px; border-radius: 50%; background: #403edf; color: #fff; font: 510 11px/20px var(--sf); text-align: center; display: none; }
+.pk-cell.sel .no { display: block; }
+.pk-done { position: absolute; right: 12px; top: 11px; height: 22px; padding: 0 2px; font: 510 15px/22px var(--sf); color: var(--brand); opacity: .35; pointer-events: none; }
+.pk-done.on { opacity: 1; pointer-events: auto; }
+.pk-sel { position: absolute; left: 0; right: 0; top: 519px; height: 139px; background: #b1b1c1; transform: translateY(100%); transition: transform .25s var(--ease-out); }
+.pk-sel.on { transform: none; }
+.pk-sel .hd { height: 40px; background: #585a6c; color: #fff; font: 510 11px/40px var(--sf); text-align: center; }
+.pk-sel .ths { position: relative; height: 99px; }
+.pk-sel .th { position: absolute; top: 6px; width: 58px; height: 58px; border-radius: 8px; border: 1px solid #fff; overflow: hidden; background: #ddd center / cover no-repeat; }
+.pk-sel .x { position: absolute; top: 3px; width: 14px; height: 14px; background: url(media/pick-x.png) 0 0 / 14px 14px; }
 
 /* Picked photo flies from its picker cell into the input slot */
 .fly { position: absolute; z-index: 80; width: 105px; height: 103px; overflow: hidden; transform-origin: 0 0; pointer-events: none;
@@ -768,6 +780,8 @@ html.no-set .ic-set { display: none !important; }   /* boss 2026-10-07: v1 has n
 .hub-card .btm .att { display: none; position: relative; width: 28px !important; height: 28px !important; border-radius: 6px; overflow: hidden; }
 .hub-card .btm .att.on { display: block; }
 .hub-card .btm .att img { width: 100%; height: 100%; object-fit: cover; }
+.hub-card .btm .att.many { width: auto !important; overflow: visible; display: flex; gap: 4px; border-radius: 0; }
+.hub-card .btm .att.many img { width: 28px; height: 28px; border-radius: 6px; }
 .hub-card .btm span { display: block; width: 28px; height: 28px; }
 .hub-card .btm svg { display: block; }
 #hub-dim { position: absolute; inset: 0; z-index: 45; background: rgba(0,0,0,.7); opacity: 0; pointer-events: none; transition: opacity .25s var(--ease-io); }
@@ -1064,6 +1078,7 @@ img.lofi, video.lofi { filter: blur(1.4px) contrast(.86) saturate(.78) brightnes
   </div>
   <div class="overlay ov-pick" id="ov-recents"><div class="dim" data-close></div><div class="sheet" data-close></div></div>
   <div class="overlay ov-pick" id="ov-product"><div class="dim" data-close></div><div class="sheet" data-close></div></div>
+  <div class="overlay ov-pick" id="ov-multi"><div class="dim" data-close></div><div class="sheet" data-close></div></div>   <!-- Figma photo_picker_recents_multiphoto 7407:34602 -->
   <div class="overlay ov-pick" id="ov-video"><div class="dim" data-close></div><div class="sheet" data-close></div></div>   <!-- Figma photo_picker_video 7401:33286 -->
 </div>
 </div>
@@ -1597,6 +1612,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   /* ── Sheets ── */
   function openSheet(id) {
     if (S.busy || S.sheet) return;
+    if (id === 'ov-multi') { MULTI = []; multiDraw(); }
     S.sheet = id; var o = $(id); o.classList.remove('closing');
     requestAnimationFrame(function () { requestAnimationFrame(function () { o.classList.add('open'); }); });
     scheduleHint();
@@ -1670,7 +1686,8 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   var CELL = { w: 105, h: 103, xs: [0, 107, 214], dy: 105 };
   var GRID = { 'ov-recents': { src: 'media/picker-recents-grid.png', rows: 5, title: 'Recents', on: 0 },
                'ov-product': { src: 'media/picker-product-grid.png', rows: 4, title: 'Sample Photos', on: 1 },
-               'ov-video': { src: 'media/picker-video-grid.jpg', rows: 5, title: 'Videos', video: true } };   // 2026-10-21: Enhance video quality picks from videos
+               'ov-video': { src: 'media/picker-video-grid.jpg', rows: 5, title: 'Videos', video: true },
+               'ov-multi': { src: 'media/picker-multi-grid.jpg', rows: 5, title: 'Recents', on: 0, multi: 5 } };   // 2026-10-21: Combine photos into one picks several   // 2026-10-21: Enhance video quality picks from videos
   var RESULT_CELL = { 'ov-recents': [2, 0], 'ov-product': [2, 2] };
   function cellXY(r, c) { return { x: CELL.xs[c], y: r * CELL.dy }; }
   Object.keys(GRID).forEach(function (id) {
@@ -1696,6 +1713,19 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     });
     sh.appendChild(alb);
     var grid = el('div', 'pk-grid'); grid.style.backgroundImage = 'url("' + g.src + '")';
+    if (g.multi) {                                            // multi-select: numbered picks, a tray of the picks, Done
+      var done = el('button', 'pk-done', 'Done'); top.appendChild(done);
+      var tray = el('div', 'pk-sel'); tray.innerHTML = '<div class="hd"></div><div class="ths"></div>'; tray.dataset.stop = '';
+      for (var mr = 0; mr < g.rows; mr++) for (var mc = 0; mc < 3; mc++) (function (r, c) {
+        var p = cellXY(r, c), b = el('button', 'pk-cell'); b.setAttribute('aria-label', 'Photo'); b.dataset.stop = '';
+        b.style.left = p.x + 'px'; b.style.top = p.y + 'px'; b.dataset.rc = r + ',' + c; b.appendChild(el('span', 'no'));
+        b.onclick = function (e) { e.stopPropagation(); multiToggle(id, r, c); };
+        grid.appendChild(b);
+      })(mr, mc);
+      sh.appendChild(grid); sh.appendChild(tray);
+      done.onclick = function (e) { e.stopPropagation(); multiDone(); };
+      return;
+    }
     grid.appendChild(el('div', 'pk-cam', ICONS.camera));
     for (var r = 0; r < g.rows; r++) for (var c = 0; c < 3; c++) {
       if (r === 0 && c === 0) continue;                                     // camera tile
@@ -1708,6 +1738,32 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     }
     sh.appendChild(grid);
   });
+  /* multi-select picker */
+  var MULTI = [];
+  function multiDraw() {
+    var sh = document.querySelector('#ov-multi .sheet');
+    Array.prototype.forEach.call(sh.querySelectorAll('.pk-cell'), function (b) {
+      var k = MULTI.indexOf(b.dataset.rc); b.classList.toggle('sel', k >= 0); b.firstChild.textContent = k >= 0 ? k + 1 : '';
+    });
+    var tray = sh.querySelector('.pk-sel'); tray.classList.toggle('on', MULTI.length > 0);
+    tray.querySelector('.hd').textContent = MULTI.length + ' photo(s) selected';
+    tray.querySelector('.ths').innerHTML = MULTI.map(function (rc, i) {
+      return '<div class="th" style="left:' + (10 + i * 70) + 'px;background-image:url(media/pk/m' + rc.replace(',', '') + '.jpg)"></div><button class="x" data-rc="' + rc + '" style="left:' + (61 + i * 70) + 'px" aria-label="Remove"></button>';
+    }).join('');
+    Array.prototype.forEach.call(tray.querySelectorAll('.x'), function (x) { x.onclick = function (e) { e.stopPropagation(); MULTI.splice(MULTI.indexOf(x.dataset.rc), 1); multiDraw(); }; });
+    sh.querySelector('.pk-done').classList.toggle('on', MULTI.length >= 2);
+  }
+  function multiToggle(id, r, c) {
+    var rc = r + ',' + c, k = MULTI.indexOf(rc);
+    if (k >= 0) MULTI.splice(k, 1); else if (MULTI.length < GRID[id].multi) MULTI.push(rc);
+    multiDraw();
+  }
+  function multiDone() {
+    if (MULTI.length < 2 || !S.pickFor) return;
+    var list = MULTI.map(function (rc) { return 'media/pk/m' + rc.replace(',', '') + '.jpg'; }), slot = S.pickFor;
+    if (slot === 'agent') { S.picked = list[0]; S.pickedList = list; S.pickedFrom = 'ov-multi'; var dn = S.onAgentPick; S.onAgentPick = null; closeSheet(function () { if (dn) dn(); }); }
+    else { closeSheet(); setHubPhoto(list); }
+  }
   function openPicker(slot) { if (S.busy || S.sheet) return; S.pickFor = slot; openSheet(PICK[slot]); }
   function frameScale() { return $('frame').getBoundingClientRect().width / 320; }
   function frameXY(n) {
@@ -1764,7 +1820,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
         return { parent: sh, x: (r.left - pr.left) / k + TRACK / 2, y: (r.top - pr.top) / k + 4 }; }   // drag to the 30s mark
       return at(sh, $('set-ok'));
     }
-    if (S.sheet === 'ov-video') return null;
+    if (S.sheet === 'ov-video' || S.sheet === 'ov-multi') return null;
     if ((S.sheet === 'ov-recents' || S.sheet === 'ov-product') && ((S.pickFor && S.pickFor.indexOf('hub:') === 0) || (S.pickFor === 'agent' && S.fromHub))) return null;   // quick skills: let the user choose freely
     if (S.sheet === 'ov-recents' || S.sheet === 'ov-product') {
       var rc = (S.pickFor === 'agent' && S.pickCell) || RESULT_CELL[S.sheet];
@@ -2672,9 +2728,9 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     if (S.busy || S.sheet) return;
     if (HUB.mode === 'edit') hubPick('photo'); else { $('hub-ta').blur(); openSheet('ov-add'); }
   }
-  function setHubPhoto(src) {
-    HUB.photo = src || null; var a = $('hub-att');
-    a.innerHTML = src ? '<img src="' + src + '" alt="">' : ''; a.classList.toggle('on', !!src);
+  function setHubPhoto(src) {                                 // one photo, or a list (Combine photos into one)
+    HUB.photo = src || null; var a = $('hub-att'), list = !src ? [] : [].concat(src);
+    a.innerHTML = list.map(function (s) { return '<img src="' + s + '" alt="">'; }).join(''); a.classList.toggle('on', list.length > 0); a.classList.toggle('many', list.length > 1);
   }
   function drawRecipe() {
     var box = $('hub-rc'); box.innerHTML = ''; if (!HUB.sel || /^E/.test(HUB.sel)) return;
@@ -2702,14 +2758,14 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     if (HUB.sel && !/^E/.test(HUB.sel) && ta.value) { var v = ta.value; selPill(null); ta.value = v; }   // AI Shorts only: an Image/Video prompt is edited in place
     syncHubSend();
   });
-  function hubPick(slot) { if (S.busy || S.sheet) return; $('hub-ta').blur(); S.pickFor = 'hub:' + slot; openSheet(slot === 'product' ? 'ov-product' : HUB.sel === 'E3' ? 'ov-video' : 'ov-recents'); }
+  function hubPick(slot) { if (S.busy || S.sheet) return; $('hub-ta').blur(); S.pickFor = 'hub:' + slot; openSheet(slot === 'product' ? 'ov-product' : HUB.sel === 'E3' ? 'ov-video' : HUB.sel === 'E7' ? 'ov-multi' : 'ov-recents'); }
   function hubLink() { if (S.busy || S.sheet) return; $('hub-ta').blur(); S.linkFor = 'hub'; LINK.text = HUB.rc.url || DEMO_URL; drawLink(); openSheet('ov-link'); }
   function hubPicked(slot, src) {
     if (slot === 'photo') return setHubPhoto(src);
     HUB.rc[slot] = src || true; if (slot === 'product') HUB.rc.url = null; drawRecipe(); }
   function sendRecipe() {                                     // nothing uploaded → the chat asks for it, as when the skill card is tapped
     var c = RCP[HUB.sel], R = HUB.rc, pre = { id: HUB.sel };
-    if (/^E/.test(HUB.sel) && HUB.photo) pre.photo = HUB.photo;
+    if (/^E/.test(HUB.sel) && HUB.photo) { pre.photo = [].concat(HUB.photo)[0]; if (Array.isArray(HUB.photo)) pre.photos = HUB.photo; }
     if (c.one && R[c.one[0]]) pre.photo = typeof R[c.one[0]] === 'string' ? R[c.one[0]] : c.one[2];
     if (R.product) pre.photo = typeof R.product === 'string' ? R.product : c.prod;
     if (R.url) pre.url = R.url;
@@ -2954,10 +3010,16 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   /* Hub pill → chat, first step only (2026-10-16). Nothing added → the agent asks for it; material added → the first question. Hint → Back. */
   var PILL_GREET = { F7: 'Hi there! 👋 I’m your AI Shorts agent. Send me a photo of <span class="pick">your product</span> and <span class="pick">a model</span>, and I’ll turn them into a UGC review video. ✨',
     F9: 'Hi there! 👋 I’m your AI Shorts agent. Send me a photo of <span class="pick">your product</span>, and I’ll turn it into a polished showcase video. ✨' };
+  function photosHtml(list, lofi, tag) {                      // one or several user photos, shrunk to share the row
+    var w = list.length > 2 ? Math.floor((288 - 6 * (list.length - 1)) / list.length) : 101;
+    return '<div class="u-imgs">' + list.map(function (s, i) {
+      return '<div class="u-ph" style="width:' + w + 'px;height:' + Math.round(w * 135 / 101) + 'px"><img src="' + s + '" alt=""' + (lofi ? ' class="lofi"' : '') + '><span class="tg">' + tag + (list.length > 1 ? i + 1 : '') + '</span></div>';
+    }).join('') + '</div>';
+  }
   async function chatPick(gn, token, def) {                   // wait for a photo from the chat's picker (⊕ or an underlined .pick word); each word opens its own picker
-    function sheetFor(w) { return /video/i.test(w) ? 'ov-video' : /product/i.test(w) ? 'ov-product' : /model|yourself|photo|person/i.test(w) ? 'ov-recents' : def; }
+    function sheetFor(w) { return def === 'ov-multi' ? def : /video/i.test(w) ? 'ov-video' : /product/i.test(w) ? 'ov-product' : /model|yourself|photo|person/i.test(w) ? 'ov-recents' : def; }
     Array.prototype.forEach.call(gn ? gn.querySelectorAll('.pick') : [], function (k) { k.onclick = function () { S.agentSheet = sheetFor(k.textContent); $('ag-pic').onclick(); S.agentSheet = def; }; });
-    S.agentSheet = def; S.pickCell = [1, 1]; S.picked = null; S.pickedFrom = null;
+    S.agentSheet = def; S.pickCell = [1, 1]; S.picked = null; S.pickedFrom = null; S.pickedList = null;
     await new Promise(function (res) { S.onAgentPick = res; S.agentHint = null; S.agentDone = true; scheduleHint(); });
     alive(token); S.agentSheet = null; S.pickCell = null; S.agentDone = false; hideHint(); unpick(gn);
   }
@@ -2974,10 +3036,11 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
           E3: 'Sure! Upload <span class="pick">the video</span> you’d like me to enhance.', E4: 'Got it. Upload <span class="pick">the photo</span> you’d like me to clean up.',
           E5: 'Sounds lovely! Upload <span class="pick">a photo of yourself</span> and I’ll place you in the scene.', E6: 'Fun! Upload <span class="pick">a clear photo of yourself</span> for the 9 looks.',
           E7: 'Sure! Upload <span class="pick">the photos</span> you’d like to combine into one.' }[id]), token);
-        await chatPick(gn, token, id === 'E3' ? 'ov-video' : 'ov-recents');   // the underlined words (or ⊕) open the picker, as in AI Shorts
-        p.photo = S.picked || c.photo;
-        await user('<div class="u-imgs"><div class="u-ph"><img src="' + p.photo + '" alt=""' + (c.lofi ? ' class="lofi"' : '') + '><span class="tg">' + (id === 'E3' ? '@video' : '@photo') + '</span></div></div>', token);
-      } else await user(M.userPhotoText(p.photo, said, c.lofi, id === 'E3' ? '@video' : null, said.length > 180), token);
+        await chatPick(gn, token, id === 'E3' ? 'ov-video' : id === 'E7' ? 'ov-multi' : 'ov-recents');   // the underlined words (or ⊕) open the picker, as in AI Shorts
+        p.photo = S.picked || c.photo; if (id === 'E7' && S.pickedList) p.photos = S.pickedList;
+        await user(photosHtml(p.photos || [p.photo], c.lofi, id === 'E3' ? '@video' : '@photo'), token);
+      } else if (p.photos) await user(photosHtml(p.photos, c.lofi, '@photo') + '<div class="u-bub ans" style="padding-top:8px"><div class="bub' + (said.length > 180 ? ' clamp"><span class="clp">' + esc(said) + '</span>' : '">' + esc(said)) + '</div></div>', token);
+      else await user(M.userPhotoText(p.photo, said, c.lofi, id === 'E3' ? '@video' : null, said.length > 180), token);
       await think(token, 1600);
       var Q = {
         E1: ['What a cute photo! Let’s bring it to life. How should it move?', { label: 'Motion', q: 'Which motion style?', o: [['Gentle breeze', 'Hair and clothes sway softly'], ['Slow push-in', 'The camera glides in closer'], ['Playful wave', 'A natural wave and a smile']] }],
