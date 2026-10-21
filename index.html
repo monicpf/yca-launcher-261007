@@ -2243,7 +2243,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
       { label: 'Ratio', q: 'Which aspect ratio?', fixed: true, pick: Math.max(0, R.indexOf(cfg.ratio)),
         o: [['9:16', 'Vertical · Reels, TikTok, Shorts'], ['16:9', 'Landscape · YouTube'], ['3:4', 'Portrait · feed posts'], ['4:3', 'Classic landscape'], ['1:1', 'Square · feed posts']] },
       { label: 'Duration', q: 'How long should it be?', fixed: true, pick: Math.max(0, D.indexOf(cfg.dur)),
-        o: [['10s', 'A quick hook'], ['15s', 'Recommended for UGC reviews'], ['20s', 'More room for the story'], ['30s', 'The full walkthrough']] },
+        o: [['10s', 'A quick hook'], ['15s', 'Recommended for Reels and Shorts'], ['20s', 'More room for the story'], ['30s', 'The full walkthrough']] },
       { label: 'Resolution', q: 'Which resolution?', fixed: true, pick: 2,
         o: [['480p', 'Fastest, for a quick preview'], ['720p', 'Faster to generate'], ['1080p', 'Recommended — sharp on every phone'], ['4K', 'Sharper, uses more credits']] }
     ];
@@ -2449,7 +2449,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
       await think(token, 2600);
       if (CREDIT < 210) { await creditGate(token); await think(token, 1200); }   // not enough for a full video (25 + 25 + 60 + 100) → buy first
       await say(M.text('Before we start, let me confirm the video settings. This template is set to ' + cfg.ratio + ' at ' + cfg.dur + ' seconds.'), token);
-      var a = await ask(settingsQs(cfg, true), token);
+      var a = await ask(videoQs(cfg), token); cfg.ratio = a[0][1]; cfg.dur = parseInt(a[1][1], 10);   // ratio / duration / resolution — three fixed questions (all demos)
       await think(token, 1600);
       await say(M.assets('Here’s the photo I’ll use:', [PET], 'Your tuxedo cat will be the star. If you’d like to use a different photo, just tell me.'), token);
       await say(M.text('Let’s set the look of your pet diary.'), token);
@@ -2470,7 +2470,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
       await boardStep('media/Pet_storyboard.jpg', token);
       await confirmYes([PET],
         [['Video style', c[0][1]]],
-        { meta: [['Duration', cfg.dur + 's'], ['Shots', '6'], ['Ratio', cfg.ratio], ['Resolution', a[1][1]]], shots: SHOTS, vo: 'Voiceover' }, token);
+        { meta: [['Duration', cfg.dur + 's'], ['Shots', '6'], ['Ratio', cfg.ratio], ['Resolution', a[2][1]]], shots: SHOTS, vo: 'Voiceover' }, token);
       await generate('media/Pet_storyboard.jpg', '00:' + (cfg.dur < 10 ? '0' : '') + cfg.dur, token, 'media/Pet_diary_vdo.mp4');
     },
     /* Marketer template (Product Detail Demo) */
@@ -2482,7 +2482,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
       await think(token, 2600);
       if (CREDIT < 210) { await creditGate(token); await think(token, 1200); }
       await say(M.text('Before we start, let me confirm the video settings. This template is set to 9:16 at 15 seconds.'), token);
-      var a = await ask(settingsQs(cfg), token);
+      var a = await ask(videoQs(cfg), token); cfg.ratio = a[0][1]; cfg.dur = parseInt(a[1][1], 10);   // ratio / duration / resolution — three fixed questions (all demos)
       await think(token, 1600);
       await say(M.assets('Here’s the product photo I’ll use:', [{ src: 'media/agent-f9-bag.png', tag: '@product', fit: true }], 'If you’d like to use a different photo, just tell me.'), token);
       await say(M.text('Which video style fits the bag best?'), token);
@@ -2501,7 +2501,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
       await boardStep('media/agent-f9-bag_storyboard.jpg', token);
       await confirmYes([{ src: 'media/agent-f9-bag.png', tag: '@product', fit: true }],
         [['Video style', d[0][1]], ['Product', BAG]],
-        { meta: [['Duration', cfg.dur + 's'], ['Shots', '5'], ['Ratio', cfg.ratio], ['Resolution', a[1][1]]], shots: SHOTS }, token);
+        { meta: [['Duration', cfg.dur + 's'], ['Shots', '5'], ['Ratio', cfg.ratio], ['Resolution', a[2][1]]], shots: SHOTS }, token);
       await generate('media/product-detail-demo.jpg', '00:' + (cfg.dur < 10 ? '0' : '') + cfg.dur, token, 'media/agent-f9-bag_vdo.mp4');
     }
   };
@@ -2984,7 +2984,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     await think(token, 2400);
     if (CREDIT < 210) { await creditGate(token); await think(token, 1200); }
     await say(M.text('Before we start, let me confirm the video settings. This one is set to ' + cfg.ratio + ' at ' + cfg.dur + ' seconds by default.'), token);
-    var a = await ask(settingsQs(cfg), token);
+    var a = await ask(videoQs(cfg), token); cfg.ratio = a[0][1]; cfg.dur = parseInt(a[1][1], 10);   // ratio / duration / resolution — three fixed questions (all demos)
     await think(token, 1600);
     await say(M.text(c.intro), token);
     var d = await ask([{ label: 'Video style', q: 'Which video style?', o: c.styles }], token);
@@ -2994,7 +2994,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     await say(M.script(c.script, meta, c.shots, c.vo), token);
     await ask([{ q: 'How does the script look?', live: 'Tell me what to change…', liveCost: COST.script, o: [['Looks good', 'Go on to the plan']] }], token);
     await think(token, 1400);
-    await confirmYes([ph], [['Video style', d[0][1]]], { meta: meta.concat([['Resolution', a[1][1]]]), shots: c.shots, vo: c.vo }, token);
+    await confirmYes([ph], [['Video style', d[0][1]]], { meta: meta.concat([['Resolution', a[2][1]]]), shots: c.shots, vo: c.vo }, token);
     await generate(c.poster, '00:' + cfg.dur, token, c.video);
   }
 
