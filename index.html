@@ -1501,8 +1501,8 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
       t.appendChild(el('div', 'ic-ph', 'Describe the video you want to make'));
     } else {
       var rc = el('div', 'ic-recipe'), imgs = el('div', 'ic-imgs'), tx = el('div', 'ic-text'), P = S.product;
-      imgs.appendChild(thumb('Model', S.model ? (S.model === 'picked' && S.modelSrc || IMG[S.model]) : null, 'm-' + (S.model || 'none'), pickModel, function () { S.model = null; renderInput(); }, S.model === 'picked'));
-      imgs.appendChild(thumb('Product', P ? (P.src || IMG.product) : null, 'p-' + (P ? P.type : 'none'), pickProduct, function () { S.product = null; renderInput(); }));
+      imgs.appendChild(thumb('Model', S.model ? IMG[S.model] : null, 'm-' + (S.model || 'none'), pickModel, function () { S.model = null; renderInput(); }, S.model === 'picked'));
+      imgs.appendChild(thumb('Product', P ? IMG.product : null, 'p-' + (P ? P.type : 'none'), pickProduct, function () { S.product = null; renderInput(); }));
       function add(node, key, fn) { node.dataset.key = key; if (fn) node.onclick = fn; tx.appendChild(node); return node; }
       add(el('span', 'lead', 'Create a UGC before-and-after video for'), 'lead');
       if (!P) {
@@ -1711,7 +1711,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     if (hubSlot && $('hub').classList.contains('compose')) $('hub-ta').focus({ preventScroll: true });   // picked from the card at rest → no keyboard
     closeSheet();                                             // 2026-10-20 (Monic): no flying thumbnail — the slot just updates as the picker closes
     if (hubSlot) hubPicked(hubSlot, psrc);
-    else { if (slot === 'model') { S.model = 'picked'; S.modelSrc = psrc; } else { S.product = { type: 'photo', src: psrc }; S.didPhoto = true; } renderInput(); }
+    else { if (slot === 'model') S.model = 'picked'; else { S.product = { type: 'photo' }; S.didPhoto = true; } renderInput(); }
     setTimeout(function () { S.busy = false; scheduleHint(); }, 280);
   }
 
@@ -2309,7 +2309,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   var FLOW = {
     /* Sub-skill (UGC Review): product link + settings come from the launcher; the model photo is asked for in chat */
     F7: async function (token) {
-      var cfg = { ratio: S.ratio, dur: S.dur }, PROD = (S.product && S.product.src) || IMG.product;
+      var cfg = { ratio: S.ratio, dur: S.dur }, PROD = IMG.product;
       await wait(250);
       await user(M.userImgs([{ src: PROD, tag: '@product' }], 'Create a UGC Review video for ',
         TG('@product') + '<span class="t12">featuring a model</span>', true), token);
@@ -2327,7 +2327,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
       } else {                                                // upload → the album opens right away; the photo is posted as the answer
         S.pickFor = 'agent'; S.agentHint = null; S.agentDone = false; openSheet('ov-recents');
         await new Promise(function (res) { S.onAgentPick = res; }); alive(token);
-        MODEL = S.picked || IMG.picked; await user(M.userPhoto(MODEL), token);
+        await user(M.userPhoto(IMG.picked), token);
       }
       await think(token, 1600);
       await say(M.assets('Here’s what I’ll work with:', [{ src: MODEL, tag: '@model' }, { src: PROD, tag: '@product', fit: true }],
@@ -2359,7 +2359,6 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
       var cfg = { ratio: '9:16', dur: 15 }, PET = { src: 'media/Pet_diary.PNG', tag: '@pet' };
       await wait(250);
       await greetAndUpload('Hi there! 👋 I’m your AI Shorts agent. Send me a photo of <span class="pick">your pet</span>, and I’ll turn one of their everyday moments into a short film. ✨', 'ov-recents', [2, 1], token);
-      PET.src = S.picked || PET.src;
       await user(M.userImgs([PET], 'Create a 15-second photorealistic short about your pet’s daily moment', 'featuring' + TG('@pet')), token);
       await think(token, 2600);
       if (CREDIT < 210) { await creditGate(token); await think(token, 1200); }   // not enough for a full video (25 + 25 + 60 + 100) → buy first
@@ -2393,7 +2392,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
       var cfg = { ratio: '9:16', dur: 15 };
       await wait(250);
       await greetAndUpload('Hi there! 👋 I’m your AI Shorts agent. Send me a photo of <span class="pick">your product</span>, and I’ll turn it into a polished showcase video. ✨', 'ov-product', [1, 0], token);
-      await user(M.userImgs([{ src: S.picked || 'media/agent-f9-bag.png', tag: '@product', fit: true }], 'Create product showcase storyboard ', 'infographic for' + TG('@product')), token);
+      await user(M.userImgs([{ src: 'media/agent-f9-bag.png', tag: '@product', fit: true }], 'Create product showcase storyboard ', 'infographic for' + TG('@product')), token);
       await think(token, 2600);
       if (CREDIT < 210) { await creditGate(token); await think(token, 1200); }
       await say(M.text('Before we start, let me confirm the video settings. This template is set to 9:16 at 15 seconds.'), token);
@@ -2800,7 +2799,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
       S.agentHint = tile; S.agentDone = true; scheduleHint();
     });
     alive(token); tile.onclick = null; S.agentSheet = null; S.pickCell = null;
-    src = S.picked || src; tile.innerHTML = '<img src="' + src + '" alt=""' + (lofi ? ' class="lofi"' : '') + '>';
+    tile.innerHTML = '<img src="' + src + '" alt=""' + (lofi ? ' class="lofi"' : '') + '>';
     await waitTap([snd], snd, token);
     var said = $('cmp-tx').value.trim() || text; $('cmp-tx').blur();
     b.classList.remove('cmp'); b.style.transform = ''; b._lift = 0; $('ag-list').style.paddingBottom = '';
@@ -2894,7 +2893,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     var cfg = { ratio: '9:16', dur: 15 };
     await wait(250);
     await greetAndUpload(c.greet, c.sheet, c.cell, token);
-    var ph = Object.assign({}, c.photo, { src: S.picked || c.photo.src });
+    var ph = c.photo;
     await user(M.userImgs([ph], c.l1, c.l2), token);
     await think(token, 2400);
     if (CREDIT < 210) { await creditGate(token); await think(token, 1200); }
