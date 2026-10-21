@@ -333,7 +333,6 @@ html.no-set .ic-set { display: none !important; }   /* boss 2026-10-07: v1 has n
   display: inline-flex; align-items: center; gap: 8px; font: 400 12px var(--sf); color: #fff; white-space: nowrap; opacity: 0; transition: opacity .25s var(--ease-io), transform .25s var(--ease-out); pointer-events: none; }
 .cr-toast.show { opacity: 1; transform: translate(-50%, 0); }
 .cr-toast.demo { top: 50%; z-index: 65; margin-top: -13px; }      /* 2026-10-21: quick-skill chats demo the first step only — say so, mid-screen */
-.cr-toast.demo.show { pointer-events: auto; }
 .cr-toast .sp { width: 16px; height: 16px; border-radius: 50%; border: 2px solid rgba(39,194,255,.25); border-top-color: #27c2ff; animation: spin .8s linear infinite; }
 .cr-toast svg { display: block; }
 /* End-of-flow survey: cost badge on an option (Figma Generating2 49:11847) */
@@ -550,6 +549,8 @@ html.no-set .ic-set { display: none !important; }   /* boss 2026-10-07: v1 has n
 /* Link sheet */
 #ov-link .sheet { height: 396.32px; box-shadow: 0 4px 10px rgba(0,0,0,.25); }
 .lk-in { padding: 0 16px 6px; }
+#ov-link .sh-top { position: relative; }
+.lk-t { position: absolute; left: 0; right: 0; top: 3px; height: 30px; line-height: 30px; text-align: center; font: 510 15px var(--sf); color: var(--ink); pointer-events: none; }   /* Figma 7350:24968 */
 .lk-box { width: 288px; background: #eff0f3; border-radius: 10px; display: flex; flex-direction: column; gap: 4px; }
 .lk-field { height: 50px; padding: 8px 10px 0; font: 400 12px/14px var(--sf); color: var(--ink); overflow-wrap: break-word; overflow: hidden; }
 .lk-field .caret { display: inline-block; width: 1.5px; height: 14px; margin-left: 1px; vertical-align: -3px; background: #0088ff; animation: blink 1s steps(1) infinite; }
@@ -1030,7 +1031,7 @@ img.lofi, video.lofi { filter: blur(1.4px) contrast(.86) saturate(.78) brightnes
   <div class="overlay" id="ov-link">
     <div class="dim" data-close></div>
     <div class="sheet">
-      <div class="sh-top"><button data-close aria-label="Close" id="lk-x"></button></div>
+      <div class="sh-top"><button data-close aria-label="Close" id="lk-x"></button><h3 class="lk-t">Product URL</h3></div>
       <div class="lk-in"><div class="lk-box">
         <div class="lk-field" id="lfield"></div>
         <div class="lk-r"><button id="lk-send" aria-label="Send"></button></div>
@@ -1500,8 +1501,8 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
       t.appendChild(el('div', 'ic-ph', 'Describe the video you want to make'));
     } else {
       var rc = el('div', 'ic-recipe'), imgs = el('div', 'ic-imgs'), tx = el('div', 'ic-text'), P = S.product;
-      imgs.appendChild(thumb('Model', S.model ? IMG[S.model] : null, 'm-' + (S.model || 'none'), pickModel, function () { S.model = null; renderInput(); }, S.model === 'picked'));
-      imgs.appendChild(thumb('Product', P ? IMG.product : null, 'p-' + (P ? P.type : 'none'), pickProduct, function () { S.product = null; renderInput(); }));
+      imgs.appendChild(thumb('Model', S.model ? (S.model === 'picked' && S.modelSrc || IMG[S.model]) : null, 'm-' + (S.model || 'none'), pickModel, function () { S.model = null; renderInput(); }, S.model === 'picked'));
+      imgs.appendChild(thumb('Product', P ? (P.src || IMG.product) : null, 'p-' + (P ? P.type : 'none'), pickProduct, function () { S.product = null; renderInput(); }));
       function add(node, key, fn) { node.dataset.key = key; if (fn) node.onclick = fn; tx.appendChild(node); return node; }
       add(el('span', 'lead', 'Create a UGC before-and-after video for'), 'lead');
       if (!P) {
@@ -1699,8 +1700,9 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   }
   function pickPhoto(id, r, c, cellBtn) {
     if (!S.pickFor || S.busy) return;
+    var psrc = 'media/pk/' + (id === 'ov-product' ? 'p' : 'r') + r + c + '.jpg';   // 2026-10-21: the photo you tap is the photo you get (cells cut from the picker grid)
     if (S.pickFor === 'agent') {                                // picked inside the Agent chat → the photo is posted as a message
-      hideHint(); var done = S.onAgentPick; S.onAgentPick = null;
+      S.picked = psrc; hideHint(); var done = S.onAgentPick; S.onAgentPick = null;
       if (agBtm().classList.contains('cmp')) $('cmp-tx').focus({ preventScroll: true });
       closeSheet(function () { if (done) done(); }); return;
     }
@@ -1708,8 +1710,8 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     var hubSlot = slot.indexOf('hub:') === 0 ? slot.slice(4) : null;
     if (hubSlot && $('hub').classList.contains('compose')) $('hub-ta').focus({ preventScroll: true });   // picked from the card at rest → no keyboard
     closeSheet();                                             // 2026-10-20 (Monic): no flying thumbnail — the slot just updates as the picker closes
-    if (hubSlot) hubPicked(hubSlot);
-    else { if (slot === 'model') S.model = 'picked'; else { S.product = { type: 'photo' }; S.didPhoto = true; } renderInput(); }
+    if (hubSlot) hubPicked(hubSlot, psrc);
+    else { if (slot === 'model') { S.model = 'picked'; S.modelSrc = psrc; } else { S.product = { type: 'photo', src: psrc }; S.didPhoto = true; } renderInput(); }
     setTimeout(function () { S.busy = false; scheduleHint(); }, 280);
   }
 
@@ -2164,7 +2166,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   async function greetAndUpload(text, sheet, cell, token) {  // template routes: greet → photo button → picker (Recents / Sample Photos) → the route's photo
     var gn = await say(M.text(text), token);
     Array.prototype.forEach.call(gn ? gn.querySelectorAll('.pick') : [], function (k) { k.onclick = function () { $('ag-pic').onclick(); }; });   // boss 2026-10-13: the underlined words open the photo picker too
-    S.agentSheet = sheet; S.pickCell = cell;
+    S.agentSheet = sheet; S.pickCell = cell; S.picked = null;
     await new Promise(function (res) { S.onAgentPick = res; S.agentHint = $('ag-pic'); S.agentDone = true; scheduleHint(); });
     alive(token); S.agentSheet = null; S.pickCell = null; S.agentHint = null; S.agentDone = false; unpick(gn);
   }
@@ -2307,9 +2309,9 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   var FLOW = {
     /* Sub-skill (UGC Review): product link + settings come from the launcher; the model photo is asked for in chat */
     F7: async function (token) {
-      var cfg = { ratio: S.ratio, dur: S.dur };
+      var cfg = { ratio: S.ratio, dur: S.dur }, PROD = (S.product && S.product.src) || IMG.product;
       await wait(250);
-      await user(M.userImgs([{ src: IMG.product, tag: '@product' }], 'Create a UGC Review video for ',
+      await user(M.userImgs([{ src: PROD, tag: '@product' }], 'Create a UGC Review video for ',
         TG('@product') + '<span class="t12">featuring a model</span>', true), token);
       await think(token, 2600);
       if (CREDIT < 210) { await creditGate(token); await think(token, 1200); }   // demo round 1 (16 credits): top up first, Figma F8 → Buy_1–3
@@ -2325,10 +2327,10 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
       } else {                                                // upload → the album opens right away; the photo is posted as the answer
         S.pickFor = 'agent'; S.agentHint = null; S.agentDone = false; openSheet('ov-recents');
         await new Promise(function (res) { S.onAgentPick = res; }); alive(token);
-        await user(M.userPhoto(IMG.picked), token);
+        MODEL = S.picked || IMG.picked; await user(M.userPhoto(MODEL), token);
       }
       await think(token, 1600);
-      await say(M.assets('Here’s what I’ll work with:', [{ src: MODEL, tag: '@model' }, { src: IMG.product, tag: '@product', fit: true }],
+      await say(M.assets('Here’s what I’ll work with:', [{ src: MODEL, tag: '@model' }, { src: PROD, tag: '@product', fit: true }],
         'If you’d like to swap either one, just tell me.'), token);
       await say(M.text('Next, let’s pick a video style for your UGC review.'), token);
       var d = await ask([{ label: 'Video style', q: 'Which video style?', o: [['Natural selfie', 'Handheld, phone-camera feel, talking to camera'], ['Bright & clean', 'Soft daylight, white vanity, crisp close-ups'], ['Cozy lifestyle', 'Warm home tones, slower and relaxed']] }], token);
@@ -2347,7 +2349,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
       await think(token, 2400);
       await say(M.board('Here’s the storyboard, built from your script.', 'media/UGC_storyboard.jpg'), token);
       await boardStep('media/UGC_storyboard.jpg', token);
-      await confirmYes([{ src: MODEL, tag: '@model' }, { src: IMG.product, tag: '@product', fit: true }],
+      await confirmYes([{ src: MODEL, tag: '@model' }, { src: PROD, tag: '@product', fit: true }],
         [['Video style', d[0][1]], ['Product', 'Firming Vegan Collagen Prep Serum']],
         { meta: [['Duration', cfg.dur + 's'], ['Shots', '5'], ['Ratio', cfg.ratio], ['Resolution', a[1][1]]], shots: SHOTS }, token);
       await generate('media/skin-renewal-effect.jpg', '00:' + (cfg.dur < 10 ? '0' : '') + cfg.dur, token, 'media/UGC_agent.mp4');
@@ -2357,6 +2359,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
       var cfg = { ratio: '9:16', dur: 15 }, PET = { src: 'media/Pet_diary.PNG', tag: '@pet' };
       await wait(250);
       await greetAndUpload('Hi there! 👋 I’m your AI Shorts agent. Send me a photo of <span class="pick">your pet</span>, and I’ll turn one of their everyday moments into a short film. ✨', 'ov-recents', [2, 1], token);
+      PET.src = S.picked || PET.src;
       await user(M.userImgs([PET], 'Create a 15-second photorealistic short about your pet’s daily moment', 'featuring' + TG('@pet')), token);
       await think(token, 2600);
       if (CREDIT < 210) { await creditGate(token); await think(token, 1200); }   // not enough for a full video (25 + 25 + 60 + 100) → buy first
@@ -2390,7 +2393,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
       var cfg = { ratio: '9:16', dur: 15 };
       await wait(250);
       await greetAndUpload('Hi there! 👋 I’m your AI Shorts agent. Send me a photo of <span class="pick">your product</span>, and I’ll turn it into a polished showcase video. ✨', 'ov-product', [1, 0], token);
-      await user(M.userImgs([{ src: 'media/agent-f9-bag.png', tag: '@product', fit: true }], 'Create product showcase storyboard ', 'infographic for' + TG('@product')), token);
+      await user(M.userImgs([{ src: S.picked || 'media/agent-f9-bag.png', tag: '@product', fit: true }], 'Create product showcase storyboard ', 'infographic for' + TG('@product')), token);
       await think(token, 2600);
       if (CREDIT < 210) { await creditGate(token); await think(token, 1200); }
       await say(M.text('Before we start, let me confirm the video settings. This template is set to 9:16 at 15 seconds.'), token);
@@ -2672,16 +2675,16 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   });
   function hubPick(slot) { if (S.busy || S.sheet) return; $('hub-ta').blur(); S.pickFor = 'hub:' + slot; openSheet(slot === 'product' ? 'ov-product' : 'ov-recents'); }
   function hubLink() { if (S.busy || S.sheet) return; $('hub-ta').blur(); S.linkFor = 'hub'; LINK.text = HUB.rc.url || DEMO_URL; drawLink(); openSheet('ov-link'); }
-  function hubPicked(slot) {
-    if (slot === 'photo') return setHubPhoto(HUB.sel ? RCP[HUB.sel].photo : 'media/model-picked.jpg');
-    HUB.rc[slot] = true; if (slot === 'product') HUB.rc.url = null; drawRecipe(); }
+  function hubPicked(slot, src) {
+    if (slot === 'photo') return setHubPhoto(src);
+    HUB.rc[slot] = src || true; if (slot === 'product') HUB.rc.url = null; drawRecipe(); }
   function sendRecipe() {                                     // nothing uploaded → the chat asks for it, as when the skill card is tapped
     var c = RCP[HUB.sel], R = HUB.rc, pre = { id: HUB.sel };
-    if (/^E/.test(HUB.sel) && HUB.photo) pre.photo = c.photo;
-    if (c.one && R[c.one[0]]) pre.photo = c.one[2];
-    if (R.product) pre.photo = c.prod;
+    if (/^E/.test(HUB.sel) && HUB.photo) pre.photo = HUB.photo;
+    if (c.one && R[c.one[0]]) pre.photo = typeof R[c.one[0]] === 'string' ? R[c.one[0]] : c.one[2];
+    if (R.product) pre.photo = typeof R.product === 'string' ? R.product : c.prod;
     if (R.url) pre.url = R.url;
-    if (R.model) pre.model = c.model;
+    if (R.model) pre.model = typeof R.model === 'string' ? R.model : c.model;
     if (/^E/.test(HUB.sel)) pre.text = $('hub-ta').value.trim();   // Image/Video: the (edited) prompt goes into the chat
     S.hubPre = pre;                                           // the chat runs the pill demo (first step only)
     $('hub-ta').blur();                                       // 2026-10-20: every send opens as a user message, so the keyboard goes down
@@ -2769,14 +2772,12 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   }
   function useFree() { FREE = Math.max(0, FREE - 1); $('ag-free').textContent = FREE; }
   var demoT = null;
-  function demoEnd(token) {                                   // quick-skill chats stop after the first step: a mid-screen toast says so (4s, tap to close)
+  function demoEnd(token) {                                   // quick-skill chats stop after the first step: a mid-screen toast says so, until Back
     setTimeout(function () {
-      if (token !== RUN || !S.agent) return; var t = $('demo-toast'); t.classList.add('show');
-      clearTimeout(demoT); demoT = setTimeout(hideDemoEnd, 4000);
+      if (token !== RUN || !S.agent) return; $('demo-toast').classList.add('show');   // stays until Back
     }, 800);
   }
   function hideDemoEnd() { clearTimeout(demoT); $('demo-toast').classList.remove('show'); }
-  $('demo-toast').onclick = hideDemoEnd;
   function unpick(gn) {                                       // photo is in → the underlined words go back to plain text
     Array.prototype.forEach.call(gn ? gn.querySelectorAll('.pick') : [], function (k) { k.replaceWith(document.createTextNode(k.textContent)); });
   }
@@ -2794,12 +2795,12 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     var b = agBtm(), tile = $('cmp-tile'), snd = $('cmp-snd');
     showCompose(text); placeAgentCompose();
     await new Promise(function (res) {
-      S.agentSheet = 'ov-recents'; S.pickCell = cell || [2, 0]; S.onAgentPick = res;
+      S.agentSheet = 'ov-recents'; S.pickCell = cell || [2, 0]; S.picked = null; S.onAgentPick = res;
       tile.onclick = function () { if (token === RUN && S.onAgentPick && !S.sheet) { S.agentHint = null; S.pickFor = 'agent'; $('cmp-tx').blur(); openSheet('ov-recents'); } };
       S.agentHint = tile; S.agentDone = true; scheduleHint();
     });
     alive(token); tile.onclick = null; S.agentSheet = null; S.pickCell = null;
-    tile.innerHTML = '<img src="' + src + '" alt=""' + (lofi ? ' class="lofi"' : '') + '>';
+    src = S.picked || src; tile.innerHTML = '<img src="' + src + '" alt=""' + (lofi ? ' class="lofi"' : '') + '>';
     await waitTap([snd], snd, token);
     var said = $('cmp-tx').value.trim() || text; $('cmp-tx').blur();
     b.classList.remove('cmp'); b.style.transform = ''; b._lift = 0; $('ag-list').style.paddingBottom = '';
@@ -2893,7 +2894,8 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     var cfg = { ratio: '9:16', dur: 15 };
     await wait(250);
     await greetAndUpload(c.greet, c.sheet, c.cell, token);
-    await user(M.userImgs([c.photo], c.l1, c.l2), token);
+    var ph = Object.assign({}, c.photo, { src: S.picked || c.photo.src });
+    await user(M.userImgs([ph], c.l1, c.l2), token);
     await think(token, 2400);
     if (CREDIT < 210) { await creditGate(token); await think(token, 1200); }
     await say(M.text('Before we start, let me confirm the video settings. This one is set to ' + cfg.ratio + ' at ' + cfg.dur + ' seconds by default.'), token);
@@ -2907,7 +2909,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     await say(M.script(c.script, meta, c.shots, c.vo), token);
     await ask([{ q: 'How does the script look?', live: 'Tell me what to change…', liveCost: COST.script, o: [['Looks good', 'Go on to the plan']] }], token);
     await think(token, 1400);
-    await confirmYes([c.photo], [['Video style', d[0][1]]], { meta: meta.concat([['Resolution', a[1][1]]]), shots: c.shots, vo: c.vo }, token);
+    await confirmYes([ph], [['Video style', d[0][1]]], { meta: meta.concat([['Resolution', a[1][1]]]), shots: c.shots, vo: c.vo }, token);
     await generate(c.poster, '00:' + cfg.dur, token, c.video);
   }
 
@@ -2925,7 +2927,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     F9: 'Hi there! 👋 I’m your AI Shorts agent. Send me a photo of <span class="pick">your product</span>, and I’ll turn it into a polished showcase video. ✨' };
   async function chatPick(gn, token) {                        // wait for a photo from the chat's picker (⊕ or an underlined .pick word)
     Array.prototype.forEach.call(gn ? gn.querySelectorAll('.pick') : [], function (k) { k.onclick = function () { $('ag-pic').onclick(); }; });
-    S.agentSheet = 'ov-recents'; S.pickCell = [1, 1];
+    S.agentSheet = 'ov-recents'; S.pickCell = [1, 1]; S.picked = null;
     await new Promise(function (res) { S.onAgentPick = res; S.agentHint = null; S.agentDone = true; scheduleHint(); });
     alive(token); S.agentSheet = null; S.pickCell = null; S.agentDone = false; hideHint(); unpick(gn);
   }
@@ -2943,7 +2945,8 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
           E5: 'Sounds lovely! Upload <span class="pick">a photo of yourself</span> and I’ll place you in the scene.', E6: 'Fun! Upload <span class="pick">a clear photo of yourself</span> for the 9 looks.',
           E7: 'Sure! Upload <span class="pick">the photos</span> you’d like to combine into one.' }[id]), token);
         await chatPick(gn, token);                            // the underlined words (or ⊕) open the picker, as in AI Shorts
-        await user('<div class="u-imgs"><div class="u-ph"><img src="' + c.photo + '" alt=""' + (c.lofi ? ' class="lofi"' : '') + '><span class="tg">@photo</span></div></div>', token);
+        p.photo = S.picked || c.photo;
+        await user('<div class="u-imgs"><div class="u-ph"><img src="' + p.photo + '" alt=""' + (c.lofi ? ' class="lofi"' : '') + '><span class="tg">@photo</span></div></div>', token);
       } else await user(M.userPhotoText(p.photo, said, c.lofi, null, said.length > 180), token);
       await think(token, 1600);
       var Q = {
@@ -2961,7 +2964,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     }
     if (!(p.photo || p.url || p.model)) {                    // nothing attached: greet → the underlined words / ⊕ open the picker → carry on with that photo
       await chatPick(await say(M.text(PILL_GREET[id] || CR[id].greet), token), token);
-      p.photo = c.one ? c.one[2] : c.prod;
+      p.photo = S.picked || (c.one ? c.one[2] : c.prod);
     }
     var tag = c.one ? '@' + c.one[0] : '@product', imgs = [];
     if (p.model) imgs.push({ src: p.model, tag: '@model' });
