@@ -2958,7 +2958,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
         E4: ['I can see a text label across the top of your photo. What should I remove?', { label: 'Remove', q: 'What should I remove?', live: 'Describe what to remove…', o: [['The text label', '“Ampoule Sheet Mask” at the top']] }]
       }[id];
       await say(M.text(Q[0]), token);
-      if (Q[1]) { Q[1].nohint = true; ask([Q[1]], token).catch(function () {}); }
+      // 2026-10-21 (Monic): the demo stops at the agent's question — no answer sheet
       finish(token); return;
     }
     if (!(p.photo || p.url || p.model)) {                    // nothing attached: greet → the underlined words / ⊕ open the picker → carry on with that photo
@@ -2974,8 +2974,6 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     await user(M.userImgs(imgs, c.lead + ' ', l2, id === 'F7'), token);
     await think(token, 1800);
     await say(M.text('Before we start, let me confirm the video settings. This one is set to 9:16 at 15 seconds by default.'), token);
-    var q = settingsQs({ ratio: '9:16', dur: 15 }).slice(0, 1); q[0].nohint = true;
-    ask(q, token).catch(function () {});
     finish(token);
   }
 
