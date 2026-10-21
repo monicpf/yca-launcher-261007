@@ -2513,7 +2513,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     if (S.sheet) closeSheet();
     closeSurvey(); S.onAgentPick = null; S.agentSheet = null; S.pickCell = null; S.agentHint = null;
     $('buy').classList.remove('in'); $('cr-toast').classList.remove('show');
-    if (S.round === 0) { setCredit(CREDIT0); PENDING = 0; }                   // the guided demo starts over → credits back to the opening balance
+    if (S.round === 0) PENDING = 0;                                           // 2026-10-21 (Monic): credits once bought are kept — no reset to the opening balance
     Array.prototype.forEach.call(document.querySelectorAll('#ag-list video'), function (v) { v.pause(); });
     $('agent').classList.remove('in'); $('launcher').classList.remove('pushed');
     S.agent = false; S.agentDone = false; hideHint();
@@ -2579,7 +2579,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   function closeHub() {                                       // Explore → the launcher; the guided demo starts over from round 0
     closeCompose(); closeDrawer(); hideHint();
     var h = $('hub'); h.classList.remove('in'); h.setAttribute('aria-hidden', 'true'); $('launcher').classList.remove('away'); S.hub = false;
-    if (S.round === 3) { S.round = 0; setCredit(CREDIT0); PENDING = 0; }
+    if (S.round === 3) { S.round = 0; PENDING = 0; }
     setTimeout(scheduleHint, 250);
   }
   $('nav-ai').onclick = openHub; $('hnav-ex').onclick = closeHub;
