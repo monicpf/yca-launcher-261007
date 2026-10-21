@@ -332,6 +332,8 @@ html.no-set .ic-set { display: none !important; }   /* boss 2026-10-07: v1 has n
 .cr-toast { position: absolute; left: 50%; top: 340px; z-index: 40; transform: translate(-50%, 6px); height: 26px; padding: 0 12px 0 8px; border-radius: 13px; background: rgba(40,40,40,.86);
   display: inline-flex; align-items: center; gap: 8px; font: 400 12px var(--sf); color: #fff; white-space: nowrap; opacity: 0; transition: opacity .25s var(--ease-io), transform .25s var(--ease-out); pointer-events: none; }
 .cr-toast.show { opacity: 1; transform: translate(-50%, 0); }
+.cr-toast.demo { top: 50%; z-index: 65; margin-top: -13px; }      /* 2026-10-21: quick-skill chats demo the first step only — say so, mid-screen */
+.cr-toast.demo.show { pointer-events: auto; }
 .cr-toast .sp { width: 16px; height: 16px; border-radius: 50%; border: 2px solid rgba(39,194,255,.25); border-top-color: #27c2ff; animation: spin .8s linear infinite; }
 .cr-toast svg { display: block; }
 /* End-of-flow survey: cost badge on an option (Figma Generating2 49:11847) */
@@ -1022,6 +1024,7 @@ img.lofi, video.lofi { filter: blur(1.4px) contrast(.86) saturate(.78) brightnes
     <div class="ft"><span>Terms of Service</span><span>Privacy Policy</span><span>Restore Purchase</span></div>
   </div>
   <div class="cr-toast" id="cr-toast"></div>
+  <div class="cr-toast demo" id="demo-toast" role="status"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.6" stroke="#fff" stroke-width="1.3"/><path d="M8 7.2v3.9" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/><circle cx="8" cy="5" r=".9" fill="#fff"/></svg><span>Demo ends here. Tap Back.</span></div>
 
   <!-- ═════════ Overlays ═════════ -->
   <div class="overlay" id="ov-link">
@@ -1940,7 +1943,8 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     agBtm().classList.toggle('free', /^E|^H[245]$/.test(which) || (which === 'T' && S.typedMode === 'edit'));   // AI Edit = old Agent: free daily allowance
     S.agent = true; S.agentDone = false; S.which = which; S.agentHint = null;
     var token = ++RUN;
-    setTimeout(function () { S.busy = false; (pill ? pillFlow : FLOW[which])(token).catch(function () {}); }, 420);
+    setTimeout(function () { S.busy = false;
+      if (pill) pillFlow(token).then(function () { demoEnd(token); }).catch(function () {}); else FLOW[which](token).catch(function () {}); }, 420);
   }
   function makeMsg(k, html) {
     var d = el('div', 'msg ' + (k === 'think' ? 'thinking' : k));
@@ -2710,7 +2714,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     closeSurvey(); S.onAgentPick = null; S.agentSheet = null; S.pickCell = null; S.agentHint = null;
     $('buy').classList.remove('in'); $('cr-toast').classList.remove('show');
     Array.prototype.forEach.call(document.querySelectorAll('#ag-list video'), function (v) { v.pause(); });
-    $('agent').classList.remove('in'); $('hub').classList.remove('pushed');
+    $('agent').classList.remove('in'); $('hub').classList.remove('pushed'); hideDemoEnd();
     if (document.activeElement && document.activeElement.blur) document.activeElement.blur();   // back on the hub at rest: no keyboard
     S.agent = false; S.agentDone = false; S.fromHub = false; hideHint();
     setTimeout(function () { $('ag-list').innerHTML = ''; $('ag-list').style.paddingBottom = ''; agBtm().classList.remove('cmp', 'free', 'tall'); agBtm().style.transform = ''; agBtm()._lift = 0; S.busy = false; scheduleHint(); }, 420);
@@ -2764,6 +2768,15 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     var n = await say(M.procLite(text, left), token); await wait(ms || 2600); alive(token); setTimeout(function () { fadeOut(n); }, 300); return n;
   }
   function useFree() { FREE = Math.max(0, FREE - 1); $('ag-free').textContent = FREE; }
+  var demoT = null;
+  function demoEnd(token) {                                   // quick-skill chats stop after the first step: a mid-screen toast says so (4s, tap to close)
+    setTimeout(function () {
+      if (token !== RUN || !S.agent) return; var t = $('demo-toast'); t.classList.add('show');
+      clearTimeout(demoT); demoT = setTimeout(hideDemoEnd, 4000);
+    }, 800);
+  }
+  function hideDemoEnd() { clearTimeout(demoT); $('demo-toast').classList.remove('show'); }
+  $('demo-toast').onclick = hideDemoEnd;
   function unpick(gn) {                                       // photo is in → the underlined words go back to plain text
     Array.prototype.forEach.call(gn ? gn.querySelectorAll('.pick') : [], function (k) { k.replaceWith(document.createTextNode(k.textContent)); });
   }
