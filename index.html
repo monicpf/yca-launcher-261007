@@ -741,9 +741,10 @@ html.no-set .ic-set { display: none !important; }   /* boss 2026-10-07: v1 has n
 .hbar .menu i:nth-child(1) { top: 8.6px; width: 19.2px; }
 .hbar .menu i:nth-child(2) { top: 14.6px; width: 14.4px; }
 .hbar .menu i:nth-child(3) { top: 20.6px; width: 9px; }
-.hub-sw { position: absolute; z-index: 2; left: 50px; top: calc(var(--safe-top) + 50px); width: 220px; height: 34px; padding: 3px; border-radius: 16px; background: #eff0f3; display: flex; }
-.hub-sw .knob { position: absolute; left: 3px; top: 3px; width: 107px; height: 28px; border-radius: 13px; background: #fff; box-shadow: 0 1px 4px rgba(64,61,222,.16); transition: transform .3s var(--ease-out); }
-.hub-sw.create .knob { transform: translateX(107px); }
+.hub-sw { position: absolute; z-index: 2; left: 28px; top: calc(var(--safe-top) + 50px); width: 264px; height: 34px; padding: 3px; border-radius: 16px; background: #eff0f3; display: flex; }
+.hub-sw .knob { position: absolute; left: 3px; top: 3px; width: 86px; height: 28px; border-radius: 13px; background: #fff; box-shadow: 0 1px 4px rgba(64,61,222,.16); transition: transform .3s var(--ease-out); }
+.hub-sw.vdo .knob { transform: translateX(86px); }
+.hub-sw.create .knob { transform: translateX(172px); }   /* 3 tabs: Image / Video / AI Shorts (Figma 7432:25024, 2026-10-22) */
 .hub-sw button { position: relative; flex: 1; height: 28px; font: 500 13px/18px var(--sf); color: var(--brand); }
 .hub-sw button.on { font-weight: 600; }
 .hub-qs { position: absolute; left: 0; right: 0; top: calc(var(--safe-top) + 99px); transition: opacity .22s var(--ease-io); }
@@ -979,8 +980,9 @@ img.lofi, video.lofi { filter: blur(1.4px) contrast(.86) saturate(.78) brightnes
         </div>
       </div>
     </div>
-    <div class="hub-sw" id="hub-sw"><i class="knob"></i><button class="on" id="sw-edit" data-m="edit">Image/Video</button><button id="sw-create" data-m="create">AI Shorts</button></div>
+    <div class="hub-sw" id="hub-sw"><i class="knob"></i><button class="on" id="sw-edit" data-m="img">Image</button><button id="sw-vdo" data-m="vdo">Video</button><button id="sw-create" data-m="create">AI Shorts</button></div>
     <div class="hub-qs" id="qs-edit"><h4>Quick skills</h4><div class="qs-sc" id="qs-edit-sc"><div class="qs-rows" id="qs-edit-rows"></div></div></div>
+    <div class="hub-qs off" id="qs-vdo"><h4>Quick skills</h4><div class="qs-sc" id="qs-vdo-sc"><div class="qs-rows" id="qs-vdo-rows"></div></div></div>
     <div class="hub-qs off" id="qs-create"><h4>Quick skills</h4><div class="qs-sc" id="qs-create-sc"><div class="qs-rows" id="qs-create-rows"></div></div></div>
     <div id="hub-dim"></div>
     <div class="hub-in" id="hub-in">
@@ -988,7 +990,7 @@ img.lofi, video.lofi { filter: blur(1.4px) contrast(.86) saturate(.78) brightnes
       <div class="hub-pills" id="hub-pills"></div>
       <div class="hub-card" id="hub-card">
         <div id="hub-rc"></div>
-        <textarea id="hub-ta" rows="2" enterkeyhint="send" placeholder="Upload a photo or video and tell me what to fix"></textarea>
+        <textarea id="hub-ta" rows="2" enterkeyhint="send" placeholder="Upload a photo and tell me what to fix"></textarea>
         <div class="btm"><div class="ll"><span id="hub-add" role="button" aria-label="Add"></span><span class="att" id="hub-att"></span></div><div class="rr"><span id="hub-mic"></span><span id="hub-snd" role="button" aria-label="Send"></span></div></div>
       </div>
     </div>
@@ -2613,10 +2615,11 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     $('hnav-ex').querySelector('.ic').innerHTML = ICONS.navExploreOff; $('hnav-ai').querySelector('.ic').innerHTML = uniqIds(ICONS.navAIAgentOn, '_hn');   // in the hub, AI Agent is the selected tab
   })();
 
-  var HUB = { mode: 'edit', step: 0 }, FREE = 20;
-  var HUB_COPY = { edit: ['What should we polish today?', 'Upload a photo or video and tell me what to fix'], create: ['What story do you want to tell?', 'Describe the video you want to make'] };
-  var EDIT_SK = [[['E1', 'Turn photo into a\nvideo', 'media/hub-e1.jpg'], ['E2', 'Enhance photo\nquality', 'media/hub-e2.jpg'], ['E5', 'Restyle the\nscene', 'media/hub-e5.jpg'], ['E6', 'Make a 9-look\ngrid', 'media/hub-e6.jpg']],   // Figma Agent_landing_1 (2026-10-20)
-                 [['E3', 'Enhance video\nquality', 'media/hub-e3.jpg', null, '50% 20%'], ['E4', 'Remove unwanted\nobjects', 'media/hub-e4.jpg'], ['E7', 'Combine photos\ninto one', 'media/hub-e7.jpg']]];
+  var HUB = { mode: 'edit', tab: 'img', step: 0 }, FREE = 20;   // tab: img / vdo / create · mode: edit (img + vdo) / create
+  var HUB_COPY = { img: ['What should we polish today?', 'Upload a photo and tell me what to fix'], vdo: ['What should we polish today?', 'Upload a video and tell me what to make'], create: ['What story do you want to tell?', 'Describe the video you want to make'] };
+  var EDIT_SK = [[['E2', 'Enhance photo\nquality', 'media/hub-e2.jpg'], ['E7', 'Combine photos\ninto one', 'media/hub-e7.jpg'], ['E5', 'Restyle the\nscene', 'media/hub-e5.jpg']],   // Image tab (2026-10-22: Image / Video split)
+                 [['E4', 'Remove unwanted\nobjects', 'media/hub-e4.jpg'], ['E6', 'Make a 9-look\ngrid', 'media/hub-e6.jpg']]];
+  var VDO_SK = [[['E1', 'Turn photo into a\nvideo', 'media/hub-e1.jpg'], ['E3', 'Enhance video\nquality', 'media/hub-e3.jpg', null, '50% 20%']]];   // Video tab
   var CREATE_SK = [[['F7', 'UGC Review', 'media/hub-f7.jpg'], ['F9', 'Product\nShowcase Ad', 'media/hub-f9.jpg', 'media/hub-f9.mp4'], ['C4', 'Product Demo\n& Solution', 'media/hub-c4.jpg', 'media/hub-c4.mp4'], ['C2', 'UGC Tutorial', 'media/hub-c2.jpg']],
                    [['C5', 'Cinematic\nBrand Ad', 'media/hub-c5.jpg', 'media/hub-c5.mp4'], ['C6', 'Unboxing &\nFirst-Use', 'media/hub-c6.jpg', null, '50% 6%'], ['C7', 'Person\nAction Remix', 'media/hub-c7.jpg']]];
   function cardMedia(src, vid, pos) {                        // [code, label, image, video?, crop?] — AI Edit cards stay still; 3 AI Create cards play their clip (Monic 2026-10-16)
@@ -2624,23 +2627,23 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     return vid ? '<video src="' + vid + '" poster="' + src + '" muted loop autoplay playsinline webkit-playsinline preload="auto"' + st + '></video>' : '<img src="' + src + '" alt=""' + st + '>'; }
   function cardRows(rows) { return rows.map(function (row) {
     return '<div class="r">' + row.map(function (s) { return '<button class="qs-c" data-f="' + s[0] + '">' + cardMedia(s[2], s[3], s[4]) + '<span>' + esc(s[1]) + '</span><i class="ring"></i></button>'; }).join('') + '</div>'; }).join(''); }
-  $('qs-edit-rows').innerHTML = cardRows(EDIT_SK);
+  $('qs-edit-rows').innerHTML = cardRows(EDIT_SK); $('qs-vdo-rows').innerHTML = cardRows(VDO_SK);
   $('qs-create-rows').innerHTML = cardRows(CREATE_SK);
   Array.prototype.forEach.call(document.querySelectorAll('#hub [data-f]'), function (b) {   // 2026-10-20: a card picks the skill (outline + the input fills in); send starts the chat
     b.onclick = function () { if ($('hub').classList.contains('compose') || S.busy) return; selPill(HUB.sel === b.dataset.f ? null : b.dataset.f); }; });
 
-  function setHubMode(m) {
-    if (HUB.mode === m) return; HUB.mode = m;
-    $('hub-sw').classList.toggle('create', m === 'create');
-    $('sw-edit').classList.toggle('on', m === 'edit'); $('sw-create').classList.toggle('on', m === 'create');
-    $('qs-edit').classList.toggle('off', m !== 'edit'); $('qs-create').classList.toggle('off', m !== 'create');
-    $('hub-gr').textContent = HUB_COPY[m][0]; $('hub-ta').placeholder = HUB_COPY[m][1]; if (typeof drawPills === 'function') { selPill(null); setHubPhoto(null); }
+  function setHubMode(t) {                                   // t: img / vdo / create ('edit' = img)
+    if (t === 'edit') t = 'img'; if (HUB.tab === t) return; HUB.tab = t; HUB.mode = t === 'create' ? 'create' : 'edit';
+    $('hub-sw').classList.toggle('vdo', t === 'vdo'); $('hub-sw').classList.toggle('create', t === 'create');
+    $('sw-edit').classList.toggle('on', t === 'img'); $('sw-vdo').classList.toggle('on', t === 'vdo'); $('sw-create').classList.toggle('on', t === 'create');
+    $('qs-edit').classList.toggle('off', t !== 'img'); $('qs-vdo').classList.toggle('off', t !== 'vdo'); $('qs-create').classList.toggle('off', t !== 'create');
+    $('hub-gr').textContent = HUB_COPY[t][0]; $('hub-ta').placeholder = HUB_COPY[t][1]; if (typeof drawPills === 'function') { selPill(null); setHubPhoto(null); }
     scheduleHint();
   }
-  $('sw-edit').onclick = function () { HUB.step = 1; setHubMode('edit'); }; $('sw-create').onclick = function () { HUB.step = 1; setHubMode('create'); };   // any tap on the switcher ends the hub guidance
+  $('sw-edit').onclick = function () { HUB.step = 1; setHubMode('img'); }; $('sw-vdo').onclick = function () { HUB.step = 1; setHubMode('vdo'); }; $('sw-create').onclick = function () { HUB.step = 1; setHubMode('create'); };   // any tap on the switcher ends the hub guidance
   function openHub() {
     if (S.busy || S.agent || S.sheet || S.hub) return;
-    hideHint(); S.hub = true; S.hubSeen = true; S.nudge = false; HUB.step = 0; setHubMode('edit'); $('qs-create-sc').scrollLeft = 0; $('qs-edit-sc').scrollLeft = 0;
+    hideHint(); S.hub = true; S.hubSeen = true; S.nudge = false; HUB.step = 0; setHubMode('img'); $('qs-create-sc').scrollLeft = 0; $('qs-edit-sc').scrollLeft = 0; $('qs-vdo-sc').scrollLeft = 0;
     var h = $('hub'); h.removeAttribute('aria-hidden'); h.classList.add('in'); $('launcher').classList.add('away'); scheduleHint();
   }
   function closeHub() {                                       // Explore → the launcher; the guided demo starts over from round 0
@@ -2773,9 +2776,10 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   };
   var PILLS = { create: [['F7', 'UGC Review'], ['C2', 'UGC Tutorial'], ['F9', 'Product Showcase Ad'], ['C4', 'Product Demo & Solution'], ['C5', 'Cinematic Brand Ad'], ['C6', 'Unboxing & First-Use'], ['C7', 'Person Action Remix']],
                 edit: [['E1', 'Turn my photo into a video'], ['E2', 'Enhance photo quality'], ['E5', 'Restyle the scene'], ['E6', 'Make a 9-look grid'], ['E3', 'Enhance video quality'], ['E4', 'Remove unwanted objects'], ['E7', 'Combine photos into one']] };
+  PILLS.img = PILLS.edit.filter(function (p) { return !/^E[13]$/.test(p[0]); }); PILLS.vdo = PILLS.edit.filter(function (p) { return /^E[13]$/.test(p[0]); });   // the compose pills follow the tab
   HUB.sel = null; HUB.rc = {};
   function drawPills() {
-    $('hub-pills').innerHTML = PILLS[HUB.mode].map(function (p) { return '<button class="hpill' + (HUB.sel === p[0] ? ' on' : '') + '" data-p="' + p[0] + '">' + esc(p[1]) + '</button>'; }).join('');
+    $('hub-pills').innerHTML = PILLS[HUB.tab].map(function (p) { return '<button class="hpill' + (HUB.sel === p[0] ? ' on' : '') + '" data-p="' + p[0] + '">' + esc(p[1]) + '</button>'; }).join('');
     Array.prototype.forEach.call($('hub-pills').children, function (b) {
       b.onmousedown = function (e) { e.preventDefault(); };   // keep the text field focused → keyboard stays up
       b.onclick = function (e) { e.stopPropagation(); selPill(HUB.sel === b.dataset.p ? null : b.dataset.p); $('hub-ta').focus({ preventScroll: true }); }; });
