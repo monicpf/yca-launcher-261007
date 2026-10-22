@@ -1985,6 +1985,25 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     return '<img src="' + p.src + '" alt="" style="inset:auto;width:' + (cw * p.cols) + 'px;height:' + (ch * p.rows) + 'px;max-width:none;object-fit:fill;left:' +
       (-(p.panel[0] * cw) - (cw - W) / 2) + 'px;top:' + (-(p.panel[1] * ch) - (ch - H) / 2) + 'px">';
   }
+  var SHORTS_NEXT = ['Change approach', 'Make a 30s version', 'Try another model'];   // Figma Generate_completed_aishort (2026-10-22)
+  var NEXT_REPLY = {                                          // a Keep exploring tap gets one agent line, then the demo ends
+    'Change approach': 'Sure! Tell me what you’d like to change — the story, the style or the pacing — and I’ll take it in a new direction.',
+    'Make a 30s version': 'On it! I’ll extend this into a 30-second version with a few more shots.',
+    'Try another model': 'Sure! Send me the model photo you’d like to use, or I can generate a new one for you.',
+    'Transform my photo into a stunning video with vibrant floral vibes': 'Love it! I’ll turn your photo into a video full of blooming floral vibes.',
+    'Whiten my teeth in seconds for a bright, natural smile': 'Sure! I’ll brighten your smile while keeping it looking natural.',
+    'Add a subtle sparkle to my eyes to make them shine beautifully': 'On it! I’ll add a soft sparkle to your eyes.'
+  };
+  async function nextTap(text) {
+    if (S.nextUsed || S.busy) return; S.nextUsed = true; hideHint();
+    var token = RUN; S.agentDone = false;
+    try {
+      await user(M.answers([['', text]]), token);
+      await think(token, 1200);
+      await say(M.text(NEXT_REPLY[text] || 'Sure! I’ll get started on that.'), token);
+      demoEnd(token); finish(token);
+    } catch (e) {}
+  }
   var IV_NEXT = ['Transform my photo into a stunning video with vibrant floral vibes', 'Whiten my teeth in seconds for a bright, natural smile', 'Add a subtle sparkle to my eyes to make them shine beautifully'];
   function ivNext() { return '<div class="a-exp"><div class="hd">Keep exploring</div>' + IV_NEXT.map(function (t) { return '<button type="button">' + esc(t) + '</button>'; }).join('') + '</div>'; }
   M.result = function (poster, dur, intro, outro, video, iv) {   // iv: an Image/Video result (download mark, good / bad / copy, a list of next edits)   // video: the generated clip (tap to play / pause); else a still placeholder
@@ -1993,7 +2012,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     return '<div class="a-in">' + head() + '<div class="a-tx long">' + esc(intro) + '</div><div class="a-res' + (video ? ' vid' : '') + '">' + media +
       '<span class="play">' + (iv ? ICONS.dlBig : ICONS.play) + '</span><span class="du">' + dur + '</span></div><div class="a-tx long">' + esc(outro) + '</div>' +
       (iv ? fbBar('iv') + ivNext() : fbBar('video') +
-      (NEXT[video] ? '<div class="a-next-lb">Keep exploring</div><div class="a-next">' + NEXT[video].map(function (t) { return '<button type="button">' + esc(t) + '</button>'; }).join('') + '</div>' : '')) + '</div>';
+      (NEXT[video] ? '<div class="a-next-lb">Keep exploring</div><div class="a-next">' + SHORTS_NEXT.map(function (t) { return '<button type="button">' + esc(t) + '</button>'; }).join('') + '</div>' : '')) + '</div>';
   };
   var NEXT = {                                             // per-video "keep editing" suggestions — tappable look, no action (boss review only)
     'media/UGC_agent.mp4': ['Enhance video quality', 'Make a 30s version', 'Try another model'],
@@ -2027,7 +2046,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     var list = $('ag-list'); list.innerHTML = ''; $('ag-scroll').scrollTop = 0;
     S.fromHub = !!S.hub; $(S.fromHub ? 'hub' : 'launcher').classList.add('pushed'); $('agent').classList.add('in');
     agBtm().classList.toggle('free', /^E|^H[245]$/.test(which) || (which === 'T' && S.typedMode === 'edit'));   // AI Edit = old Agent: free daily allowance
-    S.agent = true; S.agentDone = false; S.which = which; S.agentHint = null;
+    S.agent = true; S.agentDone = false; S.which = which; S.agentHint = null; S.nextUsed = false;
     var token = ++RUN;
     setTimeout(function () { S.busy = false;
       if (pill) pillFlow(token).then(function () { demoEnd(token); }).catch(function () {}); else FLOW[which](token).catch(function () {}); }, 420);
@@ -2086,6 +2105,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     requestAnimationFrame(function () { requestAnimationFrame(function () { w.classList.add('show'); }); });
   }
   $('ag-list').addEventListener('click', function (e) {
+    var nx = e.target.closest('.a-next button, .a-exp button'); if (nx) { nextTap(nx.textContent); return; }
     var cl = e.target.closest('.bub.clamp'); if (cl) { cl.classList.toggle('open'); return; }
     var b = e.target.closest('[data-fb]'); if (!b) return;
     var k = b.dataset.fb, bar = b.parentNode;
@@ -2397,7 +2417,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   function openAgentAgain(which) {                           // Change Approach: same template, a fresh chat
     RUN++; closeSurvey(); hideHint(); S.agent = false; S.busy = false;
     $('ag-list').innerHTML = ''; $('ag-scroll').scrollTop = 0; FB = null; LASTA = null;
-    S.agent = true; S.agentDone = false; S.which = which; S.agentHint = null;
+    S.agent = true; S.agentDone = false; S.which = which; S.agentHint = null; S.nextUsed = false;
     var token = RUN; setTimeout(function () { FLOW[which](token).catch(function () {}); }, 200);
   }
 
