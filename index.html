@@ -55,7 +55,7 @@ button:focus, button:focus-visible { outline: none; }
 .hbar .logo { position: absolute; left: 14px; top: 8px; width: 135.45px; height: 20px; }
 .hbar .logo svg { display: block; }
 .hbar .right { position: absolute; right: 12px; top: 4px; display: flex; align-items: center; gap: 6px; height: 28px; }
-.credit { height: 22px; border-radius: 22px; background: #eee; padding: 1px 4px; display: flex; align-items: center; }
+.credit { height: 22px; border-radius: 22px; background: #eee; padding: 1px 4px; display: flex; align-items: center; cursor: pointer; }   /* 2026-10-22: tap → buy credits from any page */
 .credit .in { display: flex; align-items: center; gap: 4px; padding-right: 2px; font: 500 13px var(--sf); color: var(--ink); }
 .credit svg { display: block; }
 
@@ -1805,7 +1805,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     return { parent: parent, x: (r.left - pr.left + r.width / 2) / k, y: (r.top - pr.top + r.height / 2) / k };
   }
   function hintTarget() {
-    if (S.tools) return null;
+    if (S.tools || S.buyFree) return null;
     if (S.agent && !S.sheet) {
       if ($('buy').classList.contains('in') && S.agentHint !== $('buy-cta')) return null;
       if (S.agentHint) {
@@ -1890,7 +1890,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   function launcherCtx() { return !S.hub && !S.agent && !S.tools; }
   var PROBE = false;
   $('frame').addEventListener('click', function (e) {          // a tap (not a scroll drag) somewhere other than the next step → the launcher hint shows
-    if (!HINTS_ON || !launcherCtx() || !S.hubSeen) return;
+    if (!HINTS_ON || !launcherCtx() || !S.hubSeen || e.target.closest('.credit')) return;
     PROBE = true; LAST_T = null; var t = hintTarget(); PROBE = false;
     S.nudge = !!(LAST_T && !LAST_T.contains(e.target)); if (S.nudge) { hideHint(); scheduleHint(); }
   }, true);
@@ -2392,6 +2392,23 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
       $('buy-back').onclick = function () { if (token === RUN) done(0); };
     });
   }
+  function buyNow() {                                         // credit pill on any page → the buy page; after a purchase the balance syncs and the user is back where they were
+    var pg = $('buy'); if (pg.classList.contains('in') || S.sheet || S.tools || S.buyFree) return;
+    S.buyFree = true; hideHint(); PLAN = 1; drawBuy(); pg.classList.add('in'); pg.removeAttribute('aria-hidden');
+    var cta = $('buy-cta'), back = $('buy-back'), oc = cta.onclick, ob = back.onclick;
+    function close(then) { cta.onclick = oc; back.onclick = ob; pg.classList.remove('in'); pg.setAttribute('aria-hidden', 'true'); setTimeout(then, 400); }
+    cta.onclick = function () {
+      var pl = PLANS[PLAN];
+      close(async function () {
+        var t = $('cr-toast'); t.innerHTML = '<span class="sp"></span>Syncing credit balance'; t.classList.add('show');
+        await wait(1400); setCredit(CREDIT + pl.base + pl.bonus); t.innerHTML = ICONS.check16 + 'Syncing completed';
+        await wait(1300); t.classList.remove('show'); await wait(300);
+        S.buyFree = false; if (S.gatePaid) S.gatePaid('paid'); scheduleHint();
+      });
+    };
+    back.onclick = function () { close(function () { S.buyFree = false; scheduleHint(); }); };
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('.credit'), function (c) { c.addEventListener('click', function (e) { e.stopPropagation(); buyNow(); }); });
   async function syncToast(add, token) {                     // Figma Buy_2 → Buy_3: syncing → completed (balance updates) → hold → fade out
     var t = $('cr-toast');
     t.innerHTML = '<span class="sp"></span>Syncing credit balance'; t.classList.add('show');
@@ -2412,10 +2429,12 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     var n = await say(M.noCredit(), token); FB = null;
     var btn = n.querySelector('[data-buy]'), got = 0;
     while (!got) {
-      await waitTap([btn], btn, token);
+      var r = await Promise.race([waitTap([btn], btn, token), new Promise(function (res) { S.gatePaid = res; })]);
+      S.gatePaid = null; alive(token);
+      if (r === 'paid') { btn.onclick = null; S.agentHint = null; S.agentDone = false; hideHint(); got = -1; break; }   // bought from the credit pill meanwhile
       got = await openBuy(token); alive(token);
     }
-    await syncToast(got, token);
+    if (got > 0) await syncToast(got, token);
     await collapseMsg(n); alive(token);                       // the credit reply disappears; the next question takes its place
   }
   function openAgentAgain(which) {                           // Change Approach: same template, a fresh chat
