@@ -770,6 +770,13 @@ html.no-set .ic-set { display: none !important; }   /* boss 2026-10-07: v1 has n
 .qs-c .ring { position: absolute; z-index: 3; inset: 0; border-radius: 14px; padding: 3px; background: var(--grad); opacity: 0; transition: opacity .18s var(--ease-io);   /* selected card: 3px gradient outline */
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); }
 .qs-c.on .ring { opacity: 1; }
+/* Image / Video tabs (Figma 7432:25024 / 7432:25300, 2026-10-22): 2×2, 140×84 photo, label underneath */
+.qs-c.qb { width: 140px; height: auto; border-radius: 0; overflow: visible; background: none; -webkit-mask-image: none; isolation: auto; }
+.qs-c.qb::after { display: none; }
+.qs-c.qb .im { position: relative; left: auto; right: auto; bottom: auto; -webkit-transform: none; transform: none; display: block; width: 140px; height: 84px; border-radius: 12px; overflow: hidden; background: #e9eaf2; -webkit-mask-image: -webkit-radial-gradient(white, black); }
+.qs-c.qb .im img { object-position: 50% 50%; }
+.qs-c.qb .ring { border-radius: 12px; }
+.qs-c.qb .lb { position: static; -webkit-transform: none; transform: none; display: block; margin-top: 6px; min-height: 26px; font: 510 11px/13px var(--sf); color: var(--ink); white-space: pre-line; }
 .hub-in { position: absolute; z-index: 46; left: 16px; width: 288px; bottom: 86px; transition: transform .34s var(--ease-out); }
 .hub-in .gr { margin-bottom: 10px; font: 500 13px/16px var(--sf); color: var(--ink); text-align: center; transition: color .25s; }
 .hub-card { position: relative; border-radius: 16px; border: 1px solid transparent; padding: 12px 0 8px;
@@ -2617,17 +2624,21 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
 
   var HUB = { mode: 'edit', tab: 'img', step: 0 }, FREE = 20;   // tab: img / vdo / create · mode: edit (img + vdo) / create
   var HUB_COPY = { img: ['What should we polish today?', 'Upload a photo and tell me what to fix'], vdo: ['What should we polish today?', 'Upload a video and tell me what to make'], create: ['What story do you want to tell?', 'Describe the video you want to make'] };
-  var EDIT_SK = [[['E2', 'Enhance photo\nquality', 'media/hub-e2.jpg'], ['E7', 'Combine photos\ninto one', 'media/hub-e7.jpg'], ['E5', 'Restyle the\nscene', 'media/hub-e5.jpg']],   // Image tab (2026-10-22: Image / Video split)
-                 [['E4', 'Remove unwanted\nobjects', 'media/hub-e4.jpg'], ['E6', 'Make a 9-look\ngrid', 'media/hub-e6.jpg']]];
-  var VDO_SK = [[['E1', 'Turn photo into a\nvideo', 'media/hub-e1.jpg'], ['E3', 'Enhance video\nquality', 'media/hub-e3.jpg', null, '50% 20%']]];   // Video tab
+  var EDIT_SK = [[['E2', 'Enhance Photo Quality', 'media/qs-img1.jpg'], ['E7', 'Combine Photos Into One', 'media/qs-img2.jpg']],   // Image tab (Figma 7432:25024)
+                 [['E8', 'Change My Outfit', 'media/qs-img3.jpg'], ['E4', 'Remove Unwanted\nObjects Or People', 'media/qs-img4.jpg']]];
+  var VDO_SK = [[['E3', 'Enhance Video Quality', 'media/qs-vdo1.jpg'], ['E1', 'Animate My Photo', 'media/qs-vdo2.jpg']],   // Video tab (Figma 7432:25300) · Animate My Photo runs the full photo → video demo
+                [['E9', 'Swap An Object In My Photo', 'media/qs-vdo3.jpg'], ['E10', 'Change The Camera Angle', 'media/qs-vdo4.jpg']]];
+  var VID = { E3: 1, E10: 1 };                                 // skills that take a video
   var CREATE_SK = [[['F7', 'UGC Review', 'media/hub-f7.jpg'], ['F9', 'Product\nShowcase Ad', 'media/hub-f9.jpg', 'media/hub-f9.mp4'], ['C4', 'Product Demo\n& Solution', 'media/hub-c4.jpg', 'media/hub-c4.mp4'], ['C2', 'UGC Tutorial', 'media/hub-c2.jpg']],
                    [['C5', 'Cinematic\nBrand Ad', 'media/hub-c5.jpg', 'media/hub-c5.mp4'], ['C6', 'Unboxing &\nFirst-Use', 'media/hub-c6.jpg', null, '50% 6%'], ['C7', 'Person\nAction Remix', 'media/hub-c7.jpg']]];
   function cardMedia(src, vid, pos) {                        // [code, label, image, video?, crop?] — AI Edit cards stay still; 3 AI Create cards play their clip (Monic 2026-10-16)
     var st = pos ? ' style="object-position:' + pos + '"' : '';
     return vid ? '<video src="' + vid + '" poster="' + src + '" muted loop autoplay playsinline webkit-playsinline preload="auto"' + st + '></video>' : '<img src="' + src + '" alt=""' + st + '>'; }
+  function cardRowsBelow(rows) { return rows.map(function (row) {   // Image / Video: photo with the label underneath
+    return '<div class="r">' + row.map(function (s) { return '<button class="qs-c qb" data-f="' + s[0] + '"><span class="im"><img src="' + s[2] + '" alt=""><i class="ring"></i></span><span class="lb">' + esc(s[1]) + '</span></button>'; }).join('') + '</div>'; }).join(''); }
   function cardRows(rows) { return rows.map(function (row) {
     return '<div class="r">' + row.map(function (s) { return '<button class="qs-c" data-f="' + s[0] + '">' + cardMedia(s[2], s[3], s[4]) + '<span>' + esc(s[1]) + '</span><i class="ring"></i></button>'; }).join('') + '</div>'; }).join(''); }
-  $('qs-edit-rows').innerHTML = cardRows(EDIT_SK); $('qs-vdo-rows').innerHTML = cardRows(VDO_SK);
+  $('qs-edit-rows').innerHTML = cardRowsBelow(EDIT_SK); $('qs-vdo-rows').innerHTML = cardRowsBelow(VDO_SK);
   $('qs-create-rows').innerHTML = cardRows(CREATE_SK);
   Array.prototype.forEach.call(document.querySelectorAll('#hub [data-f]'), function (b) {   // 2026-10-20: a card picks the skill (outline + the input fills in); send starts the chat
     b.onclick = function () { if ($('hub').classList.contains('compose') || S.busy) return; selPill(HUB.sel === b.dataset.f ? null : b.dataset.f); }; });
@@ -2763,7 +2774,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     C6: { lead: 'Create an unboxing and first-use video for', prod: 'media/themed-sale-unbox.jpg' },
     C7: { lead: 'Remix', one: ['person', 'Person image', 'media/fashion-ava.jpg'], after: 'into a short action clip.' },
     E1: { photo: 'media/bonjour-selfie.jpg' }, E2: { photo: 'media/model-picked.jpg', lofi: true }, E3: { photo: 'media/teatime-date.jpg', lofi: true },   // Image/Video: the photo a pick resolves to
-    E4: { photo: 'media/ugc-hand-gesture.jpg' }, E5: { photo: 'media/fashion-erica.jpg' }, E6: { photo: 'media/model-picked.jpg' }, E7: { photo: 'media/bonjour-selfie.jpg' }
+    E4: { photo: 'media/ugc-hand-gesture.jpg' }, E8: { photo: 'media/fashion-erica.jpg' }, E9: { photo: 'media/teatime-date.jpg' }, E10: { photo: 'media/bonjour-selfie.jpg', lofi: true }, E5: { photo: 'media/fashion-erica.jpg' }, E6: { photo: 'media/model-picked.jpg' }, E7: { photo: 'media/bonjour-selfie.jpg' }
   };
   var PROMPT = {                                              // Image/Video skills fill the input with an editable prompt (E1 = Figma AURA prompt; the rest drafted 2026-10-20)
     E1: "High resolution, high quality, Preserve the uploaded face identity and exact hairstyle, but regenerate head ratio to make the size moderate. Apply subtle professional beauty retouching: gently refine the complexion, slightly soften uneven skin texture, brighten underexposed facial areas, reduce dull or yellow undertones, and add a natural healthy glow, pearl stud earrings. Hair with a single delicate rose-gold crystal flower hairpin, catching soft warm highlights. Ensure the person always at the center of magazine cover.\nConcept: viral 3D dreamland art installation — a luxury fashion magazine cover — not a thick book or box, not tilted — with a slim visible edge along its top and side, titled \"AURA\" in embossed 3D rose-gold typography, breaking out of its own 2D frame into physical space.\nFraming & 3D Object Presence: The magazine cover is rendered visible page-edge depth along its top and side, viewed at a slight three-quarter angle so both the printed front face and the dimensional edge are visible, establishing it as a freestanding object in the scene. A grounded contact shadow falls from the ledge and arm onto the floor of roses below, anchoring the object's weight in the scene.\nFX: translucent glass-prism butterflies with rainbow refractions hover near fingertips. The front plane displays a short two-to-three-word editorial coverline match the person's vibe, in fine rose-gold serif type consistent with the masthead style, plus two brief coverline captions tucked near the corners — a kicker line above the masthead and a teaser line near the base — and a subtle vertical barcode motif in the lower corner, fashion-magazine front-cover layout, no date.\nPalette: lavender, baby pink, champagne cream, sky blue. Setting: neoclassical white marble terrace under a bright azure sky, soft top-corner sunlight, a distant minimalist stone archway veiled in pastel-pink clouds. The frame's base emerges from a bed of blush-pink roses, with cascading petals, soap bubbles, and diamond light-dust spilling into the foreground.\nLighting: volumetric god rays casting a golden rim light on her hair and sweater; diamond sparkle dust, rainbow-caustic bubbles, crisp horizontal lens flares on jewelry and the glossy cover edge.\nShot with an 85mm portrait telephoto lens perspective to eliminate wide-angle distortion (moderate natural head size, perfect head-to-shoulder ratio, slender neck). Poised, upright, and centered posture with leveled shoulders. Wearing a soft asymmetric mohair-knit cardigan in dusty lavender draped off one shoulder, with the other shoulder fully covered by the knit, finely spun fluffy fibers catching the light, for a romantic goddess silhouette; a delicate lace-trim camisole underneath; a layered pearl necklace. Both arms rest gracefully and horizontally across the lower marble frame ledge.\nFinish: high resolution, sleek fitted silhouette, slim cover edge with clean minimal typography, natural skin retouching — brighten shadows, neutralize yellow undertones, healthy glow, no wrinkles, camera level and unrotated. Ensure the head must regenerate into a moderate size, no big head. Perfect head-to-body ratio. No date. No cleavage. Retain the input face features and hairstyle. Remove eye bags and dark circles. No under-eye circles",
@@ -2772,11 +2783,15 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     E6: 'Create a 3×3 grid of nine portraits of the person in my photo, each with a different look: change the sunglasses, headscarf, hat, outfit color and a solid pastel background in every tile. Keep the same face, hairstyle and camera framing throughout. Bright, playful editorial style.',
     E3: 'Upscale this video to 1080p with sharper, cleaner frames and smooth motion, without changing the people or framing.',
     E4: 'Remove the unwanted objects and people from this photo and fill the gaps seamlessly with matching background.',
-    E7: 'Combine the people and pets from my photos into one natural group photo with consistent lighting and scale.'
+    E7: 'Combine the people and pets from my photos into one natural group photo with consistent lighting and scale.',
+    E8: 'Change my outfit to a cream knit cardigan over a white tee with light-wash jeans, keeping my face, hair, pose and background the same.',
+    E9: 'Swap the item in my hand for a pink iced latte, matching the lighting, angle and shadows so it looks natural.',
+    E10: 'Re-shoot this video from a low, wide fisheye angle with a slow orbit around me, keeping the same people, motion and timing.'
   };
   var PILLS = { create: [['F7', 'UGC Review'], ['C2', 'UGC Tutorial'], ['F9', 'Product Showcase Ad'], ['C4', 'Product Demo & Solution'], ['C5', 'Cinematic Brand Ad'], ['C6', 'Unboxing & First-Use'], ['C7', 'Person Action Remix']],
-                edit: [['E1', 'Turn my photo into a video'], ['E2', 'Enhance photo quality'], ['E5', 'Restyle the scene'], ['E6', 'Make a 9-look grid'], ['E3', 'Enhance video quality'], ['E4', 'Remove unwanted objects'], ['E7', 'Combine photos into one']] };
-  PILLS.img = PILLS.edit.filter(function (p) { return !/^E[13]$/.test(p[0]); }); PILLS.vdo = PILLS.edit.filter(function (p) { return /^E[13]$/.test(p[0]); });   // the compose pills follow the tab
+                edit: [['E2', 'Enhance photo quality'], ['E7', 'Combine photos into one'], ['E8', 'Change my outfit'], ['E4', 'Remove unwanted objects or people'],
+                       ['E3', 'Enhance video quality'], ['E1', 'Animate my photo'], ['E9', 'Swap an object in my photo'], ['E10', 'Change the camera angle']] };
+  PILLS.img = PILLS.edit.slice(0, 4); PILLS.vdo = PILLS.edit.slice(4);   // the compose pills follow the tab
   HUB.sel = null; HUB.rc = {};
   function drawPills() {
     $('hub-pills').innerHTML = PILLS[HUB.tab].map(function (p) { return '<button class="hpill' + (HUB.sel === p[0] ? ' on' : '') + '" data-p="' + p[0] + '">' + esc(p[1]) + '</button>'; }).join('');
@@ -2829,7 +2844,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     if (HUB.sel && !/^E/.test(HUB.sel) && ta.value) { var v = ta.value; selPill(null); ta.value = v; }   // AI Shorts only: an Image/Video prompt is edited in place
     syncHubSend();
   });
-  function hubPick(slot) { if (S.busy || S.sheet) return; $('hub-ta').blur(); S.pickFor = 'hub:' + slot; openSheet(slot === 'product' ? 'ov-product' : HUB.sel === 'E3' ? 'ov-video' : HUB.sel === 'E7' ? 'ov-multi' : 'ov-recents'); }
+  function hubPick(slot) { if (S.busy || S.sheet) return; $('hub-ta').blur(); S.pickFor = 'hub:' + slot; openSheet(slot === 'product' ? 'ov-product' : VID[HUB.sel] ? 'ov-video' : HUB.sel === 'E7' ? 'ov-multi' : 'ov-recents'); }
   function hubLink() { if (S.busy || S.sheet) return; $('hub-ta').blur(); S.linkFor = 'hub'; LINK.text = HUB.rc.url || DEMO_URL; drawLink(); openSheet('ov-link'); }
   function hubPicked(slot, src) {
     if (slot === 'photo') return setHubPhoto(src);
@@ -3141,12 +3156,13 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
         var gn = await say(M.text({ E1: 'Love it! Upload <span class="pick">the photo</span> you’d like to turn into a video.', E2: 'Sure! Upload <span class="pick">the photo</span> you’d like me to enhance.',
           E3: 'Sure! Upload <span class="pick">the video</span> you’d like me to enhance.', E4: 'Got it. Upload <span class="pick">the photo</span> you’d like me to clean up.',
           E5: 'Sounds lovely! Upload <span class="pick">a photo of yourself</span> and I’ll place you in the scene.', E6: 'Fun! Upload <span class="pick">a clear photo of yourself</span> for the 9 looks.',
-          E7: 'Sure! Upload <span class="pick">the photos</span> you’d like to combine into one.' }[id]), token);
-        await chatPick(gn, token, id === 'E3' ? 'ov-video' : id === 'E7' ? 'ov-multi' : 'ov-recents');   // the underlined words (or ⊕) open the picker, as in AI Shorts
+          E7: 'Sure! Upload <span class="pick">the photos</span> you’d like to combine into one.', E8: 'Love it! Upload <span class="pick">a photo of yourself</span> and I’ll change your outfit.',
+          E9: 'Sure! Upload <span class="pick">the photo</span> with the item you’d like to swap.', E10: 'Fun! Upload <span class="pick">the video</span> you’d like to re-shoot from a new angle.' }[id]), token);
+        await chatPick(gn, token, VID[id] ? 'ov-video' : id === 'E7' ? 'ov-multi' : 'ov-recents');   // the underlined words (or ⊕) open the picker, as in AI Shorts
         p.photo = S.picked || c.photo; if (id === 'E7' && S.pickedList) p.photos = S.pickedList;
-        await user(photosHtml(p.photos || [p.photo], c.lofi, id === 'E3' ? '@video' : '@photo'), token);
+        await user(photosHtml(p.photos || [p.photo], c.lofi, VID[id] ? '@video' : '@photo'), token);
       } else if (p.photos) await user(photosHtml(p.photos, c.lofi, '@photo') + '<div class="u-bub ans" style="padding-top:8px"><div class="bub' + (said.length > 180 ? ' clamp"><span class="clp">' + esc(said) + '</span>' : '">' + esc(said)) + '</div></div>', token);
-      else await user(M.userPhotoText(p.photo, said, c.lofi, id === 'E3' ? '@video' : null, said.length > 180), token);
+      else await user(M.userPhotoText(p.photo, said, c.lofi, VID[id] ? '@video' : null, said.length > 180), token);
       await think(token, 1600);
       var Q = {
         E1: ['What a cute photo! Let’s bring it to life. How should it move?', { label: 'Motion', q: 'Which motion style?', o: [['Gentle breeze', 'Hair and clothes sway softly'], ['Slow push-in', 'The camera glides in closer'], ['Playful wave', 'A natural wave and a smile']] }],
@@ -3155,6 +3171,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
         E5: ['Love this photo! Which scene should I place you in?', { label: 'Scene', q: 'Which scene?', o: [['Parisian café', 'Cream stone street, golden hour'], ['Seaside terrace', 'Blue sea and white walls'], ['Tokyo at night', 'Neon signs and city glow']] }],
         E6: ['Great shot! Which theme should the 9 looks follow?', { label: 'Theme', q: 'Which theme?', o: [['Summer accessories', 'Sunglasses, scarves and hats'], ['Color pop', 'A different pastel outfit in each tile'], ['Through the decades', 'From 60s glam to Y2K']] }],
         E7: ['Got it. Where should everyone be in the combined photo?', { label: 'Setting', q: 'Which setting?', o: [['City street', 'Sunny sidewalk, natural light'], ['Park', 'Green lawn and trees'], ['Studio', 'Clean backdrop, soft light']] }],
+        E8: ['Great photo! Which style should the new outfit be?'], E9: ['Got it. What should I swap in?'], E10: ['Nice clip! Which camera angle should I use?'],
         E4: ['I can see a text label across the top of your photo. What should I remove?', { label: 'Remove', q: 'What should I remove?', live: 'Describe what to remove…', o: [['The text label', '“Ampoule Sheet Mask” at the top']] }]
       }[id];
       await say(M.text(Q[0]), token);
