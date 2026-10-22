@@ -2430,6 +2430,13 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     F7: async function (token) {
       var cfg = { ratio: S.ratio, dur: S.dur }, PROD = IMG.product;
       await wait(250);
+      if (!S.product) {                                       // 2026-10-22: sent without a product → no product photo in the request; the agent asks for it
+        await user(M.answers([['', 'Create a UGC Review video for your product featuring a model']]), token);
+        await think(token, 1600);
+        await greetAndUpload('Sure! First, send me a photo of <span class="pick">your product</span>.', 'ov-product', RESULT_CELL['ov-product'], token);
+        await user(photosHtml([PROD], false, '@product'), token);
+        return FLOW.ugc(token, cfg, PROD, null, S.setDone);
+      }
       await user(M.userImgs([{ src: PROD, tag: '@product' }], 'Create a UGC Review video for ',
         TG('@product') + '<span class="t12">featuring a model</span>', true), token);
       return FLOW.ugc(token, cfg, PROD, null, S.setDone);
