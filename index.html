@@ -390,6 +390,7 @@ html.no-set .ic-set { display: none !important; }   /* boss 2026-10-07: v1 has n
 .ag-btm .quota span.n { color: var(--brand); }
 .ag-btm .box { position: relative; width: 288px; height: 42px; border-radius: 10px; background: #eff0f3; }
 .ag-btm .box .ph { position: absolute; left: 41px; top: 13px; font: 510 12px var(--sf); color: var(--ink-3); white-space: nowrap; }
+.ag-btm .box .ph.typed { color: var(--ink); font-weight: 400; }
 .ag-btm .box .pic { position: absolute; left: 1px; top: 1px; }
 .ag-btm .box .snd { position: absolute; right: 1px; top: 1px; }
 .ag-btm .box .mic { position: absolute; right: 43px; top: 7px; }   /* 2026-10-14: speech-to-text, same icon as the launcher input */
@@ -1778,7 +1779,8 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   }
   function pickPhoto(id, r, c, cellBtn) {
     if (!S.pickFor || S.busy) return;
-    var psrc = 'media/pk/' + (id === 'ov-product' ? 'p' : id === 'ov-video' ? 'v' : 'r') + r + c + '.jpg';   // 2026-10-21: the photo you tap is the photo you get (cells cut from the picker grid)
+    var psrc = 'media/pk/' + (id === 'ov-product' ? 'p' : id === 'ov-video' ? 'v' : 'r') + r + c + '.jpg';
+    if (id === 'ov-recents' && r === 1 && c === 1) psrc = 'media/demo-img2vdo-src.jpg';   // Turn photo into a video: the demo photo (row 2, middle)   // 2026-10-21: the photo you tap is the photo you get (cells cut from the picker grid)
     if (S.pickFor === 'agent') {                                // picked inside the Agent chat → the photo is posted as a message
       S.picked = psrc; S.pickedFrom = id; hideHint(); var done = S.onAgentPick; S.onAgentPick = null;
       if (agBtm().classList.contains('cmp')) $('cmp-tx').focus({ preventScroll: true });
@@ -1827,9 +1829,11 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
       return at(sh, $('set-ok'));
     }
     if (S.sheet === 'ov-video' || S.sheet === 'ov-multi') return null;
+    var e1Pick = S.sheet === 'ov-recents' && (S.e1Demo || (S.pickFor === 'hub:photo' && HUB.sel === 'E1'));
+    if (e1Pick) return at(document.querySelector('#ov-recents .pk-grid'), document.querySelector('#ov-recents [data-rc="1,1"]'));   // the demo photo the result video is made from
     if ((S.sheet === 'ov-recents' || S.sheet === 'ov-product') && ((S.pickFor && S.pickFor.indexOf('hub:') === 0) || (S.pickFor === 'agent' && S.fromHub))) return null;   // quick skills: let the user choose freely
     if (S.sheet === 'ov-recents' || S.sheet === 'ov-product') {
-      var rc = (S.pickFor === 'agent' && S.pickCell) || RESULT_CELL[S.sheet];
+      var rc = (S.pickFor === 'agent' && S.pickCell) || RESULT_CELL[S.sheet];   // (Turn photo into a video is handled above)
       return at(document.querySelector('#' + S.sheet + ' .pk-grid'), document.querySelector('#' + S.sheet + ' [data-rc="' + rc.join(',') + '"]'));
     }
     if (S.sheet || S.busy) return null;
@@ -2049,7 +2053,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     S.agent = true; S.agentDone = false; S.which = which; S.agentHint = null; S.nextUsed = false;
     var token = ++RUN;
     setTimeout(function () { S.busy = false;
-      if (pill) pillFlow(token).then(function () { demoEnd(token); }).catch(function () {}); else FLOW[which](token).catch(function () {}); }, 420);
+      if (pill) pillFlow(token).then(function (r) { if (r !== 'full') demoEnd(token); }).catch(function () {}); else FLOW[which](token).catch(function () {}); }, 420);
   }
   function makeMsg(k, html) {
     var d = el('div', 'msg ' + (k === 'think' ? 'thinking' : k));
@@ -3053,10 +3057,45 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     await new Promise(function (res) { S.onAgentPick = res; S.agentHint = null; S.agentDone = true; scheduleHint(); });
     alive(token); S.agentSheet = null; S.pickCell = null; S.agentDone = false; hideHint(); unpick(gn);
   }
+  async function typeReply(text, token) {                    // the user "types" a reply into the chat box, then taps send (guided)
+    var box = document.querySelector('#agent .ag-btm .box'), ph = box.querySelector('.ph'), snd = $('ag-snd'), keep = ph.textContent;
+    await wait(500); alive(token); ph.textContent = ''; ph.classList.add('typed');
+    for (var i = 1; i <= text.length; i++) { ph.textContent = text.slice(0, i); await wait(45); alive(token); }
+    snd.innerHTML = ICONS.agSendOn;
+    await waitTap([snd], snd, token);
+    ph.textContent = keep; ph.classList.remove('typed'); snd.innerHTML = ICONS.agSend;
+  }
+  async function e1Flow(p, said, token) {                    // Turn photo into a video: the one quick skill demoed end to end (2026-10-22)
+    S.e1Demo = true;
+    try {
+      if (!p.photo) {
+        await user('<div class="u-bub ans"><div class="bub' + (said.length > 180 ? ' clamp"><span class="clp">' + esc(said) + '</span>' : '">' + esc(said)) + '</div></div>', token);
+        await think(token, 1600);
+        var gn = await say(M.text('Love it! Upload <span class="pick">the photo</span> you’d like to turn into a video.'), token);
+        var pk = gn && gn.querySelector('.pick'); if (pk) pk.onclick = function () { $('ag-pic').onclick(); };
+        S.agentSheet = 'ov-recents'; S.pickCell = [1, 1]; S.picked = null;
+        await new Promise(function (res) { S.onAgentPick = res; S.agentHint = pk || $('ag-pic'); S.agentDone = true; scheduleHint(); });
+        alive(token); S.agentSheet = null; S.pickCell = null; S.agentHint = null; S.agentDone = false; unpick(gn);
+        p.photo = S.picked || 'media/demo-img2vdo-src.jpg';
+        await user(photosHtml([p.photo], false, '@photo'), token);
+      } else await user(M.userPhotoText(p.photo, said, false, null, said.length > 180), token);
+      await think(token, 1600);
+      await say(M.text('What a great shot! What would you like to happen in the video? For example, “make her wave”, “spin around” or “walk toward the camera”.'), token);
+      await typeReply('Make her dance', token);
+      await user(M.answers([['', 'Make her dance']]), token);
+      await think(token, 1400);
+      await say(M.text('Love it! Creating a 5-second clip of her dancing down the sunny street, with a gentle camera move.'), token);
+      await processing('Video generation is processing...', token, 3000, 'About 1 minute left');
+      var rn = await say(M.result('media/demo-img2vdo.jpg', '00:05', 'It looks amazing!', 'This looks polished! There’s plenty more you can create.', 'media/demo-img2vdo.mp4', true), token);
+      wirePlayer(rn); useFree(); finish(token);
+    } finally { S.e1Demo = false; }
+    return 'full';
+  }
   async function pillFlow(token) {
     var p = S.hubPre; S.hubPre = null;
     var id = p.id, c = RCP[id], label = PILLS.edit.concat(PILLS.create).filter(function (x) { return x[0] === id; })[0][1];
     await wait(250);
+    if (id === 'E1') return e1Flow(p, p.text || label, token);
     if (/^E/.test(id)) {
       var said = p.text || label;
       if (!p.photo) {                                         // 2026-10-20 (Monic): no photo → the prompt is the user's message; the agent thinks, then asks for the photo
