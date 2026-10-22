@@ -3081,7 +3081,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
       } else await user(M.userPhotoText(p.photo, said, false, null, said.length > 180), token);
       await think(token, 1600);
       await say(M.text('What a great shot! What would you like to happen in the video? For example, “make her wave”, “spin around” or “walk toward the camera”.'), token);
-      await typeReply('Make her dance', token);
+      await wait(700); alive(token);                          // 2026-10-22 (Monic): the reply just appears as the user's message — no typing, no send tap
       await user(M.answers([['', 'Make her dance']]), token);
       await think(token, 1400);
       await say(M.text('Love it! Creating a 5-second clip of her dancing down the sunny street, with a gentle camera move.'), token);
