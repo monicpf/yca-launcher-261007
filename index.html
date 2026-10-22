@@ -2432,22 +2432,28 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
       await wait(250);
       await user(M.userImgs([{ src: PROD, tag: '@product' }], 'Create a UGC Review video for ',
         TG('@product') + '<span class="t12">featuring a model</span>', true), token);
+      return FLOW.ugc(token, cfg, PROD, null, S.setDone);
+    },
+    ugc: async function (token, cfg, PROD, MODEL0, picked) {  // UGC Review after the request: settings → model → style → product info → script → storyboard → Generate (launcher and AI Agent share it)
+    {
       await think(token, 2600);
       if (CREDIT < 210) { await creditGate(token); await think(token, 1200); }   // demo round 1 (16 credits): top up first, Figma F8 → Buy_1–3
-      await say(M.text(S.setDone ? 'Before we start, let me confirm the video settings you picked.' : 'Before we start, let me confirm the video settings. This one is set to ' + cfg.ratio + ' at ' + cfg.dur + ' seconds by default.'), token);
+      await say(M.text(picked ? 'Before we start, let me confirm the video settings you picked.' : 'Before we start, let me confirm the video settings. This one is set to ' + cfg.ratio + ' at ' + cfg.dur + ' seconds by default.'), token);
       var a = await ask(videoQs(cfg), token);                // 2026-10-21 (Monic): ratio / duration / resolution as three fixed questions, no typing
       cfg.ratio = a[0][1]; cfg.dur = parseInt(a[1][1], 10);
       await think(token, 1600);
+      var MODEL = MODEL0 || IMG.picked;
+      if (!MODEL0) {
       await say(M.text('Got it. I still need a model for this video. Would you like to upload a photo, or should I create one for you?'), token);
       var m = await ask([{ raw: true, fixed: true, any: true, num: true, q: 'How should we add your model?', o: [['Upload a photo', 'Pick one from your camera roll'], ['Generate one with AI', 'I’ll create a model that fits the product', null, COST.image]] }], token);
-      var MODEL = IMG.picked;
       if (m[0][2] === 1) {                                    // AI model: Next showed and charged -25 (character image); the agent makes one
         await user(M.answers([['', 'Generate one with AI']]), token);
         MODEL = IMG.sample;
       } else {                                                // upload → the album opens right away; the photo is posted as the answer
         S.pickFor = 'agent'; S.agentHint = null; S.agentDone = false; openSheet('ov-recents');
         await new Promise(function (res) { S.onAgentPick = res; }); alive(token);
-        await user(M.userPhoto(IMG.picked), token);
+        MODEL = S.fromHub && S.picked ? S.picked : IMG.picked; await user(M.userPhoto(MODEL), token);   // AI Agent: the photo you tap is the one you get
+      }
       }
       await think(token, 1600);
       await say(M.assets('Here’s what I’ll work with:', [{ src: MODEL, tag: '@model' }, { src: PROD, tag: '@product', fit: true }],
@@ -2473,6 +2479,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
         [['Video style', d[0][1]], ['Product', 'Firming Vegan Collagen Prep Serum']],
         { meta: [['Duration', cfg.dur + 's'], ['Shots', '5'], ['Ratio', cfg.ratio], ['Resolution', a[2][1]]], shots: SHOTS }, token);
       await generate('media/skin-renewal-effect.jpg', '00:' + (cfg.dur < 10 ? '0' : '') + cfg.dur, token, 'media/UGC_agent.mp4');
+    }
     },
     /* Creator template (Cinematic Movie · Pet Diary) */
     F8: async function (token) {
@@ -3136,6 +3143,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     if (c.tail) l2 += '<span class="t12">featuring</span>' + (p.model ? TG('@model') : '<span class="t12">a model</span>');
     if (c.after) l2 += '<span class="t12">' + esc(c.after) + '</span>';
     await user(M.userImgs(imgs, c.lead + ' ', l2, id === 'F7'), token);
+    if (id === 'F7') { await FLOW.ugc(token, { ratio: '9:16', dur: 15 }, p.photo || IMG.product, p.model || null); return 'full'; }   // 2026-10-22 (Monic): UGC Review runs the whole launcher flow
     await think(token, 1800);
     await say(M.text('Before we start, let me confirm the video settings. This one is set to 9:16 at 15 seconds by default.'), token);
     finish(token);
