@@ -2652,7 +2652,15 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     $('sw-edit').classList.toggle('on', t === 'img'); $('sw-vdo').classList.toggle('on', t === 'vdo'); $('sw-create').classList.toggle('on', t === 'create');
     $('qs-edit').classList.toggle('off', t !== 'img'); $('qs-vdo').classList.toggle('off', t !== 'vdo'); $('qs-create').classList.toggle('off', t !== 'create');
     $('hub-gr').textContent = HUB_COPY[t][0]; $('hub-ta').placeholder = HUB_COPY[t][1]; if (typeof drawPills === 'function') { selPill(null); setHubPhoto(null); }
+    playHubCards();
     scheduleHint();
+  }
+  function playHubCards() {                                   // 2026-10-23: iOS leaves autoplay clips paused while their tab is hidden → start / stop them on tab change
+    setTimeout(function () {
+      Array.prototype.forEach.call(document.querySelectorAll('#qs-create video'), function (v) {
+        if (HUB.tab === 'create' && S.hub) { v.muted = true; var p = v.play(); if (p && p.catch) p.catch(function () {}); } else if (!v.paused) v.pause();
+      });
+    }, 30);
   }
   $('sw-edit').onclick = function () { HUB.step = 1; setHubMode('img'); }; $('sw-vdo').onclick = function () { HUB.step = 1; setHubMode('vdo'); }; $('sw-create').onclick = function () { HUB.step = 1; setHubMode('create'); };   // any tap on the switcher ends the hub guidance
   function openHub() {
@@ -2882,8 +2890,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     var h = $('hub');
     if ($('hub-drw').classList.contains('in')) return null;
     if (h.classList.contains('compose')) return null;
-    if (HUB.sel || $('hub-ta').value.trim()) return null;   // 2026-10-23 (Monic): a quick skill is picked → no tab hint
-    if (HUB.step === 0 && HUB.mode !== 'create') return at(h, $('sw-create'));   // Monic 2026-10-16: once the mode is switched, no hint on Quick skills
+    // 2026-10-23 (Monic): no hint on the AI Shorts tab, ever
     return null;                                              // after the UGC Review chat: no more guidance in the hub
   }
   function backToHub() {                                      // back from a chat that started in the hub
@@ -2892,7 +2899,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     closeSurvey(); S.onAgentPick = null; S.agentSheet = null; S.pickCell = null; S.agentHint = null;
     $('buy').classList.remove('in'); $('cr-toast').classList.remove('show');
     Array.prototype.forEach.call(document.querySelectorAll('#ag-list video'), function (v) { v.pause(); });
-    $('agent').classList.remove('in'); $('hub').classList.remove('pushed'); hideDemoEnd();
+    $('agent').classList.remove('in'); $('hub').classList.remove('pushed'); hideDemoEnd(); playHubCards();
     if (document.activeElement && document.activeElement.blur) document.activeElement.blur();   // back on the hub at rest: no keyboard
     S.agent = false; S.agentDone = false; S.fromHub = false; hideHint();
     setTimeout(function () { $('ag-list').innerHTML = ''; $('ag-list').style.paddingBottom = ''; agBtm().classList.remove('cmp', 'free', 'tall'); agBtm().style.transform = ''; agBtm()._lift = 0; S.busy = false; scheduleHint(); }, 420);
