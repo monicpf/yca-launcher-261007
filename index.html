@@ -393,6 +393,7 @@ html.no-set .ic-set { display: none !important; }   /* boss 2026-10-07: v1 has n
 .ag-btm .box .ph.typed { color: var(--ink); font-weight: 400; }
 .ag-btm .box .pic { position: absolute; left: 1px; top: 1px; }
 .ag-btm .box .snd { position: absolute; right: 1px; top: 1px; }
+.nomic { display: none !important; }
 .ag-btm .box .mic { position: absolute; right: 43px; top: 7px; }   /* 2026-10-14: speech-to-text, same icon as the launcher input */
 .ag-btm .box svg { display: block; }
 .ag-btm .safe { height: 28px; }
@@ -1826,7 +1827,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
         }
         return t;
       }
-      if (!S.agentDone) return null;
+      if (!S.agentDone || S.noBackHint) return null;           // 2026-10-23 (Monic): no back hint on the Image/Video result screen
       return at(document.querySelector('#agent .hdr'), $('ag-back'));                    // back
     }
     if (S.sheet === 'ov-link') return at(document.querySelector('#ov-link .sheet'), $('lk-send'));
@@ -2008,7 +2009,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     'Add a subtle sparkle to my eyes to make them shine beautifully': 'On it! I’ll add a soft sparkle to your eyes.'
   };
   async function nextTap(text) {
-    if (S.nextUsed || S.busy) return; S.nextUsed = true; hideHint();
+    if (S.nextUsed || S.busy) return; S.nextUsed = true; S.noBackHint = false; hideHint();
     var token = RUN; S.agentDone = false;
     try {
       await user(M.answers([['', text]]), token);
@@ -2052,7 +2053,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   function alive(token) { if (token !== RUN) throw 'stop'; }
   function kbUp() { var k = $('kb-proxy'); if (k && document.activeElement !== k) k.focus({ preventScroll: true }); }
   function openAgent(which) {
-    FB = null; LASTA = null;
+    FB = null; LASTA = null; S.noBackHint = false;
     if (S.busy || S.agent) return; S.busy = true; hideHint();
     var pill = S.hubPre && S.hubPre.id === which;
     if (/^E\d$/.test(which) && !pill) kbUp();               // AI Edit chats (not from the hub) open on the compose with the keyboard up
@@ -2077,7 +2078,9 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   }
   function follow(smooth) {
     var sc = $('ag-scroll'), target = sc.scrollHeight - sc.clientHeight;
-    if (CAP && CAP.isConnected) target = Math.min(target, capTop());
+    if (CAP && CAP.isConnected) { var ct = capTop();
+      if (ct < sc.scrollTop - 1) { sc.scrollTop = Math.max(0, ct); return; }   // 2026-10-23 (Monic): a card above collapsed → pull back so the reply starts at the top, never drift to the bottom
+      target = Math.min(target, ct); }
     if (target <= sc.scrollTop) return;
     if (smooth) sc.scrollTo({ top: target, behavior: 'smooth' }); else sc.scrollTop = target;
   }
@@ -2879,6 +2882,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     var h = $('hub');
     if ($('hub-drw').classList.contains('in')) return null;
     if (h.classList.contains('compose')) return null;
+    if (HUB.sel || $('hub-ta').value.trim()) return null;   // 2026-10-23 (Monic): a quick skill is picked → no tab hint
     if (HUB.step === 0 && HUB.mode !== 'create') return at(h, $('sw-create'));   // Monic 2026-10-16: once the mode is switched, no hint on Quick skills
     return null;                                              // after the UGC Review chat: no more guidance in the hub
   }
@@ -2936,6 +2940,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     n.style.overflow = 'hidden'; n.style.height = n.offsetHeight + 'px'; void n.offsetHeight;
     n.style.transition = 'opacity .3s var(--ease-io), height .38s var(--ease-out) .22s, padding .38s var(--ease-out) .22s';
     n.style.opacity = 0; n.style.height = '0px'; n.style.paddingBottom = '0px';
+    var t0 = Date.now(); (function hold() { if (CAP && CAP.isConnected) follow(); if (Date.now() - t0 < 800) requestAnimationFrame(hold); })();   // keep the newest reply anchored while this collapses
     setTimeout(function () { if (n.parentNode) n.remove(); }, 700);
   }
   async function processing(text, token, ms, left) {
@@ -2952,6 +2957,13 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
   function unpick(gn) {                                       // photo is in → the underlined words go back to plain text
     Array.prototype.forEach.call(gn ? gn.querySelectorAll('.pick') : [], function (k) { k.replaceWith(document.createTextNode(k.textContent)); });
   }
+  (function syncMic() {                                      // 2026-10-23 (Monic): text in the field → no speech-to-text icon
+    try { var ph = document.querySelector('#agent .ag-btm .box .ph'), ta = $('hub-ta');
+      var on = { 'ic-mic': !!S.input && S.input !== 'default', 'hub-mic': !!(ta && ta.value.trim()), 'ag-mic': !!(ph && ph.classList.contains('typed') && ph.textContent.trim()) };
+      for (var id in on) { var m = $(id); if (m && m.classList.contains('nomic') !== on[id]) m.classList.toggle('nomic', on[id]); }
+    } catch (e) {}
+    setTimeout(syncMic, 100);
+  })();
   function finish(token) { if (token !== RUN) return; S.agentDone = true; S.agentHint = null; scheduleHint(); }   // guide → back
 
   /* AI Edit chats (Figma inchat_edit): the skill text is already typed; add a photo, send, get the result. Free daily allowance, no credits. */
@@ -3139,7 +3151,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
       await say(M.text('Love it! Creating a 5-second clip of her dancing down the sunny street, with a gentle camera move.'), token);
       await processing('Video generation is processing...', token, 3000, 'About 1 minute left');
       var rn = await say(M.result('media/demo-img2vdo.jpg', '00:05', 'It looks amazing!', 'This looks polished! There’s plenty more you can create.', 'media/demo-img2vdo.mp4', true), token);
-      wirePlayer(rn); useFree(); finish(token);
+      wirePlayer(rn); useFree(); S.noBackHint = true; finish(token);
     } finally { S.e1Demo = false; }
     return 'full';
   }
@@ -3165,7 +3177,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
       await say(M.text('On it! Removing the people in the background and filling the gaps to match the street.'), token);
       await processing('Removing people from your photo...', token, 3000);
       await say(M.result('media/demo-remove-after.jpg', '', 'It looks amazing!', 'This looks polished! There’s plenty more you can create.', null, true), token);
-      useFree(); finish(token);
+      useFree(); S.noBackHint = true; finish(token);
     } finally { S.e4Demo = false; }
     return 'full';
   }
