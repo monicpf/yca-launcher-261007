@@ -1838,7 +1838,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
       return at(sh, $('set-ok'));
     }
     if (S.sheet === 'ov-video' || S.sheet === 'ov-multi') return null;
-    var e1Pick = S.sheet === 'ov-recents' && (S.e1Demo || (S.pickFor === 'hub:photo' && HUB.sel === 'E1'));
+    var e1Pick = S.sheet === 'ov-recents' && (S.e1Demo || S.e4Demo || (S.pickFor === 'hub:photo' && (HUB.sel === 'E1' || HUB.sel === 'E4')));
     if (e1Pick) return at(document.querySelector('#ov-recents .pk-grid'), document.querySelector('#ov-recents [data-rc="1,1"]'));   // the demo photo the result video is made from
     if ((S.sheet === 'ov-recents' || S.sheet === 'ov-product') && ((S.pickFor && S.pickFor.indexOf('hub:') === 0) || (S.pickFor === 'agent' && S.fromHub))) return null;   // quick skills: let the user choose freely
     if (S.sheet === 'ov-recents' || S.sheet === 'ov-product') {
@@ -2624,9 +2624,9 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
 
   var HUB = { mode: 'edit', tab: 'img', step: 0 }, FREE = 20;   // tab: img / vdo / create · mode: edit (img + vdo) / create
   var HUB_COPY = { img: ['What should we polish today?', 'Upload a photo and tell me what to fix'], vdo: ['What should we polish today?', 'Upload a video and tell me what to make'], create: ['What story do you want to tell?', 'Describe the video you want to make'] };
-  var EDIT_SK = [[['E2', 'Enhance Photo Quality', 'media/qs-img1.jpg'], ['E7', 'Combine Photos Into One', 'media/qs-img2.jpg']],   // Image tab (Figma 7432:25024)
-                 [['E8', 'Change My Outfit', 'media/qs-img3.jpg'], ['E4', 'Remove Unwanted\nObjects Or People', 'media/qs-img4.jpg']]];
-  var VDO_SK = [[['E3', 'Enhance Video Quality', 'media/qs-vdo1.jpg'], ['E1', 'Animate My Photo', 'media/qs-vdo2.jpg']],   // Video tab (Figma 7432:25300) · Animate My Photo runs the full photo → video demo
+  var EDIT_SK = [[['E4', 'Remove Unwanted\nObjects Or People', 'media/qs-img4.jpg'], ['E2', 'Enhance Photo Quality', 'media/qs-img1.jpg']],   // Image tab (Figma 7432:25024) · 2026-10-23: Remove first, full demo
+                 [['E7', 'Combine Photos Into One', 'media/qs-img2.jpg'], ['E8', 'Change My Outfit', 'media/qs-img3.jpg']]];
+  var VDO_SK = [[['E1', 'Animate My Photo', 'media/qs-vdo2.jpg'], ['E3', 'Enhance Video Quality', 'media/qs-vdo1.jpg']],   // Video tab (Figma 7432:25300) · Animate My Photo runs the full photo → video demo
                 [['E9', 'Swap An Object In My Photo', 'media/qs-vdo3.jpg'], ['E10', 'Change The Camera Angle', 'media/qs-vdo4.jpg']]];
   var VID = { E3: 1, E10: 1 };                                 // skills that take a video
   var CREATE_SK = [[['F7', 'UGC Review', 'media/hub-f7.jpg'], ['F9', 'Product\nShowcase Ad', 'media/hub-f9.jpg', 'media/hub-f9.mp4'], ['C4', 'Product Demo\n& Solution', 'media/hub-c4.jpg', 'media/hub-c4.mp4'], ['C2', 'UGC Tutorial', 'media/hub-c2.jpg']],
@@ -2774,7 +2774,7 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     C6: { lead: 'Create an unboxing and first-use video for', prod: 'media/themed-sale-unbox.jpg' },
     C7: { lead: 'Remix', one: ['person', 'Person image', 'media/fashion-ava.jpg'], after: 'into a short action clip.' },
     E1: { photo: 'media/bonjour-selfie.jpg' }, E2: { photo: 'media/model-picked.jpg', lofi: true }, E3: { photo: 'media/teatime-date.jpg', lofi: true },   // Image/Video: the photo a pick resolves to
-    E4: { photo: 'media/ugc-hand-gesture.jpg' }, E8: { photo: 'media/fashion-erica.jpg' }, E9: { photo: 'media/teatime-date.jpg' }, E10: { photo: 'media/bonjour-selfie.jpg', lofi: true }, E5: { photo: 'media/fashion-erica.jpg' }, E6: { photo: 'media/model-picked.jpg' }, E7: { photo: 'media/bonjour-selfie.jpg' }
+    E4: { photo: 'media/demo-img2vdo-src.jpg' }, E8: { photo: 'media/fashion-erica.jpg' }, E9: { photo: 'media/teatime-date.jpg' }, E10: { photo: 'media/bonjour-selfie.jpg', lofi: true }, E5: { photo: 'media/fashion-erica.jpg' }, E6: { photo: 'media/model-picked.jpg' }, E7: { photo: 'media/bonjour-selfie.jpg' }
   };
   var PROMPT = {                                              // Image/Video skills fill the input with an editable prompt (E1 = Figma AURA prompt; the rest drafted 2026-10-20)
     E1: "High resolution, high quality, Preserve the uploaded face identity and exact hairstyle, but regenerate head ratio to make the size moderate. Apply subtle professional beauty retouching: gently refine the complexion, slightly soften uneven skin texture, brighten underexposed facial areas, reduce dull or yellow undertones, and add a natural healthy glow, pearl stud earrings. Hair with a single delicate rose-gold crystal flower hairpin, catching soft warm highlights. Ensure the person always at the center of magazine cover.\nConcept: viral 3D dreamland art installation — a luxury fashion magazine cover — not a thick book or box, not tilted — with a slim visible edge along its top and side, titled \"AURA\" in embossed 3D rose-gold typography, breaking out of its own 2D frame into physical space.\nFraming & 3D Object Presence: The magazine cover is rendered visible page-edge depth along its top and side, viewed at a slight three-quarter angle so both the printed front face and the dimensional edge are visible, establishing it as a freestanding object in the scene. A grounded contact shadow falls from the ledge and arm onto the floor of roses below, anchoring the object's weight in the scene.\nFX: translucent glass-prism butterflies with rainbow refractions hover near fingertips. The front plane displays a short two-to-three-word editorial coverline match the person's vibe, in fine rose-gold serif type consistent with the masthead style, plus two brief coverline captions tucked near the corners — a kicker line above the masthead and a teaser line near the base — and a subtle vertical barcode motif in the lower corner, fashion-magazine front-cover layout, no date.\nPalette: lavender, baby pink, champagne cream, sky blue. Setting: neoclassical white marble terrace under a bright azure sky, soft top-corner sunlight, a distant minimalist stone archway veiled in pastel-pink clouds. The frame's base emerges from a bed of blush-pink roses, with cascading petals, soap bubbles, and diamond light-dust spilling into the foreground.\nLighting: volumetric god rays casting a golden rim light on her hair and sweater; diamond sparkle dust, rainbow-caustic bubbles, crisp horizontal lens flares on jewelry and the glossy cover edge.\nShot with an 85mm portrait telephoto lens perspective to eliminate wide-angle distortion (moderate natural head size, perfect head-to-shoulder ratio, slender neck). Poised, upright, and centered posture with leveled shoulders. Wearing a soft asymmetric mohair-knit cardigan in dusty lavender draped off one shoulder, with the other shoulder fully covered by the knit, finely spun fluffy fibers catching the light, for a romantic goddess silhouette; a delicate lace-trim camisole underneath; a layered pearl necklace. Both arms rest gracefully and horizontally across the lower marble frame ledge.\nFinish: high resolution, sleek fitted silhouette, slim cover edge with clean minimal typography, natural skin retouching — brighten shadows, neutralize yellow undertones, healthy glow, no wrinkles, camera level and unrotated. Ensure the head must regenerate into a moderate size, no big head. Perfect head-to-body ratio. No date. No cleavage. Retain the input face features and hairstyle. Remove eye bags and dark circles. No under-eye circles",
@@ -2789,8 +2789,8 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     E10: 'Re-shoot this video from a low, wide fisheye angle with a slow orbit around me, keeping the same people, motion and timing.'
   };
   var PILLS = { create: [['F7', 'UGC Review'], ['C2', 'UGC Tutorial'], ['F9', 'Product Showcase Ad'], ['C4', 'Product Demo & Solution'], ['C5', 'Cinematic Brand Ad'], ['C6', 'Unboxing & First-Use'], ['C7', 'Person Action Remix']],
-                edit: [['E2', 'Enhance photo quality'], ['E7', 'Combine photos into one'], ['E8', 'Change my outfit'], ['E4', 'Remove unwanted objects or people'],
-                       ['E3', 'Enhance video quality'], ['E1', 'Animate my photo'], ['E9', 'Swap an object in my photo'], ['E10', 'Change the camera angle']] };
+                edit: [['E4', 'Remove unwanted objects or people'], ['E2', 'Enhance photo quality'], ['E7', 'Combine photos into one'], ['E8', 'Change my outfit'],
+                       ['E1', 'Animate my photo'], ['E3', 'Enhance video quality'], ['E9', 'Swap an object in my photo'], ['E10', 'Change the camera angle']] };
   PILLS.img = PILLS.edit.slice(0, 4); PILLS.vdo = PILLS.edit.slice(4);   // the compose pills follow the tab
   HUB.sel = null; HUB.rc = {};
   function drawPills() {
@@ -3143,11 +3143,38 @@ ICONS.newChat = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xml
     } finally { S.e1Demo = false; }
     return 'full';
   }
+  async function e4Flow(p, said, token) {                    // Remove unwanted objects or people: full demo, same photo as Animate My Photo (Figma inchat_remove, 2026-10-23)
+    S.e4Demo = true;
+    try {
+      if (!p.photo) {
+        await user('<div class="u-bub ans"><div class="bub' + (said.length > 180 ? ' clamp"><span class="clp">' + esc(said) + '</span>' : '">' + esc(said)) + '</div></div>', token);
+        await think(token, 1600);
+        var gn = await say(M.text('Got it. Upload <span class="pick">the photo</span> you’d like me to clean up.'), token);
+        var pk = gn && gn.querySelector('.pick'); if (pk) pk.onclick = function () { $('ag-pic').onclick(); };
+        S.agentSheet = 'ov-recents'; S.pickCell = [1, 1]; S.picked = null;
+        await new Promise(function (res) { S.onAgentPick = res; S.agentHint = pk || $('ag-pic'); S.agentDone = true; scheduleHint(); });
+        alive(token); S.agentSheet = null; S.pickCell = null; S.agentHint = null; S.agentDone = false; unpick(gn);
+        p.photo = S.picked || 'media/demo-img2vdo-src.jpg';
+        await user(photosHtml([p.photo], false, '@photo'), token);
+      } else await user(M.userPhotoText(p.photo, said, false, null, said.length > 180), token);
+      await think(token, 1600);
+      await say(M.text('I can see other people behind the girl, would you like me to remove them?'), token);
+      await wait(700); alive(token);                          // the reply just appears as the user's message, as in Animate My Photo
+      await user(M.answers([['', 'Yes, remove them.']]), token);
+      await think(token, 1400);
+      await say(M.text('On it! Removing the people in the background and filling the gaps to match the street.'), token);
+      await processing('Removing people from your photo...', token, 3000);
+      await say(M.result('media/demo-remove-after.jpg', '', 'It looks amazing!', 'This looks polished! There’s plenty more you can create.', null, true), token);
+      useFree(); finish(token);
+    } finally { S.e4Demo = false; }
+    return 'full';
+  }
   async function pillFlow(token) {
     var p = S.hubPre; S.hubPre = null;
     var id = p.id, c = RCP[id], label = PILLS.edit.concat(PILLS.create).filter(function (x) { return x[0] === id; })[0][1];
     await wait(250);
     if (id === 'E1') return e1Flow(p, p.text || label, token);
+    if (id === 'E4') return e4Flow(p, p.text || label, token);
     if (/^E/.test(id)) {
       var said = p.text || label;
       if (!p.photo) {                                         // 2026-10-20 (Monic): no photo → the prompt is the user's message; the agent thinks, then asks for the photo
